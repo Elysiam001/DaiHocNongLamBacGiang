@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+﻿import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   clearSession,
@@ -154,7 +154,7 @@ export default function LobbyPage() {
 
         {/* Segment 3: Nạp Tiền (Giant Center) */}
         <div className="footer-segment nap-tien-segment">
-          <button className="btn-nap-3d">
+          <button className="btn-nap-premium">
             <span>NẠP TIỀN</span>
           </button>
         </div>

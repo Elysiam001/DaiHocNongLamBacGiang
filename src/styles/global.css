@@ -194,18 +194,66 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   margin-left: -20px; border-right: 1px solid #444;
 }
 
-/* GIANT 3D NẠP TIỀN BUTTON */
+
+/* --- ULTIMATE GOLDEN NAP TIEN PLATE --- */
 .nap-tien-segment {
-  flex: 0 0 240px; height: 90px;
-  background: linear-gradient(180deg, #ffcc00, #8b6508);
-  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
-  margin-top: -15px; border: 2px solid #fff;
-  box-shadow: 0 0 30px rgba(255, 204, 0, 0.6);
-  z-index: 10; cursor: pointer;
+  flex: 0 0 240px; height: 100px;
+  background: #000;
+  display: flex; align-items: flex-end; justify-content: center;
+  margin-top: -20px; z-index: 10; position: relative;
 }
-.nap-tien-segment span {
-  font-size: 32px; font-weight: 1000; color: #4a0000;
-  text-shadow: 1px 1px 0px #fff;
+
+.btn-nap-premium {
+  width: 90%; height: 85px;
+  background: linear-gradient(180deg, #fff3a6 0%, #ffcc00 40%, #d4af37 60%, #8b6508 100%);
+  border-radius: 25px 25px 10px 10px;
+  border: 3px solid #fff;
+  box-shadow: 
+    0 10px 20px rgba(0,0,0,0.6),
+    inset 0 2px 3px rgba(255,255,255,0.8),
+    inset 0 -5px 10px rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden; cursor: pointer;
+  transition: 0.2s;
+}
+
+/* Glitter / Sparkle effect using multiple gradients */
+.btn-nap-premium::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.4) 1px, transparent 1px),
+    radial-gradient(circle at 80% 40%, rgba(255,255,255,0.4) 1px, transparent 1px),
+    radial-gradient(circle at 40% 70%, rgba(255,255,255,0.4) 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.4) 1px, transparent 1px);
+  background-size: 20px 20px; opacity: 0.6;
+}
+
+/* Shimmer shine effect */
+.btn-nap-premium::after {
+  content: ""; position: absolute; top: -50%; left: -100%; width: 50%; height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  transform: rotate(30deg); animation: shimmer-gold 3s infinite;
+}
+
+@keyframes shimmer-gold {
+  0% { left: -100%; }
+  30% { left: 150%; }
+  100% { left: 150%; }
+}
+
+.btn-nap-premium span {
+  font-size: 38px; font-weight: 1000; color: #4a0000;
+  text-transform: uppercase; letter-spacing: -1px;
+  text-shadow: 
+    1px 1px 0px #fff,
+    -1px -1px 0px rgba(0,0,0,0.5),
+    0 2px 4px rgba(0,0,0,0.3);
+  z-index: 5; font-family: 'Outfit', sans-serif;
+}
+
+.btn-nap-premium:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(255, 204, 0, 0.6);
 }
 
 /* Action Items Section */
