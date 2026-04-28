@@ -1,9 +1,9 @@
-﻿@import url(''https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap'');
+﻿@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
 
 :root {
   --gold-metallic: linear-gradient(180deg, #fff3a6 0%, #ffcc00 45%, #8b6508 100%);
   --gold-text: #ffcc00;
-  --font-main: ''Outfit'', sans-serif;
+  --font-main: 'Outfit', sans-serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,7 +11,7 @@ body { font-family: var(--font-main); background: #000; color: #fff; }
 
 .page.auth-bg {
   min-height: 100vh;
-  background: radial-gradient(circle at center, rgba(139,0,0,0.4) 0%, rgba(0,0,0,0.9) 100%), url(''/assets/bg_lobby.png'');
+  background: radial-gradient(circle at center, rgba(139,0,0,0.4) 0%, rgba(0,0,0,0.9) 100%), url('/assets/bg_lobby.png');
   background-size: cover; background-position: center; background-attachment: fixed;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   position: relative;
@@ -167,7 +167,7 @@ body { font-family: var(--font-main); background: #000; color: #fff; }
 
 .lobby-container {
   width: 100%; height: 100vh;
-  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(''/assets/bg_lobby.png'');
+  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/assets/bg_lobby.png');
   background-size: cover; background-position: center; background-attachment: fixed;
   display: flex; flex-direction: column; position: relative; overflow: hidden;
 }
