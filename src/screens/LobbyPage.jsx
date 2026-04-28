@@ -129,55 +129,61 @@ export default function LobbyPage() {
       </div>
 
       {/* Segmented Bottom Bar (REBALANCED) */}
-      <footer className="footer-bar">
-        {/* LEFT GROUP: User + Rut Tien */}
-        <div className="footer-group-left">
-          <div className="footer-segment user-segment">
-            <div className="sdt-box">Hãy kích hoạt SĐT</div>
-            <div className="avatar-gold-ring">
-              <img src="/assets/bg_login.png" alt="Avatar" />
+      <footer className="footer-bar-premium">
+        <div className="footer-content">
+          {/* LEFT: VIP Profile Area */}
+          <div className="footer-left-vip">
+            <div className="vip-avatar-wrap">
+              <div className="sdt-badge-premium">Hãy kích hoạt SĐT</div>
+              <div className="avatar-ring-animated">
+                <img src="/assets/bg_login.png" alt="Avatar" />
+              </div>
+              <div className="vip-info-box">
+                <div className="vip-name">{visibleName}</div>
+                <div className="vip-balance">
+                  <span className="coin-icon">💰</span>
+                  { (user?.balance || 0).toLocaleString() }
+                </div>
+              </div>
             </div>
-            <div className="name-bal-box">
-              <div className="user-label-name">{visibleName}</div>
-              <div className="user-label-bal">{(user?.balance || 0).toLocaleString()}</div>
+            
+            <div className="action-item-wrap" style={{marginLeft: '20px'}}>
+              <div className="action-btn-gold">
+                <i className="fa-solid fa-vault"></i>
+                <span>RÚT TIỀN</span>
+              </div>
             </div>
           </div>
-          
-          <div className="footer-segment rut-tien-segment">
-            <div className="nav-item-box">
-              <i className="fa-solid fa-money-bill-transfer"></i>
-              <span>RÚT TIỀN</span>
-            </div>
-          </div>
-        </div>
 
-        {/* CENTER GROUP: Nap Tien (Perfectly Centered) */}
-        <div className="footer-group-center">
-          <div className="footer-segment nap-tien-segment">
-            <button className="btn-nap-premium">
-              <span>NẠP TIỀN</span>
-            </button>
+          {/* CENTER: The Golden Power Button */}
+          <div className="footer-center-power">
+            <div className="nap-tien-orb-wrap">
+              <button className="btn-nap-tien-3d">
+                <div className="shine-layer"></div>
+                <span>NẠP TIỀN</span>
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* RIGHT GROUP: Nav Actions */}
-        <div className="footer-group-right">
-          <div className="nav-segments">
-            <div className="nav-item-box">
-              <i className="fa-solid fa-gem"></i>
-              <span>SĂN HŨ</span>
-            </div>
-            <div className="nav-item-box">
-              <i className="fa-solid fa-gift"></i>
-              <span>NHIỆM VỤ</span>
-            </div>
-            <div className="nav-item-box">
-              <i className="fa-solid fa-envelope"></i>
-              <span>HỘP THƯ</span>
-            </div>
-            <div className="nav-item-box" onClick={logout}>
-              <i className="fa-solid fa-bars"></i>
-              <span>MENU</span>
+          {/* RIGHT: Global Navigation Items */}
+          <div className="footer-right-nav">
+            <div className="nav-group-premium">
+              <div className="nav-item-premium">
+                <i className="fa-solid fa-gem"></i>
+                <span>SĂN HŨ</span>
+              </div>
+              <div className="nav-item-premium">
+                <i className="fa-solid fa-gift"></i>
+                <span>NHIỆM VỤ</span>
+              </div>
+              <div className="nav-item-premium">
+                <i className="fa-solid fa-envelope"></i>
+                <span>HỘP THƯ</span>
+              </div>
+              <div className="nav-item-premium" onClick={logout}>
+                <i className="fa-solid fa-bars"></i>
+                <span>MENU</span>
+              </div>
             </div>
           </div>
         </div>
