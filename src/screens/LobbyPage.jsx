@@ -11,30 +11,33 @@ const gameCards = [
     id: "game-taixiu-md5",
     title: "TÀI XỈU MD5",
     img: "/assets/banner_taixiu.png",
-    amount: "576,636,703",
-    amount2: "509,086,351",
-    badge: "MD5"
+    val: "576,636,703",
+    badge: "MD5",
+    jackpotIdx: 3
   },
   {
     id: "game-taixiu-normal",
     title: "TÀI XỈU",
     img: "/assets/banner_taixiu.png",
-    amount: "64,202,123,493",
-    badge: "LIVE"
+    val: "64,202,123,493",
+    badge: "LIVE",
+    jackpotIdx: 5
   },
   {
     id: "game-xocdia",
     title: "XÓC ĐĨA",
-    img: "/assets/bg_login.png", // Placeholder
-    amount: "4,629,988,387",
-    badge: "HOT"
+    img: "/assets/bg_login.png",
+    val: "4,629,988,387",
+    badge: "HOT",
+    jackpotIdx: 2
   },
   {
     id: "game-taixiu-livestream",
     title: "TÀI XỈU LIVESTREAM",
     img: "/assets/bg_taixiu.png",
-    amount: "13,781,615,174",
-    badge: "LIVE"
+    val: "13,781,615,174",
+    badge: "LIVE",
+    jackpotIdx: 4
   }
 ];
 
@@ -75,66 +78,52 @@ export default function LobbyPage() {
     <div className="lobby-container">
       {/* Top Bar */}
       <header className="top-bar">
-        <div className="top-left">
+        <div className="minigame-area">
           <button className="minigame-btn">
-            <i className="fa-solid fa-gamepad" style={{ fontSize: 24 }}></i>
-            <span>MINI GAME</span>
+            <i className="fa-solid fa-gamepad" style={{ fontSize: 28, color: "#ffcc00" }}></i>
+            <span style={{ fontSize: 10, fontWeight: 900, marginTop: 4 }}>MINI GAME</span>
           </button>
         </div>
 
-        <div className="top-center">
-          <div className="logo-box">
-            <div className="logo-main">GO88</div>
-            <div className="logo-sub">GO88.COM</div>
-          </div>
+        <div className="logo-wrap">
+          <div className="logo-text">GO88</div>
+          <div className="logo-site">GO88.COM</div>
         </div>
 
-        <div className="top-right">
-          <div className="top-notice">
-            Để được giải đáp thắc mắc, vui lòng liên hệ <br />
-            <span>Livechat</span>
-          </div>
+        <div className="top-right-info">
+          Để được giải đáp thắc mắc, vui lòng liên hệ <br />
+          <span>Livechat</span>
         </div>
       </header>
 
-      {/* Tabs Bar */}
-      <nav className="tabs-bar">
+      {/* Tabs */}
+      <nav className="tabs-container">
         {tabs.map((tab) => (
-          <div
+          <button
             key={tab}
-            className={`tab-item ${activeTab === tab ? "active" : ""}`}
+            className={`tab-btn ${activeTab === tab ? "active" : ""}`}
             onClick={() => setActiveTab(tab)}
           >
-            {tab}
-          </div>
+            {tab === "YÊU THÍCH" ? <>{tab} ★</> : tab}
+          </button>
         ))}
       </nav>
 
       {/* Main Content */}
-      <main className="main-lobby">
-        {/* Promo Card (like the one in screenshot) */}
-        <div className="game-card" style={{ border: "2px solid #00f2fe", width: 220 }}>
-          <img src="/assets/banner_taixiu.png" alt="Promo" style={{ filter: "brightness(0.7)" }} />
-          <div style={{ position: "absolute", top: 10, left: 10, background: "red", padding: "2px 10px", color: "#fff", fontWeight: "bold", fontSize: 12 }}>
-            CƯỢC NGAY
-          </div>
-          <div className="game-card-footer">
-            <div style={{ fontSize: 10 }}>CHAMPIONS LEAGUE</div>
-            <div style={{ color: "#ffcc00", fontWeight: "bold" }}>PSG vs BAYERN</div>
-            <div style={{ fontSize: 10 }}>02:00 29/04/2026</div>
-          </div>
-        </div>
-
+      <main className="main-content">
+        {/* Ornate Game Cards */}
         {gameCards.map((card) => (
-          <div key={card.id} className="game-card">
-            <img src={card.img} alt={card.title} />
-            <div style={{ position: "absolute", top: 5, right: 5, background: "red", padding: "2px 8px", color: "#fff", borderRadius: 4, fontSize: 10, fontWeight: "bold" }}>
-              {card.badge}
-            </div>
-            <div className="game-card-footer">
-              <div style={{ fontSize: 12, fontWeight: "bold", color: "#ffcc00", textTransform: "uppercase" }}>{card.title}</div>
-              <div className="card-amount">$ {card.amount}</div>
-              {card.amount2 && <div style={{ fontSize: 11, color: "#fff" }}>$ {card.amount2}</div>}
+          <div key={card.id} className="ornate-card">
+            <img src={card.img} alt={card.title} className="card-img" />
+            <div className="card-label">{card.badge}</div>
+            <div className="card-info">
+              <div className="card-title">{card.title}</div>
+              <div className="card-val">$ {card.val}</div>
+              <div className="jackpot-dots">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className={`dot ${i < card.jackpotIdx ? "active" : ""}`} />
+                ))}
+              </div>
             </div>
           </div>
         ))}
@@ -142,38 +131,39 @@ export default function LobbyPage() {
 
       {/* Bottom Bar */}
       <footer className="bottom-bar">
-        <div className="user-info">
-          <div className="user-avatar">
+        <div className="user-block">
+          <div className="activate-bubble">Hãy kích hoạt SĐT</div>
+          <div className="avatar-circle">
             <img src="/assets/bg_login.png" alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
-          <div className="user-details">
-            <div className="user-name">{visibleName}</div>
+          <div className="user-details-wrap">
+            <div className="user-txt">{visibleName}</div>
             <div className="user-balance">{ (user?.balance || 0).toLocaleString() }</div>
           </div>
-          <button className="nav-item" style={{ marginLeft: 20 }}>
+          <button className="nav-btn" style={{ marginLeft: 15 }}>
             <i className="fa-solid fa-money-bill-transfer"></i>
             <span>RÚT TIỀN</span>
           </button>
         </div>
 
-        <div className="center-action">
-          <button className="naptien-btn">NẠP TIỀN</button>
+        <div className="giant-nap-wrap">
+          <button className="giant-nap-btn">NẠP TIỀN</button>
         </div>
 
-        <div className="bottom-nav">
-          <button className="nav-item">
+        <div className="nav-group">
+          <button className="nav-btn">
             <i className="fa-solid fa-gem"></i>
             <span>SĂN HŨ</span>
           </button>
-          <button className="nav-item">
+          <button className="nav-btn">
             <i className="fa-solid fa-list-check"></i>
             <span>NHIỆM VỤ</span>
           </button>
-          <button className="nav-item">
+          <button className="nav-btn">
             <i className="fa-solid fa-envelope"></i>
             <span>HỘP THƯ</span>
           </button>
-          <button className="nav-item" onClick={logout}>
+          <button className="nav-btn" onClick={logout}>
             <i className="fa-solid fa-bars"></i>
             <span>MENU</span>
           </button>
@@ -183,13 +173,13 @@ export default function LobbyPage() {
       {/* Display Name Modal */}
       {shouldAskDisplayName ? (
         <div className="modal-overlay">
-          <div className="modal-content premium-alert" style={{ background: "linear-gradient(145deg, #222, #000)", borderColor: "#ffcc00" }}>
-            <h3 style={{ color: "#ffcc00" }}>Tên Hiển Thị</h3>
+          <div className="modal-gold">
+            <h3 style={{ color: "#ffcc00", fontSize: 24, marginBottom: 15 }}>Tên Hiển Thị</h3>
             <form onSubmit={submitDisplayName}>
-              <p>Vui lòng nhập tên hiển thị của bạn</p>
+              <p style={{ color: "#fff", marginBottom: 20 }}>Vui lòng nhập tên hiển thị của bạn</p>
               <input
                 className="premium-input"
-                style={{ width: "100%", textAlign: "center", border: "1px solid #ffcc00", color: "#fff" }}
+                style={{ width: "100%", textAlign: "center", border: "1px solid #ffcc00", background: "#000", color: "#fff", padding: 15, borderRadius: 10, fontSize: 18 }}
                 value={displayName}
                 onChange={(e) => {
                   setDisplayName(e.target.value);
@@ -199,7 +189,7 @@ export default function LobbyPage() {
                 maxLength={15}
               />
               {displayNameError && <div style={{ color: "red", margin: "10px 0" }}>{displayNameError}</div>}
-              <button className="alert-ok-btn" style={{ background: "linear-gradient(180deg, #ffcc00, #886600)", color: "#000" }}>
+              <button className="alert-ok-btn" style={{ marginTop: 20, background: "var(--gold-primary)", border: "none", padding: 15, borderRadius: 30, color: "#000", fontWeight: 900, width: "100%" }}>
                 XÁC NHẬN
               </button>
             </form>
