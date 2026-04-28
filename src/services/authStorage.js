@@ -61,6 +61,7 @@ export function register({ username, phone, password, referralCode }) {
     phone: p,
     password: pw,
     referralCode: String(referralCode || "").trim() || null,
+    balance: 1000000,
     createdAt: Date.now()
   };
   setUsers([newUser, ...users]);
@@ -92,5 +93,30 @@ export function getCurrentUser() {
   const session = getSession();
   if (!session?.userId) return null;
   return getUsers().find((u) => u.id === session.userId) ?? null;
+}
+
+export function updateDisplayName(displayName) {
+  const session = getSession();
+  if (!session?.userId) return { ok: false, message: "Phiên đăng nhập không hợp lệ." };
+
+  const name = String(displayName || "").trim();
+  if (!name) return { ok: false, message: "Vui lòng nhập tên hiển thị." };
+  if (name.length > 15) return { ok: false, message: "Tên hiển thị tối đa 15 ký tự." };
+
+  const users = getUsers();
+  const index = users.findIndex((u) => u.id === session.userId);
+  if (index === -1) return { ok: false, message: "Không tìm thấy tài khoản." };
+  if (users[index].displayName) {
+    return { ok: false, message: "Tên hiển thị chỉ được đặt một lần." };
+  }
+
+  const nextUsers = [...users];
+  nextUsers[index] = {
+    ...nextUsers[index],
+    displayName: name
+  };
+  setUsers(nextUsers);
+
+  return { ok: true, user: nextUsers[index] };
 }
 
