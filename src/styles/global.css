@@ -171,29 +171,51 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   position: relative; transition: 0.3s;
 }
 
-/* User Profile Section */
+
+/* --- USER & RÚT TIỀN REFINEMENT --- */
 .user-segment {
-  flex: 0 0 280px; background: linear-gradient(90deg, #1a1a1a, #333);
-  clip-path: polygon(0 0, 90% 0, 100% 100%, 0% 100%);
-  padding-left: 15px; justify-content: flex-start;
-  border-right: 2px solid #ffcc00;
+  flex: 0 0 300px; background: transparent; border: none;
+  padding-left: 10px; justify-content: flex-start;
+  clip-path: none; /* User info is flat on the left */
 }
-.profile-wrap { display: flex; align-items: center; gap: 10px; }
+
 .avatar-gold-ring {
-  width: 60px; height: 60px; border-radius: 50%; border: 3px solid #ffcc00;
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5); background: #000;
+  width: 70px; height: 70px; border-radius: 50%; border: 3px solid #ffcc00;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+  background: #000; z-index: 2;
 }
-.name-bal-box { display: flex; flex-direction: column; }
-.user-label-name { font-size: 14px; font-weight: 900; color: #ffcc00; }
-.user-label-bal { font-size: 18px; font-weight: 1000; color: #fff; }
 
-/* Rút Tiền Section */
+.name-bal-box { 
+  display: flex; flex-direction: column; gap: 2px; 
+  position: relative; margin-left: 5px; padding-top: 15px;
+}
+.user-label-name { font-size: 16px; font-weight: 1000; color: #ffcc00; text-transform: uppercase; }
+.user-label-bal { font-size: 20px; font-weight: 1000; color: #ffcc00; }
+
+.sdt-box {
+  position: absolute; top: -15px; left: 0;
+  background: #111; border: 2px solid #ffcc00;
+  color: #ffcc00; padding: 1px 15px; border-radius: 20px;
+  font-size: 11px; font-weight: 900; white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  line-height: 1.2; text-align: center;
+}
+
 .rut-tien-segment {
-  flex: 0 0 120px; background: #222;
-  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
-  margin-left: -20px; border-right: 1px solid #444;
+  flex: 0 0 140px; background: #1a1a1a;
+  clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
+  border-left: 2px solid rgba(255, 204, 0, 0.3);
+  margin-left: 10px; flex-direction: column; gap: 5px;
 }
+.rut-tien-segment i { font-size: 28px; color: #ffcc00; filter: drop-shadow(0 0 5px rgba(255,204,0,0.3)); }
+.rut-tien-segment span { font-size: 12px; font-weight: 1000; color: #ffcc00; }
 
+/* Refine Nav Segments to start after the giant Nap Tien button */
+.nav-segments {
+  flex: 1; display: flex; justify-content: space-around;
+  background: #111; clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+  margin-left: -25px; padding-left: 30px;
+}
 
 /* --- ULTIMATE GOLDEN NAP TIEN PLATE --- */
 .nap-tien-segment {
