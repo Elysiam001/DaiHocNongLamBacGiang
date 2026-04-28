@@ -37,31 +37,31 @@ export default function LobbyPage() {
 
         <section className="lobby__grid">
           <div className="tile">
-            <div className="tile__badge">HOT</div>
+            <div className="tile__badge">NỔI BẬT</div>
             <div className="tile__title">TÀI XỈU</div>
-            <div className="tile__sub muted">Coming soon</div>
+            <div className="tile__sub muted">Sắp ra mắt</div>
           </div>
           <div className="tile">
-            <div className="tile__badge">LIVE</div>
-            <div className="tile__title">LIVE CASINO</div>
-            <div className="tile__sub muted">Coming soon</div>
+            <div className="tile__badge">TRỰC TIẾP</div>
+            <div className="tile__title">CASINO TRỰC TUYẾN</div>
+            <div className="tile__sub muted">Sắp ra mắt</div>
           </div>
           <div className="tile">
-            <div className="tile__badge">NEW</div>
+            <div className="tile__badge">MỚI</div>
             <div className="tile__title">XÓC ĐĨA</div>
-            <div className="tile__sub muted">Coming soon</div>
+            <div className="tile__sub muted">Sắp ra mắt</div>
           </div>
           <div className="tile">
             <div className="tile__badge">SLOTS</div>
             <div className="tile__title">SLOTS</div>
-            <div className="tile__sub muted">Coming soon</div>
+            <div className="tile__sub muted">Sắp ra mắt</div>
           </div>
         </section>
       </main>
 
       <footer className="legal">
-        <span>© {new Date().getFullYear()} Tài Xỉu Entertainment.</span>
-        <span className="muted">Terms · Privacy · Responsible gaming</span>
+        <span>© {new Date().getFullYear()} Tài Xỉu Giải Trí.</span>
+        <span className="muted">Điều khoản · Quyền riêng tư · Chơi có trách nhiệm</span>
       </footer>
     </div>
   );

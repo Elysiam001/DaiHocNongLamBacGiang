@@ -43,13 +43,13 @@ export default function LoginPage() {
       <main className="auth">
         <div className="auth__card">
           <div className="auth__header">
-            <div className="badge">WELCOME BACK</div>
-            <div className="subtitle">HIGH STAKES · ELITE GAMING</div>
+            <div className="badge">CHÀO MỪNG BẠN QUAY LẠI</div>
+            <div className="subtitle">ĐẲNG CẤP CAO · GIẢI TRÍ HẤP DẪN</div>
           </div>
 
           <form className="form" onSubmit={onSubmit}>
             <label className="field">
-              <span className="field__label">USERNAME OR PHONE</span>
+              <span className="field__label">TÊN ĐĂNG NHẬP HOẶC SỐ ĐIỆN THOẠI</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
                   👤
@@ -57,7 +57,7 @@ export default function LoginPage() {
                 <input
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="Enter your ID"
+                  placeholder="Nhập tên đăng nhập hoặc số điện thoại"
                   autoComplete="username"
                   inputMode="text"
                 />
@@ -65,7 +65,7 @@ export default function LoginPage() {
             </label>
 
             <label className="field">
-              <span className="field__label">PASSWORD</span>
+              <span className="field__label">MẬT KHẨU</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
                   🔒
@@ -91,7 +91,7 @@ export default function LoginPage() {
             <div className="row row--between">
               <span className="muted small"> </span>
               <button type="button" className="linklike" disabled>
-                Forgot Password?
+                Quên mật khẩu?
               </button>
             </div>
 
@@ -103,7 +103,7 @@ export default function LoginPage() {
             </button>
 
             <div className="divider">
-              <span>OR JOIN WITH</span>
+              <span>HOẶC ĐĂNG NHẬP BẰNG</span>
             </div>
 
             <div className="social">
@@ -116,7 +116,7 @@ export default function LoginPage() {
             </div>
 
             <div className="footer">
-              <span className="muted">Don’t have an account?</span>{" "}
+              <span className="muted">Chưa có tài khoản?</span>{" "}
               <Link className="link" to="/register">
                 ĐĂNG KÝ
               </Link>

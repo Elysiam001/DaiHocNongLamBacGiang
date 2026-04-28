@@ -19,7 +19,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setToast("");
 
-    if (!agree) return setToast("Bạn cần đồng ý Terms & Conditions.");
+    if (!agree) return setToast("Bạn cần đồng ý điều khoản và điều kiện.");
     if (password !== confirmPassword) return setToast("Mật khẩu xác nhận không khớp.");
 
     setBusy(true);
@@ -42,8 +42,8 @@ export default function RegisterPage() {
           ←
         </Link>
         <div className="topbar__title">
-          <div className="title">Create Account</div>
-          <div className="subtitle muted">JOIN PRESTIGE GAMING</div>
+          <div className="title">Tạo Tài Khoản</div>
+          <div className="subtitle muted">THAM GIA CÙNG PRESTIGE GAMING</div>
         </div>
         <div className="topbar__spacer" />
       </div>
@@ -52,7 +52,7 @@ export default function RegisterPage() {
         <div className="auth__card">
           <form className="form" onSubmit={onSubmit}>
             <label className="field">
-              <span className="field__label">USERNAME</span>
+              <span className="field__label">TÊN ĐĂNG NHẬP</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
                   👤
@@ -60,14 +60,14 @@ export default function RegisterPage() {
                 <input
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your username"
+                  placeholder="Nhập tên đăng nhập"
                   autoComplete="username"
                 />
               </div>
             </label>
 
             <label className="field">
-              <span className="field__label">PHONE NUMBER</span>
+              <span className="field__label">SỐ ĐIỆN THOẠI</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
                   📱
@@ -83,7 +83,7 @@ export default function RegisterPage() {
             </label>
 
             <label className="field">
-              <span className="field__label">PASSWORD</span>
+              <span className="field__label">MẬT KHẨU</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
                   🔒
@@ -92,7 +92,7 @@ export default function RegisterPage() {
                   type={showPw ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min. 8 characters"
+                  placeholder="Tối thiểu 8 ký tự"
                   autoComplete="new-password"
                 />
                 <button
@@ -107,7 +107,7 @@ export default function RegisterPage() {
             </label>
 
             <label className="field">
-              <span className="field__label">CONFIRM PASSWORD</span>
+              <span className="field__label">XÁC NHẬN MẬT KHẨU</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
                   ✅
@@ -116,7 +116,7 @@ export default function RegisterPage() {
                   type={showPw ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Repeat your password"
+                  placeholder="Nhập lại mật khẩu"
                   autoComplete="new-password"
                 />
               </div>
@@ -124,8 +124,8 @@ export default function RegisterPage() {
 
             <label className="field">
               <span className="field__label row row--between">
-                <span>REFERRAL CODE</span>
-                <span className="muted small">Optional</span>
+                <span>MÃ GIỚI THIỆU</span>
+                <span className="muted small">Tùy chọn</span>
               </span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
@@ -134,7 +134,7 @@ export default function RegisterPage() {
                 <input
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value)}
-                  placeholder="Enter referral code"
+                  placeholder="Nhập mã giới thiệu"
                 />
               </div>
             </label>
@@ -146,8 +146,8 @@ export default function RegisterPage() {
                 onChange={(e) => setAgree(e.target.checked)}
               />
               <span>
-                I agree to the <span className="linklike">Terms &amp; Conditions</span> and
-                confirm I am over 18 years of age.
+                Tôi đồng ý với <span className="linklike">điều khoản và điều kiện</span> và
+                xác nhận tôi trên 18 tuổi.
               </span>
             </label>
 
@@ -156,14 +156,14 @@ export default function RegisterPage() {
             </button>
 
             <div className="footer">
-              <span className="muted">Already have an account?</span>{" "}
+              <span className="muted">Đã có tài khoản?</span>{" "}
               <Link className="link" to="/login">
-                Login
+                Đăng nhập
               </Link>
             </div>
 
             <div className="divider">
-              <span>OR QUICK JOIN WITH</span>
+              <span>HOẶC THAM GIA NHANH BẰNG</span>
             </div>
             <div className="social">
               <button type="button" className="social__btn" disabled>
