@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
-const socket = io("https://dainochonglambacgiang.onrender.com"); // Kết nối đến server của bạn
+const socket = io("https://dainochonglambacgiang.onrender.com");
 
 export default function TaiXiuPage() {
   const nav = useNavigate();
@@ -18,6 +18,16 @@ export default function TaiXiuPage() {
   const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
   const [sessionId, setSessionId] = useState(0);
 
+  const handlePhaseChange = useCallback((newPhase, resultDices) => {
+    if (newPhase === "betting") {
+      setIsBowlClosed(true);
+      setMyBet({ tai: 0, xiu: 0 });
+    } else if (newPhase === "result") {
+      if (resultDices) setDices(resultDices);
+      setTimeout(() => setIsBowlClosed(false), 500);
+    }
+  }, []);
+
   useEffect(() => {
     if (!session) {
       nav("/login");
@@ -27,20 +37,27 @@ export default function TaiXiuPage() {
     socket.emit("login", { username: session.username });
     socket.emit("taixiuJoin");
 
-    socket.on("loginSuccess", (data) => setBalance(data.balance));
+    socket.on("loginSuccess", (data) => {
+        if (data && data.balance !== undefined) setBalance(data.balance);
+    });
+
     socket.on("balanceUpdate", (data) => {
-      if (data.username === session.username) setBalance(data.newBalance);
+      if (data && data.username === session.username) setBalance(data.newBalance);
     });
 
     socket.on("taixiuTick", (data) => {
-      setTimer(data.timer);
-      setSessionId(data.sessionId);
-      setTotalPool(data.totalPool);
+      if (!data) return;
+      setTimer(data.timer || 0);
+      setSessionId(data.sessionId || 0);
+      if (data.totalPool) setTotalPool(data.totalPool);
       
-      if (data.phase !== phase) {
-        setPhase(data.phase);
-        handlePhaseChange(data.phase, data.dices);
-      }
+      setPhase((prevPhase) => {
+        if (data.phase && data.phase !== prevPhase) {
+          handlePhaseChange(data.phase, data.dices);
+          return data.phase;
+        }
+        return prevPhase;
+      });
     });
 
     return () => {
@@ -48,33 +65,21 @@ export default function TaiXiuPage() {
       socket.off("balanceUpdate");
       socket.off("taixiuTick");
     };
-  }, [session, phase]);
-
-  const handlePhaseChange = (newPhase, resultDices) => {
-    if (newPhase === "betting") {
-      setIsBowlClosed(true);
-      setMyBet({ tai: 0, xiu: 0 });
-      // Hiệu ứng tung xúc xắc ảo ở đây nếu cần
-    } else if (newPhase === "result") {
-      setDices(resultDices);
-      // Đợi 1 chút rồi mở bát
-      setTimeout(() => setIsBowlClosed(false), 500);
-    }
-  };
+  }, [session, nav, handlePhaseChange]);
 
   const handleBet = (side, amount) => {
     if (phase !== "betting") return;
-    socket.emit("taixiuBet", { username: session.username, side, amount });
+    socket.emit("taixiuBet", { username: session?.username, side, amount });
   };
+
+  const totalDice = dices.reduce((a, b) => a + b, 0);
 
   return (
     <div className="taixiu-container">
-      {/* Nút thoát */}
       <button className="btn-back-lobby" onClick={() => nav("/lobby")}>
-        <i className="fas fa-chevron-left"></i> SẢNH
+        SẢNH
       </button>
 
-      {/* Thông tin người chơi */}
       <div className="player-info-top">
         <div className="balance-box">
           <div className="css-coin-icon">$</div>
@@ -82,7 +87,6 @@ export default function TaiXiuPage() {
         </div>
       </div>
 
-      {/* Bàn cược MD5 Premium */}
       <div className="md5-board">
         <div className="md5-header">
           <div className="btn-info">i</div>
@@ -91,18 +95,16 @@ export default function TaiXiuPage() {
         </div>
 
         <div className="md5-main-content">
-          {/* Cửa TÀI */}
-          <div className="bet-side left">
+          <div className={`bet-side left ${phase === 'result' && totalDice >= 11 ? 'winner' : ''}`}>
             <div className="side-stats-top">
               <span className="user-count">107 <i className="fas fa-user"></i></span>
             </div>
             <div className="side-label-img tai">TÀI</div>
-            <div className="pool-value">{totalPool.tai.toLocaleString()}</div>
+            <div className="pool-value">{(totalPool?.tai || 0).toLocaleString()}</div>
             <button className="btn-bet-action" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
             <div className="my-confirmed-bet">{myBet.tai > 0 ? `Đã cược: ${myBet.tai.toLocaleString()}` : ''}</div>
           </div>
 
-          {/* Vòng tròn trung tâm */}
           <div className="md5-center">
             <div className="timer-ring">
               <div className="timer-number">{timer}</div>
@@ -115,32 +117,31 @@ export default function TaiXiuPage() {
                   </div>
                 ))}
               </div>
-              {isBowlClosed && <div className="md5-bowl-cover">
-                <div className="bowl-handle"></div>
-              </div>}
+              {isBowlClosed && (
+                <div className="md5-bowl-cover">
+                  <div className="bowl-handle"></div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Cửa XỈU */}
-          <div className="bet-side right">
+          <div className={`bet-side right ${phase === 'result' && totalDice <= 10 ? 'winner' : ''}`}>
             <div className="side-stats-top">
               <span className="user-count">149 <i className="fas fa-user"></i></span>
             </div>
             <div className="side-label-img xiu">XỈU</div>
-            <div className="pool-value">{totalPool.xiu.toLocaleString()}</div>
+            <div className="pool-value">{(totalPool?.xiu || 0).toLocaleString()}</div>
             <button className="btn-bet-action" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
             <div className="my-confirmed-bet">{myBet.xiu > 0 ? `Đã cược: ${myBet.xiu.toLocaleString()}` : ''}</div>
           </div>
         </div>
 
-        {/* Lịch sử soi cầu */}
         <div className="md5-history-bar">
           {[...Array(20)].map((_, i) => (
             <div key={i} className={`history-dot ${Math.random() > 0.5 ? 't' : 'x'}`}></div>
           ))}
         </div>
 
-        {/* Thanh Hash MD5 */}
         <div className="md5-hash-footer">
           <div className="hash-label">CHUỖI HASH</div>
           <div className="hash-value">64eac0de964ce97f506ffad9dd7363db25...</div>
@@ -148,14 +149,12 @@ export default function TaiXiuPage() {
         </div>
       </div>
 
-        {/* Bảng chip cược */}
-        <div className="chip-selector">
-          {[10000, 50000, 100000, 500000, 1000000].map(val => (
-            <div key={val} className="chip" onClick={() => console.log("Chọn chip", val)}>
-              {val >= 1000000 ? (val/1000000)+'M' : (val/1000)+'K'}
-            </div>
-          ))}
-        </div>
+      <div className="chip-selector">
+        {[10000, 50000, 100000, 500000, 1000000].map(val => (
+          <div key={val} className="chip" onClick={() => handleBet(null, val)}>
+            {val >= 1000000 ? (val/1000000)+'M' : (val/1000)+'K'}
+          </div>
+        ))}
       </div>
     </div>
   );
