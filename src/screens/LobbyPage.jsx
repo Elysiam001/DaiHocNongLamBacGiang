@@ -5,7 +5,7 @@ import {
   clearSession,
   getCurrentUser
 } from "../services/authStorage.js";
-import "../styles/lobby.css";
+import "../styles/global.css";
 
 export default function LobbyPage() {
   const nav = useNavigate();
