@@ -75,93 +75,95 @@ export default function TaiXiuPage() {
   const totalDice = dices.reduce((a, b) => a + b, 0);
 
   return (
-    <div className="go88-taixiu-wrapper">
-      {/* Background mờ ảo phía sau */}
-      <div className="lobby-preview-bg"></div>
-
-      {/* Bàn cược Go88 MD5 chính */}
-      <div className="go88-board">
-        {/* Header với Logo và Session */}
-        <div className="go88-header">
-          <div className="go88-logo">GO88.COM</div>
-          <div className="go88-session-wrap">
-             <div className="session-text"># {sessionId}</div>
-          </div>
-          <div className="go88-close-btn" onClick={() => nav("/lobby")}></div>
+    <div className="go88-container">
+      <div className="go88-overlay">
+        {/* Jackpot & Header Area */}
+        <div className="go88-top-header">
+           <div className="dragon-left"></div>
+           <div className="jackpot-container">
+              <span className="jackpot-val">74,611,761,253</span>
+           </div>
+           <div className="session-tag"># {sessionId}</div>
         </div>
 
-        {/* Các nút chức năng xung quanh */}
-        <div className="side-icons left">
-          <div className="icon-btn chart"></div>
-          <div className="icon-btn help"></div>
-          <div className="icon-btn history"></div>
-        </div>
-        <div className="side-icons right">
-          <div className="icon-btn rank"></div>
-          <div className="icon-btn chat"></div>
-          <div className="icon-btn sound"></div>
-        </div>
-
-        <div className="go88-main-content">
-          {/* Bên TÀI */}
-          <div className={`go88-side tai ${phase === 'result' && totalDice >= 11 ? 'winner' : ''}`}>
-             <div className="user-info-box">
-                <span className="user-count-icon"></span>
-                <span className="count-val">3,762</span>
-             </div>
-             <div className="label-tai">TÀI</div>
-             <div className="pool-val">{(totalPool?.tai || 0).toLocaleString()}</div>
-             <button className="go88-bet-btn" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
+        {/* Bàn cược Capsule */}
+        <div className="go88-main-table">
+          {/* Icon Trái uốn lượn */}
+          <div className="side-menu left">
+            <div className="circle-btn info blue">i</div>
+            <div className="circle-btn chart red"></div>
+            <div className="circle-btn help blue">?</div>
+            <div className="circle-btn log red"></div>
           </div>
 
-          {/* Vòng tròn Timer trung tâm */}
-          <div className="go88-center">
-             <div className="go88-timer-ring">
-                <div className="timer-val">{timer}</div>
-             </div>
-             <div className="go88-dice-area">
-                <div className="go88-dice-wrap">
-                  {dices.map((d, i) => (
-                    <div key={i} className={`go88-dice d-${d}`}>
-                      {[...Array(d)].map((_, dot) => <div key={dot} className="dot"></div>)}
-                    </div>
-                  ))}
-                </div>
-                {isBowlClosed && <div className="go88-bowl-cover"></div>}
-             </div>
+          {/* Icon Phải uốn lượn */}
+          <div className="side-menu right">
+            <div className="circle-btn close red" onClick={() => nav("/lobby")}>×</div>
+            <div className="circle-btn rank blue"></div>
+            <div className="circle-btn chat blue"></div>
+            <div className="circle-btn sound gray"></div>
           </div>
 
-          {/* Bên XỈU */}
-          <div className={`go88-side xiu ${phase === 'result' && totalDice <= 10 ? 'winner' : ''}`}>
-             <div className="user-info-box">
-                <span className="user-count-icon"></span>
-                <span className="count-val">4,502</span>
-             </div>
-             <div className="label-xiu">XỈU</div>
-             <div className="pool-val">{(totalPool?.xiu || 0).toLocaleString()}</div>
-             <button className="go88-bet-btn" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
+          <div className="table-content">
+            {/* Cửa TÀI */}
+            <div className="door tai">
+              <div className="user-stats">
+                 <span className="user-icon"></span> 641
+              </div>
+              <div className="metallic-text">TÀI</div>
+              <div className="pool-amount">{totalPool.tai.toLocaleString()}</div>
+              <button className="glossy-bet-btn" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
+            </div>
+
+            {/* Vòng quay MD5 chính giữa */}
+            <div className="md5-center-circle">
+               <div className="timer-box">
+                  <span className="timer-num">{timer}</span>
+               </div>
+               <div className="dice-container">
+                  <div className="dice-group">
+                    {dices.map((d, i) => (
+                      <div key={i} className={`real-dice d-${d}`}>
+                        {[...Array(d)].map((_, dot) => <div key={dot} className="dot"></div>)}
+                      </div>
+                    ))}
+                  </div>
+                  {isBowlClosed && <div className="real-bowl"></div>}
+               </div>
+            </div>
+
+            {/* Cửa XỈU */}
+            <div className="door xiu">
+              <div className="user-stats">
+                 <span className="user-icon"></span> 384
+              </div>
+              <div className="metallic-text">XỈU</div>
+              <div className="pool-amount">{totalPool.xiu.toLocaleString()}</div>
+              <button className="glossy-bet-btn" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
+            </div>
+          </div>
+
+          {/* Lịch sử soi cầu bottom */}
+          <div className="history-line">
+             {[...Array(15)].map((_, i) => (
+               <div key={i} className={`dot-h ${Math.random() > 0.5 ? 'white' : 'black'}`}></div>
+             ))}
+             <div className="last-res">14</div>
           </div>
         </div>
 
-        {/* Chấm soi cầu ở dưới */}
-        <div className="go88-history-dots">
-           {[...Array(18)].map((_, i) => (
-             <div key={i} className={`h-dot ${Math.random() > 0.5 ? 't' : 'x'}`}></div>
-           ))}
-        </div>
-
-        {/* Thanh Hash MD5 */}
-        <div className="go88-hash-bar">
-           <div className="hash-label">CHUỖI HASH</div>
-           <div className="hash-content">64eac0de964ce97f506ffad9dd7363db25...</div>
-           <div className="hash-copy">COPY</div>
+        {/* MD5 Hash Footer */}
+        <div className="hash-footer-bar">
+           <div className="label-hash">CHUỖI HASH</div>
+           <div className="val-hash">64eac0de964ce97f506ffad9dd7363db25...</div>
+           <div className="copy-action">COPY</div>
         </div>
       </div>
 
-      {/* Chip cược ở dưới cùng */}
-      <div className="go88-chip-selector">
+      {/* Chips selector */}
+      <div className="go88-chips-bar">
         {[10000, 50000, 100000, 500000, 1000000].map(val => (
-          <div key={val} className="go88-chip" onClick={() => handleBet(null, val)}>
+          <div key={val} className="go88-chip-item">
             {val >= 1000000 ? (val/1000000)+'M' : (val/1000)+'K'}
           </div>
         ))}
