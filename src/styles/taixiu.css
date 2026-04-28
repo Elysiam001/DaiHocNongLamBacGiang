@@ -1,9 +1,11 @@
-.go88-container {
+.taixiu-modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
   width: 100%; height: 100vh;
-  background: #000;
+  background: rgba(0, 0, 0, 0.7); /* Nền mờ để nhìn thấy sảnh */
   display: flex; align-items: center; justify-content: center;
-  overflow: hidden; font-family: 'Segoe UI', sans-serif;
-  position: relative;
+  z-index: 9999; /* Đảm bảo nổi lên trên tất cả */
+  backdrop-filter: blur(3px); /* Làm mờ sảnh một chút cho sang */
 }
 
 .go88-overlay {

@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import TaiXiuModal from "../ui/TaiXiuModal.jsx";
 import {
   clearSession,
   getCurrentUser,
@@ -82,7 +83,7 @@ export default function LobbyPage() {
       {/* Main Content */}
       <main className="main-lobby">
         {gameCards.map((card, idx) => (
-          <div key={card.id} className="game-card-bafu" onClick={() => nav('/taixiu')}>
+          <div key={card.id} className="game-card-bafu" onClick={() => setIsTaiXiuOpen(true)}>
             <img src="/assets/banner_taixiu_bafu.png" alt={card.title} className="game-img-bafu" />
             <div className="jackpot-bafu-container">
               <span className="jackpot-bafu-label">HŨ THƯỞNG:</span>
@@ -93,6 +94,9 @@ export default function LobbyPage() {
           </div>
         ))}
       </main>
+
+      {/* HIỆN BÀN TÀI XỈU DẠNG MODAL */}
+      {isTaiXiuOpen && <TaiXiuModal onClose={() => setIsTaiXiuOpen(false)} />}
 
       {/* Floating Mini Game Bubble */}
       <div className="mini-game-bubble">

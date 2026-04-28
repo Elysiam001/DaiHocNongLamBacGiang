@@ -26,16 +26,7 @@ export default function App() {
           </RequireAuth>
         }
       />
-      <Route
-        path="/taixiu"
-        element={
-          <RequireAuth>
-            <TaiXiuPage />
-          </RequireAuth>
-        }
-      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
-
