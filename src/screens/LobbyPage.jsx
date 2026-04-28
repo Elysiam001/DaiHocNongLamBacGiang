@@ -4,197 +4,98 @@ import TaiXiuModal from "../ui/TaiXiuModal.jsx";
 import {
   clearSession,
   getCurrentUser,
-  updateDisplayName
+  updateDisplayName,
 } from "../services/authStorage.js";
-
-const gameCards = [
-  {
-    id: "game-taixiu-normal",
-    title: "TÀI XỈU",
-    img: "/assets/banner_taixiu.png",
-    val: "64,620,513,565",
-    badge: "LIVE",
-    jackpot: 7
-  }
-];
+import "../styles/lobby.css";
 
 export default function LobbyPage() {
   const nav = useNavigate();
-  const [user, setUser] = useState(() => getCurrentUser());
-  const [displayName, setDisplayName] = useState("");
-  const [displayNameError, setDisplayNameError] = useState("");
-  const [jackpotValues, setJackpotValues] = useState(gameCards.map(c => {
-    const numericPart = c.val.replace(/,/g, "");
-    const parsed = parseInt(numericPart);
-    return isNaN(parsed) ? 0 : parsed;
-  }));
-
-  // Floating Mini Game position
-  const [miniGamePos, setMiniGamePos] = useState({ x: 0, y: 0 });
+  const [user, setUser] = useState(null);
+  const [isTaiXiuOpen, setIsTaiXiuOpen] = useState(false);
+  const [jackpotValues, setJackpotValues] = useState([
+    74528740777, 1876884729, 8437235236, 14994947616,
+  ]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setJackpotValues(prev => prev.map(v => v + Math.floor(Math.random() * 5000)));
-    }, 2000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const visibleName = useMemo(
-    () => user?.displayName || user?.username || "Player",
-    [user]
-  );
-  const shouldAskDisplayName = !user?.displayName;
-
-  function logout() {
-    clearSession();
-    nav("/login", { replace: true });
-  }
-
-  function submitDisplayName(e) {
-    e.preventDefault();
-    const res = updateDisplayName(displayName);
-    if (!res.ok) {
-      setDisplayNameError(res.message || "Không thể lưu tên hiển thị.");
-      return;
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      nav("/");
+    } else {
+      setUser(currentUser);
     }
 
-    setUser(res.user);
-    setDisplayName("");
-    setDisplayNameError("");
-  }
+    const timer = setInterval(() => {
+      setJackpotValues((prev) =>
+        prev.map((val) => val + Math.floor(Math.random() * 10000))
+      );
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [nav]);
+
+  const handleLogout = () => {
+    clearSession();
+    nav("/");
+  };
+
+  const gameCards = [
+    { id: 1, title: "Tài Xỉu MD5", type: "taixiu" },
+    { id: 2, title: "Tiến Lên", type: "card" },
+    { id: 3, title: "Bắn Cá", type: "fish" },
+    { id: 4, title: "Nổ Hũ", type: "slot" },
+  ];
+
+  if (!user) return null;
 
   return (
-    <div className="lobby-container">
-      {/* Top Bar */}
-      <header className="top-bar">
-        <div style={{ flex: 1 }}></div>
-        <div className="logo-box">
-          <div className="logo-main">ĐH Nông Lâm BG</div>
-          <div className="logo-sub">bafu.D-14G(D-CNTT14A)</div>
+    <div className="lobby-container-bafu">
+      {/* Header */}
+      <header className="header-bafu">
+        <div className="user-info-bafu">
+          <div className="avatar-bafu"></div>
+          <div className="user-details-bafu">
+            <div className="username-bafu">{user.username}</div>
+            <div className="balance-bafu">
+              Số dư: <span className="gold-text-bafu">{user.balance?.toLocaleString()} đ</span>
+            </div>
+          </div>
         </div>
-        <div style={{ flex: 1, textAlign: 'right' }}>
-           <button style={{ background: 'linear-gradient(180deg, #8b0000, #4a0000)', border: '2px solid #ffcc00', borderRadius: 8, padding: '5px 15px', color: '#fff', fontSize: 11, fontWeight: 'bold' }}>
-            <i className="fa-solid fa-triangle-exclamation" style={{ color: '#ffcc00', marginRight: 5 }}></i>
-            CẢNH BÁO
-          </button>
+        <div className="logo-center-bafu">ELYSIAM CASINO</div>
+        <div className="header-actions-bafu">
+          <button className="btn-action-bafu">NẠP TIỀN</button>
+          <button className="btn-action-bafu logout" onClick={handleLogout}>ĐĂNG XUẤT</button>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="main-lobby">
         {gameCards.map((card, idx) => (
-          <div key={card.id} className="game-card-bafu" onClick={() => setIsTaiXiuOpen(true)}>
+          <div 
+            key={card.id} 
+            className="game-card-bafu" 
+            onClick={() => card.type === 'taixiu' ? setIsTaiXiuOpen(true) : null}
+          >
             <img src="/assets/banner_taixiu_bafu.png" alt={card.title} className="game-img-bafu" />
             <div className="jackpot-bafu-container">
               <span className="jackpot-bafu-label">HŨ THƯỞNG:</span>
               <span className="jackpot-bafu-value">
-                {jackpotValues[idx].toLocaleString()}
+                {jackpotValues[idx] ? jackpotValues[idx].toLocaleString() : "0"}
               </span>
             </div>
           </div>
         ))}
       </main>
 
-      {/* HIỆN BÀN TÀI XỈU DẠNG MODAL */}
+      {/* Overlay bàn Tài Xỉu */}
       {isTaiXiuOpen && <TaiXiuModal onClose={() => setIsTaiXiuOpen(false)} />}
 
-      {/* Floating Mini Game Bubble */}
-      <div className="mini-game-bubble">
-        <div className="bubble-content">
-          <i className="fa-solid fa-dice" style={{ fontSize: 32 }}></i>
-          <span>MINI GAME</span>
-        </div>
-        <div className="badge-count">31</div>
-      </div>
-
-      {/* Segmented Bottom Bar (REBALANCED) */}
-      <footer className="footer-bar-premium">
-        <div className="footer-content">
-          {/* LEFT: Unified VIP Panel */}
-          <div className="footer-left-vip-panel">
-            <div className="vip-user-card">
-              <div className="sdt-badge-premium">Hãy kích hoạt SĐT</div>
-              <div className="avatar-ring-animated">
-                <img src="/assets/bg_login.png" alt="Avatar" />
-              </div>
-              <div className="vip-info-box">
-                <div className="vip-name">{visibleName}</div>
-                <div className="vip-balance">
-                  <span className="coin-icon">💰</span>
-                  { (user?.balance || 0).toLocaleString() }
-                </div>
-              </div>
-            </div>
-            
-            <div className="action-btn-gold-large">
-              <i className="fa-solid fa-vault"></i>
-              <span>RÚT TIỀN</span>
-            </div>
-          </div>
-
-          {/* CENTER: The Golden Power Button */}
-          <div className="footer-center-power">
-            <div className="nap-tien-orb-wrap">
-              <button className="btn-nap-tien-3d">
-                <div className="shine-layer"></div>
-                <span>NẠP TIỀN</span>
-              </button>
-            </div>
-          </div>
-
-          {/* RIGHT: Expanded Navigation Panel */}
-          <div className="footer-right-nav-panel">
-            <div className="nav-group-premium-full">
-              <div className="nav-item-premium-large">
-                <i className="fa-solid fa-gem"></i>
-                <span>SĂN HŨ</span>
-              </div>
-              <div className="nav-item-premium-large">
-                <i className="fa-solid fa-gift"></i>
-                <span>NHIỆM VỤ</span>
-              </div>
-              <div className="nav-item-premium-large">
-                <i className="fa-solid fa-fire"></i>
-                <span>KHUYẾN MÃI</span>
-              </div>
-              <div className="nav-item-premium-large">
-                <i className="fa-solid fa-users"></i>
-                <span>ĐẠI LÝ</span>
-              </div>
-              <div className="nav-item-premium-large">
-                <i className="fa-solid fa-envelope"></i>
-                <span>HỘP THƯ</span>
-              </div>
-              <div className="nav-item-premium-large" onClick={logout}>
-                <i className="fa-solid fa-right-from-bracket"></i>
-                <span>ĐĂNG XUẤT</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Footer Navigation */}
+      <footer className="footer-nav-bafu">
+        <div className="nav-item-bafu active">SẢNH</div>
+        <div className="nav-item-bafu">NHIỆM VỤ</div>
+        <div className="nav-item-bafu">SỰ KIỆN</div>
+        <div className="nav-item-bafu">HỖ TRỢ</div>
       </footer>
-
-      {/* Display Name Modal */}
-      {shouldAskDisplayName ? (
-        <div className="modal-overlay">
-          <div className="modal-gold-premium" style={{ background: "#000", border: "4px solid #ffcc00", padding: 40, borderRadius: 30, textAlign: "center" }}>
-            <h3 style={{ color: "#ffcc00", fontSize: 28, marginBottom: 20 }}>Tên Hiển Thị</h3>
-            <form onSubmit={submitDisplayName}>
-              <p style={{ color: "#fff", marginBottom: 25 }}>Vui lòng nhập tên hiển thị</p>
-              <input
-                style={{ width: "100%", textAlign: "center", border: "2px solid #ffcc00", background: "#111", color: "#fff", padding: 15, borderRadius: 12, fontSize: 20 }}
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Tên hiển thị..."
-                maxLength={15}
-              />
-              <button style={{ marginTop: 25, background: "linear-gradient(180deg, #ffcc00, #8b6508)", border: "none", padding: 18, borderRadius: 35, color: "#000", fontWeight: 1000, width: "100%", fontSize: 20 }}>
-                XÁC NHẬN
-              </button>
-            </form>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
