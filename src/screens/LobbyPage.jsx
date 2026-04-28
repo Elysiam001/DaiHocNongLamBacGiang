@@ -88,7 +88,7 @@ export default function LobbyPage() {
               <span className="jackpot-bafu-label">HŨ THƯỞNG:</span>
               <span className="jackpot-bafu-value">
                 {jackpotValues[idx].toLocaleString()}
-              </div>
+              </span>
             </div>
           </div>
         ))}
