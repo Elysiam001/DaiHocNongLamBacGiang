@@ -131,9 +131,9 @@ export default function LobbyPage() {
       {/* Segmented Bottom Bar (REBALANCED) */}
       <footer className="footer-bar-premium">
         <div className="footer-content">
-          {/* LEFT: VIP Profile Area */}
-          <div className="footer-left-vip">
-            <div className="vip-avatar-wrap">
+          {/* LEFT: Unified VIP Panel */}
+          <div className="footer-left-vip-panel">
+            <div className="vip-user-card">
               <div className="sdt-badge-premium">Hãy kích hoạt SĐT</div>
               <div className="avatar-ring-animated">
                 <img src="/assets/bg_login.png" alt="Avatar" />
@@ -147,11 +147,9 @@ export default function LobbyPage() {
               </div>
             </div>
             
-            <div className="action-item-wrap" style={{marginLeft: '20px'}}>
-              <div className="action-btn-gold">
-                <i className="fa-solid fa-vault"></i>
-                <span>RÚT TIỀN</span>
-              </div>
+            <div className="action-btn-gold-large">
+              <i className="fa-solid fa-vault"></i>
+              <span>RÚT TIỀN</span>
             </div>
           </div>
 
@@ -165,22 +163,30 @@ export default function LobbyPage() {
             </div>
           </div>
 
-          {/* RIGHT: Global Navigation Items */}
-          <div className="footer-right-nav">
-            <div className="nav-group-premium">
-              <div className="nav-item-premium">
+          {/* RIGHT: Expanded Navigation Panel */}
+          <div className="footer-right-nav-panel">
+            <div className="nav-group-premium-full">
+              <div className="nav-item-premium-large">
                 <i className="fa-solid fa-gem"></i>
                 <span>SĂN HŨ</span>
               </div>
-              <div className="nav-item-premium">
+              <div className="nav-item-premium-large">
                 <i className="fa-solid fa-gift"></i>
                 <span>NHIỆM VỤ</span>
               </div>
-              <div className="nav-item-premium">
+              <div className="nav-item-premium-large">
+                <i className="fa-solid fa-fire"></i>
+                <span>KHUYẾN MÃI</span>
+              </div>
+              <div className="nav-item-premium-large">
+                <i className="fa-solid fa-users"></i>
+                <span>ĐẠI LÝ</span>
+              </div>
+              <div className="nav-item-premium-large">
                 <i className="fa-solid fa-envelope"></i>
                 <span>HỘP THƯ</span>
               </div>
-              <div className="nav-item-premium" onClick={logout}>
+              <div className="nav-item-premium-large" onClick={logout}>
                 <i className="fa-solid fa-bars"></i>
                 <span>MENU</span>
               </div>

@@ -159,50 +159,58 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 
 /* ======================================================
-   ULTIMATE PREMIUM CASINO BOTTOM BAR (2024 DESIGN)
+   ULTIMATE PREMIUM CASINO BOTTOM BAR (FULLER & LARGER)
    ====================================================== */
 .footer-bar-premium {
-  position: fixed; bottom: 0; left: 0; width: 100%; height: 100px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, #000 100%);
-  border-top: 2px solid #d4af37;
+  position: fixed; bottom: 0; left: 0; width: 100%; height: 110px; /* Taller bar */
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(50,50,50,0.3) 0%, transparent 70%),
+    linear-gradient(180deg, #111 0%, #000 100%);
+  background-size: cover;
+  border-top: 3px solid #d4af37;
   z-index: 1000;
   display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+  box-shadow: 0 -15px 50px rgba(0,0,0,0.9);
+}
+
+/* Subtle Carbon Pattern on background */
+.footer-bar-premium::before {
+  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background-image: radial-gradient(#222 1px, transparent 1px);
+  background-size: 4px 4px; opacity: 0.2; pointer-events: none;
 }
 
 .footer-content {
-  width: 100%; max-width: 1200px; height: 100%;
+  width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 15px; position: relative;
+  padding: 0 10px; position: relative;
 }
 
-/* --- LEFT: VIP PROFILE AREA --- */
-.footer-left-vip {
-  flex: 1; display: flex; align-items: center;
+/* --- LEFT: VIP UNIFIED PANEL --- */
+.footer-left-vip-panel {
+  flex: 1; display: flex; align-items: center; gap: 10px;
 }
 
-.vip-avatar-wrap {
-  display: flex; align-items: center; gap: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 8px 15px 8px 8px; border-radius: 50px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  position: relative;
+.vip-user-card {
+  display: flex; align-items: center; gap: 15px;
+  background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(0,0,0,0.4));
+  padding: 10px 20px 10px 10px; border-radius: 15px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  position: relative; min-width: 280px;
 }
 
 .sdt-badge-premium {
-  position: absolute; top: -18px; left: 10px;
-  background: #ff0000; color: #fff; font-size: 9px;
-  font-weight: 1000; padding: 2px 10px; border-radius: 20px;
-  border: 1px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  position: absolute; top: -15px; left: 10px;
+  background: #ff0000; color: #fff; font-size: 10px;
+  font-weight: 1000; padding: 2px 12px; border-radius: 20px;
+  border: 1px solid #fff; z-index: 5;
 }
 
 .avatar-ring-animated {
-  width: 55px; height: 55px; border-radius: 50%;
+  width: 65px; height: 65px; border-radius: 50%;
   background: #000; padding: 2px;
-  border: 2px solid #d4af37;
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-  overflow: hidden;
+  border: 3px solid #d4af37;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
 }
 .avatar-ring-animated img {
   width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
@@ -210,101 +218,65 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 .vip-info-box { display: flex; flex-direction: column; }
 .vip-name { 
-  color: #d4af37; font-size: 14px; font-weight: 1000; 
-  text-transform: uppercase; letter-spacing: 0.5px;
+  color: #d4af37; font-size: 16px; font-weight: 1000; 
+  text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 .vip-balance { 
-  color: #fff; font-size: 18px; font-weight: 1000; 
+  color: #fff; font-size: 22px; font-weight: 1000; 
   display: flex; align-items: center; gap: 5px;
 }
-.coin-icon { font-size: 16px; }
 
-/* --- CENTER: POWER BUTTON (NAP TIEN REDESIGNED) --- */
+.action-btn-gold-large {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #444 0%, #111 100%);
+  width: 110px; height: 80px; border-radius: 15px;
+  border: 2px solid #555; cursor: pointer; transition: 0.2s;
+}
+.action-btn-gold-large i { font-size: 32px; color: #d4af37; margin-bottom: 2px; }
+.action-btn-gold-large span { color: #d4af37; font-size: 12px; font-weight: 1000; }
+.action-btn-gold-large:hover { border-color: #d4af37; transform: scale(1.05); }
+
+/* --- CENTER: THE MASSIVE GOLD BAR --- */
 .footer-center-power {
-  position: relative; width: 220px; height: 100%;
+  position: relative; width: 240px; height: 100%;
   display: flex; align-items: center; justify-content: center;
+  z-index: 100;
 }
-
-.nap-tien-orb-wrap {
-  position: absolute; bottom: 12px;
-  filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.4));
-}
-
 .btn-nap-tien-3d {
-  width: 190px; height: 75px;
+  width: 210px; height: 85px; /* Bigger button */
   background: linear-gradient(180deg, #fff9d1 0%, #ffcc00 20%, #d4af37 50%, #b8860b 100%);
-  border: 2px solid #fff;
-  border-radius: 12px; /* Smooth rounded corners instead of sharp slants */
-  box-shadow: 
-    0 8px 0 #8b6508, /* Heavy 3D depth */
-    0 15px 25px rgba(0,0,0,0.5);
+  border: 3px solid #fff; border-radius: 15px;
+  box-shadow: 0 10px 0 #8b6508, 0 20px 30px rgba(0,0,0,0.6);
   cursor: pointer; position: relative; overflow: hidden;
   transition: all 0.1s ease;
-  display: flex; align-items: center; justify-content: center;
 }
-
-.btn-nap-tien-3d:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-}
-
-.btn-nap-tien-3d:active {
-  transform: translateY(6px);
-  box-shadow: 
-    0 2px 0 #8b6508,
-    0 5px 10px rgba(0,0,0,0.5);
-}
-
 .btn-nap-tien-3d span {
-  color: #3d2b00; /* Deep chocolate brown for contrast */
-  font-size: 28px; font-weight: 1000;
-  text-transform: uppercase;
-  letter-spacing: -0.5px;
-  z-index: 2; position: relative;
+  color: #3d2b00; font-size: 32px; font-weight: 1000;
   text-shadow: 1px 1px 0px rgba(255,255,255,0.7);
 }
 
-.shine-layer {
-  position: absolute; top: 0; left: -150%; width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-  transform: skewX(-20deg); animation: ultra-shine 2.5s infinite;
-}
-@keyframes ultra-shine {
-  0% { left: -150%; }
-  40% { left: 150%; }
-  100% { left: 150%; }
+/* --- RIGHT: EXPANDED NAV PANEL --- */
+.footer-right-nav-panel {
+  flex: 1.5; display: flex; justify-content: flex-end;
 }
 
-/* --- ACTION BUTTONS (RUT TIEN, ETC) --- */
-.action-btn-gold {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  background: linear-gradient(180deg, #333 0%, #111 100%);
-  padding: 8px 20px; border-radius: 12px;
-  border: 1px solid #444; cursor: pointer; transition: 0.3s;
-}
-.action-btn-gold i { font-size: 24px; color: #d4af37; }
-.action-btn-gold span { color: #d4af37; font-size: 11px; font-weight: 1000; }
-.action-btn-gold:hover { border-color: #d4af37; transform: translateY(-3px); }
-
-/* --- RIGHT: NAVIGATION ITEMS --- */
-.footer-right-nav {
-  flex: 1; display: flex; justify-content: flex-end;
+.nav-group-premium-full {
+  display: flex; align-items: center; justify-content: space-around;
+  width: 100%; background: rgba(0,0,0,0.6);
+  padding: 10px 15px; border-radius: 20px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
 }
 
-.nav-group-premium {
-  display: flex; align-items: center; gap: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 10px 25px; border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.nav-item-premium {
+.nav-item-premium-large {
   display: flex; flex-direction: column; align-items: center; gap: 5px;
-  cursor: pointer; transition: 0.3s;
+  cursor: pointer; transition: 0.3s; min-width: 70px;
 }
-.nav-item-premium i { font-size: 22px; color: #d4af37; }
-.nav-item-premium span { color: #fff; font-size: 10px; font-weight: bold; }
-.nav-item-premium:hover { transform: translateY(-5px); }
-.nav-item-premium:hover i { filter: drop-shadow(0 0 5px #d4af37); }
+.nav-item-premium-large i { font-size: 30px; color: #d4af37; } /* Larger Icons */
+.nav-item-premium-large span { 
+  color: #fff; font-size: 11px; font-weight: 1000; 
+  text-transform: uppercase; white-space: nowrap;
+}
+.nav-item-premium-large:hover { transform: translateY(-8px); filter: brightness(1.2); }
 
 
