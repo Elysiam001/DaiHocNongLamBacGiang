@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "../screens/LoginPage.jsx";
 import RegisterPage from "../screens/RegisterPage.jsx";
 import LobbyPage from "../screens/LobbyPage.jsx";
+import TaiXiuPage from "../screens/TaiXiuPage.jsx";
 import RequireAuth from "./RequireAuth.jsx";
 import { getSession } from "../services/authStorage.js";
 
@@ -22,6 +23,14 @@ export default function App() {
         element={
           <RequireAuth>
             <LobbyPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/taixiu"
+        element={
+          <RequireAuth>
+            <TaiXiuPage />
           </RequireAuth>
         }
       />

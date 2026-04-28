@@ -82,7 +82,7 @@ export default function LobbyPage() {
       {/* Main Content */}
       <main className="main-lobby">
         {gameCards.map((card, idx) => (
-          <div key={card.id} className="game-card-bafu" onClick={() => window.location.href = '/taixiu.html'}>
+          <div key={card.id} className="game-card-bafu" onClick={() => nav('/taixiu')}>
             <img src="/assets/banner_taixiu_bafu.png" alt={card.title} className="game-img-bafu" />
             <div className="jackpot-bafu-container">
               <span className="jackpot-bafu-label">HŨ THƯỞNG:</span>
