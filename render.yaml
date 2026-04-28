@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: webtaixiu
+    env: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    autoDeploy: true
+
