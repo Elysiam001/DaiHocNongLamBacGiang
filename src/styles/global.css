@@ -125,61 +125,110 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .logo-main { font-size: 24px; font-weight: 1000; color: #ffcc00; }
 .logo-sub { font-size: 9px; color: #ffcc00; font-weight: bold; }
 
-.main-lobby { flex: 1; display: flex; align-items: center; justify-content: center; gap: 20px; padding: 0 40px 100px; }
-.game-card {
-  width: 300px; height: 450px; border: 2px solid #ffcc00; border-radius: 20px 20px 10px 10px;
-  background: #000; position: relative; overflow: hidden; flex-shrink: 0; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-  transition: transform 0.3s;
+/* --- IMPERIAL GOLD 3D GAME CARD --- */
+.game-card-imperial {
+  width: 320px; height: 480px;
+  background: #000;
+  border-radius: 25px;
+  padding: 10px;
+  position: relative;
+  background: linear-gradient(135deg, #d4af37 0%, #fff9d1 50%, #8b6508 100%);
+  box-shadow: 
+    0 15px 35px rgba(0,0,0,0.8),
+    inset 0 0 15px rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.game-card:hover { transform: scale(1.05); }
-.game-card::before { content: ""; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 140px; height: 15px; background: #ffcc00; border-radius: 10px; }
+.game-card-imperial:hover { transform: scale(1.05) translateY(-10px); }
 
-/* --- MODERN GAME CARD REDESIGN --- */
-.game-card-info-modern {
+.card-inner-frame {
+  width: 100%; height: 100%;
+  border-radius: 18px;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #555;
+  box-shadow: inset 0 0 30px #000;
+}
+
+.game-img-imperial {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: 0.5s;
+}
+.game-card-imperial:hover .game-img-imperial { transform: scale(1.1); filter: brightness(1.2); }
+
+/* ORNATE LIVE RIBBON */
+.live-ribbon {
+  position: absolute; top: 20px; left: -10px;
+  background: linear-gradient(90deg, #ff0000 0%, #8b0000 100%);
+  color: #fff; padding: 5px 30px;
+  font-weight: 1000; font-size: 14px;
+  transform: rotate(-45deg) translateX(-20px);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+  border: 1px solid #ffcc00;
+  z-index: 10;
+}
+.live-ribbon span {
+  display: block; text-shadow: 0 0 5px #fff;
+  animation: pulse-soft 1s infinite;
+}
+
+/* METALLIC FOOTER PLAQUE */
+.imperial-footer-plaque {
   position: absolute; bottom: 0; left: 0; right: 0;
-  height: 180px;
-  background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, transparent 100%);
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-  padding-bottom: 30px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.95) 30%);
+  padding: 40px 10px 20px;
+  display: flex; flex-direction: column; align-items: center;
 }
 
-.game-title-modern {
-  font-size: 42px; font-weight: 900;
-  color: #ffcc00;
+.imperial-title {
+  font-size: 36px; font-weight: 900;
+  background: linear-gradient(180deg, #fff 0%, #ffcc00 40%, #d4af37 60%, #8b6508 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-transform: uppercase;
-  letter-spacing: -2px;
-  text-shadow: 0 4px 10px rgba(0,0,0,0.9);
-  line-height: 1; margin-bottom: 5px;
-}
-
-.game-jackpot-modern {
-  font-size: 38px; font-weight: 900;
-  color: #fff;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-  font-family: 'Arial Black', sans-serif;
   letter-spacing: -1px;
-  animation: jackpot-pulse 2s infinite ease-in-out;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+  margin-bottom: 5px;
+  position: relative;
 }
 
-@keyframes jackpot-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.9; }
+.imperial-jackpot-wrap {
+  background: rgba(0,0,0,0.8);
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  padding: 5px 20px;
+  display: flex; flex-direction: column; align-items: center;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
 }
 
-/* Redesigned LIVE Badge */
-.live-badge-modern {
-  position: absolute; top: 15px; right: 15px;
-  background: #ff0000; color: #fff;
-  font-size: 11px; font-weight: 1000;
-  padding: 3px 12px; border-radius: 4px;
-  box-shadow: 0 0 10px rgba(255,0,0,0.6);
-  display: flex; align-items: center; gap: 5px;
+.jackpot-label {
+  color: #ffcc00; font-size: 10px; font-weight: 1000;
+  letter-spacing: 2px; margin-bottom: -5px;
 }
-.live-badge-modern::before {
-  content: ""; width: 6px; height: 6px; background: #fff; border-radius: 50%;
-  animation: blink 1s infinite;
+
+.imperial-jackpot-value {
+  color: #fff; font-size: 32px; font-weight: 900;
+  text-shadow: 0 0 10px #fff, 0 0 20px #ffcc00;
+  font-family: 'Arial Black', sans-serif;
 }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+/* Shine effect on the whole card */
+.game-card-imperial::after {
+  content: ""; position: absolute; top: -50%; left: -100%; width: 50%; height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: rotate(25deg); animation: imperial-shine 4s infinite;
+}
+
+@keyframes imperial-shine {
+  0% { left: -100%; }
+  20% { left: 150%; }
+  100% { left: 150%; }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
 
 
 /* ======================================================
