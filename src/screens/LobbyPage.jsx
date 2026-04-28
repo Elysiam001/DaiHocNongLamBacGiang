@@ -1,10 +1,9 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import TaiXiuModal from "../ui/TaiXiuModal.jsx";
 import {
   clearSession,
-  getCurrentUser,
-  updateDisplayName,
+  getCurrentUser
 } from "../services/authStorage.js";
 import "../styles/lobby.css";
 
@@ -49,7 +48,6 @@ export default function LobbyPage() {
 
   return (
     <div className="lobby-container-bafu">
-      {/* Header */}
       <header className="header-bafu">
         <div className="user-info-bafu">
           <div className="avatar-bafu"></div>
@@ -67,7 +65,6 @@ export default function LobbyPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="main-lobby">
         {gameCards.map((card, idx) => (
           <div 
@@ -86,10 +83,8 @@ export default function LobbyPage() {
         ))}
       </main>
 
-      {/* Overlay bàn Tài Xỉu */}
       {isTaiXiuOpen && <TaiXiuModal onClose={() => setIsTaiXiuOpen(false)} />}
 
-      {/* Footer Navigation */}
       <footer className="footer-nav-bafu">
         <div className="nav-item-bafu active">SẢNH</div>
         <div className="nav-item-bafu">NHIỆM VỤ</div>

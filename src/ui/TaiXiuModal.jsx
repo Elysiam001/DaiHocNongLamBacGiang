@@ -12,14 +12,12 @@ export default function TaiXiuModal({ onClose }) {
   const [phase, setPhase] = useState("betting");
   const [dices, setDices] = useState([1, 1, 1]);
   const [isBowlClosed, setIsBowlClosed] = useState(true);
-  const [myBet, setMyBet] = useState({ tai: 0, xiu: 0 });
   const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
   const [sessionId, setSessionId] = useState(0);
 
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
       setIsBowlClosed(true);
-      setMyBet({ tai: 0, xiu: 0 });
     } else if (newPhase === "result") {
       if (resultDices) setDices(resultDices);
       setTimeout(() => setIsBowlClosed(false), 500);
@@ -62,6 +60,12 @@ export default function TaiXiuModal({ onClose }) {
   return (
     <div className="taixiu-modal-overlay">
       <div className="go88-overlay">
+        {/* Balance Display */}
+        <div className="modal-user-balance">
+           <div className="coin-icon">$</div>
+           <span>{balance.toLocaleString()}</span>
+        </div>
+
         <div className="go88-top-header">
            <div className="jackpot-container">
               <span className="jackpot-val">74,774,407,191</span>
@@ -84,7 +88,7 @@ export default function TaiXiuModal({ onClose }) {
           </div>
 
           <div className="table-content">
-            <div className="door tai">
+            <div className={`door tai ${phase === 'result' && totalDice >= 11 ? 'winner' : ''}`}>
               <div className="user-stats"><span className="user-icon"></span> 1,858</div>
               <div className="metallic-text">TÀI</div>
               <div className="pool-amount">{totalPool.tai.toLocaleString()}</div>
@@ -103,7 +107,7 @@ export default function TaiXiuModal({ onClose }) {
                   {isBowlClosed && <div className="real-bowl"></div>}
                </div>
             </div>
-            <div className="door xiu">
+            <div className={`door xiu ${phase === 'result' && totalDice <= 10 ? 'winner' : ''}`}>
               <div className="user-stats"><span className="user-icon"></span> 1,715</div>
               <div className="metallic-text">XỈU</div>
               <div className="pool-amount">{totalPool.xiu.toLocaleString()}</div>
@@ -114,7 +118,7 @@ export default function TaiXiuModal({ onClose }) {
              {[...Array(15)].map((_, i) => (
                <div key={i} className={`dot-h ${Math.random() > 0.5 ? 'white' : 'black'}`}></div>
              ))}
-             <div className="last-res">14</div>
+             <div className="last-res">{totalDice}</div>
           </div>
         </div>
         <div className="hash-footer-bar">
