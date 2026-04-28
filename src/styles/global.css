@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
 
 :root {
   --gold-metallic: linear-gradient(180deg, #fff3a6 0%, #ffcc00 45%, #8b6508 100%);
@@ -68,6 +68,9 @@ body { font-family: var(--font-main); background: #000; color: #fff; overflow-x:
 .input:focus-within { border-color: #ffcc00; box-shadow: 0 0 15px rgba(255,204,0,0.3); }
 .input__icon { color: #ffcc00; font-size: 18px; min-width: 30px; text-align: center; margin-right: 12px; }
 .input input {
+  flex: 1; background: transparent !important; border: none !important; color: #fff !important;
+  font-size: 16px; outline: none; font-family: var(--font-main); height: 100%; width: 100%;
+}
   flex: 1; background: transparent; border: none; color: #fff;
   font-size: 16px; outline: none; font-family: var(--font-main);
   height: 100%;
