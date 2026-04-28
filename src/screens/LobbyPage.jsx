@@ -46,7 +46,11 @@ export default function LobbyPage() {
   const [user, setUser] = useState(() => getCurrentUser());
   const [displayName, setDisplayName] = useState("");
   const [displayNameError, setDisplayNameError] = useState("");
-  const [jackpotValues, setJackpotValues] = useState(gameCards.map(c => parseInt(c.val.replace(/,/g, ''))));
+  const [jackpotValues, setJackpotValues] = useState(gameCards.map(c => {
+    const numericPart = c.val.replace(/,/g, "");
+    const parsed = parseInt(numericPart);
+    return isNaN(parsed) ? 0 : parsed;
+  }));
 
   useEffect(() => {
     const timer = setInterval(() => {
