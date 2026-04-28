@@ -3,6 +3,6 @@ services:
     name: webtaixiu
     env: node
     plan: free
-    buildCommand: rm -rf node_modules package-lock.json && npm install && npm run build
-    startCommand: npm start
+    buildCommand: rm -rf node_modules yarn.lock && yarn install && yarn build
+    startCommand: yarn start
     autoDeploy: true
