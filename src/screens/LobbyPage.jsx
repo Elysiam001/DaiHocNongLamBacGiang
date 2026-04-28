@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   clearSession,
@@ -8,12 +8,13 @@ import {
 
 const gameCards = [
   {
-    id: "promo-slider",
-    title: "GO88.COM",
+    id: "promo-banner",
+    title: "GO88",
     img: "/assets/banner_taixiu.png",
-    val: "TRUY CẬP ĐỂ NHẬN LINK",
+    val: "TRUY CẬP NGAY",
     badge: "NEW",
-    isPromo: true
+    isPromo: true,
+    players: "99,999+"
   },
   {
     id: "game-taixiu-normal",
@@ -21,7 +22,8 @@ const gameCards = [
     img: "/assets/banner_taixiu.png",
     val: "64,620,513,565",
     badge: "LIVE",
-    jackpot: 5
+    jackpot: 6,
+    players: "12,452"
   },
   {
     id: "game-taixiu-md5",
@@ -29,7 +31,8 @@ const gameCards = [
     img: "/assets/banner_taixiu.png",
     val: "411,348,296",
     badge: "MD5",
-    jackpot: 3
+    jackpot: 4,
+    players: "8,921"
   },
   {
     id: "game-xocdia",
@@ -37,7 +40,8 @@ const gameCards = [
     img: "/assets/bg_login.png",
     val: "4,762,018,602",
     badge: "HOT",
-    jackpot: 2
+    jackpot: 3,
+    players: "5,103"
   },
   {
     id: "game-taixiu-livestream",
@@ -45,7 +49,8 @@ const gameCards = [
     img: "/assets/bg_taixiu.png",
     val: "13,830,137,665",
     badge: "LIVE",
-    jackpot: 4
+    jackpot: 5,
+    players: "15,284"
   }
 ];
 
@@ -57,6 +62,15 @@ export default function LobbyPage() {
   const [displayName, setDisplayName] = useState("");
   const [displayNameError, setDisplayNameError] = useState("");
   const [activeTab, setActiveTab] = useState("ALL GAMES");
+  const [jackpotValues, setJackpotValues] = useState(gameCards.map(c => parseInt(c.val.replace(/,/g, ''))));
+
+  // Simulate jumping jackpot
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setJackpotValues(prev => prev.map(v => v + Math.floor(Math.random() * 10000)));
+    }, 2000);
+    return () => clearInterval(timer);
+  }, []);
 
   const visibleName = useMemo(
     () => user?.displayName || user?.username || "Player",
@@ -84,15 +98,15 @@ export default function LobbyPage() {
 
   return (
     <div className="lobby-container">
-      <div className="top-decor">
-        <div className="banner-red"><i className="fa-solid fa-star"></i></div>
-      </div>
+      <div className="top-decor" />
 
       {/* Top Bar */}
       <header className="top-bar">
-        <div className="marquee-box">
-          <i className="fa-solid fa-volume-high"></i>
-          <span>GO88.NG là tên miền mới nhất của GO88, Các trang web khác đều là giả mạo.</span>
+        <div className="marquee-gold">
+          <i className="fa-solid fa-bullhorn"></i>
+          <marquee scrollamount="5">
+            CHÀO MỪNG BẠN ĐẾN VỚI THIÊN ĐƯỜNG CỜ BẠC GO88. CHÚC BẠN CHƠI VUI VẺ VÀ THẮNG LỚN! HÃY CẨN THẬN VỚI CÁC TRANG WEB GIẢ MẠO!
+          </marquee>
         </div>
 
         <div className="logo-container">
@@ -100,12 +114,13 @@ export default function LobbyPage() {
           <div className="logo-sub">GO88.COM</div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 15, paddingTop: 15 }}>
-          <div className="top-notice" style={{ textAlign: 'right', fontSize: 11 }}>
-            Nạp/Rút bằng <span style={{ color: '#ffcc00', fontWeight: 'bold' }}>TIỀN ẢO</span> để được xử lý nhanh hơn
+        <div className="top-right">
+          <div style={{ textAlign: 'right', fontSize: 11, color: '#aaa' }}>
+            Nạp/Rút bằng <span style={{ color: '#ffcc00' }}>TIỀN ẢO</span> <br/>
+            để được xử lý nhanh hơn
           </div>
-          <button style={{ background: 'linear-gradient(180deg, #8b0000, #4a0000)', border: '2px solid #ffcc00', borderRadius: 8, padding: '5px 10px', color: '#fff', fontSize: 10, fontWeight: 'bold' }}>
-            <i className="fa-solid fa-triangle-exclamation" style={{ color: '#ffcc00', marginRight: 5 }}></i>
+          <button className="btn-alert">
+            <i className="fa-solid fa-triangle-exclamation"></i>
             CẢNH BÁO
           </button>
         </div>
@@ -116,7 +131,7 @@ export default function LobbyPage() {
         {tabs.map((tab) => (
           <div
             key={tab}
-            className={`tab-node ${activeTab === tab ? "active" : ""}`}
+            className={`tab-item ${activeTab === tab ? "active" : ""}`}
             onClick={() => setActiveTab(tab)}
           >
             {tab}
@@ -125,21 +140,26 @@ export default function LobbyPage() {
       </nav>
 
       {/* Main Content */}
-      <main className="games-grid">
-        {gameCards.map((card) => (
-          <div key={card.id} className="card-gold-frame">
-            <img src={card.img} alt={card.title} className="card-inner-img" />
-            <div className="card-badge-red">{card.badge}</div>
-            <div className="card-footer-box">
-              <div className="card-name">{card.title}</div>
-              <div className="card-price">$ {card.val}</div>
-              {!card.isPromo && (
-                <div className="jackpot-meter">
-                  {[...Array(8)].map((_, i) => (
-                    <div key={i} className={`meter-dot ${i < card.jackpot ? "on" : ""}`} />
-                  ))}
-                </div>
-              )}
+      <main className="games-scroll">
+        {gameCards.map((card, idx) => (
+          <div key={card.id} className="vip-card">
+            <img src={card.img} alt={card.title} className="card-img" />
+            <div className="card-badge">{card.badge}</div>
+            <div className="active-players">
+              <i className="fa-solid fa-users" style={{ marginRight: 5 }}></i>
+              {card.players}
+            </div>
+            
+            <div className="card-footer">
+              <div className="game-name">{card.title}</div>
+              <div className="jackpot-box">
+                <div className="jackpot-val">$ {jackpotValues[idx].toLocaleString()}</div>
+              </div>
+              <div className="meter-row">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className={`meter-dot ${i < card.jackpot ? "active" : ""}`} />
+                ))}
+              </div>
             </div>
           </div>
         ))}
@@ -147,39 +167,39 @@ export default function LobbyPage() {
 
       {/* Bottom Bar */}
       <footer className="footer-bar">
-        <div className="profile-section">
-          <div className="bubble-activate">Hãy kích hoạt SĐT</div>
-          <div className="profile-ring">
+        <div className="user-panel">
+          <div className="sdt-bubble">Hãy kích hoạt SĐT</div>
+          <div className="avatar-gold">
             <img src="/assets/bg_login.png" alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
-          <div className="profile-info">
-            <div className="profile-name">{visibleName}</div>
-            <div className="profile-money">{ (user?.balance || 0).toLocaleString() }</div>
+          <div className="user-info">
+            <div className="user-name">{visibleName}</div>
+            <div className="user-bal">{ (user?.balance || 0).toLocaleString() }</div>
           </div>
-          <button className="footer-icon-btn" style={{ marginLeft: 30 }}>
-            <i className="fa-solid fa-receipt"></i>
+          <button className="action-btn" style={{ marginLeft: 40 }}>
+            <i className="fa-solid fa-money-bill-transfer"></i>
             <span>RÚT TIỀN</span>
           </button>
         </div>
 
-        <div className="nap-tien-3d-wrap">
-          <button className="nap-tien-3d-btn">NẠP TIỀN</button>
+        <div className="giant-nap-tien-wrap">
+          <button className="giant-nap-tien-btn">NẠP TIỀN</button>
         </div>
 
-        <div className="footer-nav">
-          <button className="footer-icon-btn">
-            <i className="fa-solid fa-gem"></i>
+        <div className="nav-actions">
+          <button className="action-btn">
+            <i className="fa-solid fa-coins"></i>
             <span>SĂN HŨ</span>
           </button>
-          <button className="footer-icon-btn">
+          <button className="action-btn">
             <i className="fa-solid fa-gift"></i>
             <span>NHIỆM VỤ</span>
           </button>
-          <button className="minigame-circle-btn">
-            <i className="fa-solid fa-dice" style={{ fontSize: 24, color: '#fff' }}></i>
-            <span style={{ fontSize: 9, fontWeight: 900, marginTop: 2, color: '#ffcc00' }}>MINI GAME</span>
-          </button>
-          <button className="footer-icon-btn" onClick={logout}>
+          <div className="mini-game-vip">
+            <i className="fa-solid fa-dice" style={{ fontSize: 32, color: '#fff' }}></i>
+            <span style={{ fontSize: 10, fontWeight: 1000, marginTop: 4, color: '#ffcc00' }}>MINI GAME</span>
+          </div>
+          <button className="action-btn" onClick={logout}>
             <i className="fa-solid fa-bars"></i>
             <span>MENU</span>
           </button>
@@ -189,23 +209,23 @@ export default function LobbyPage() {
       {/* Display Name Modal */}
       {shouldAskDisplayName ? (
         <div className="modal-overlay">
-          <div className="modal-gold-premium">
-            <h3 style={{ color: "#ffcc00", fontSize: 28, marginBottom: 20 }}>Tên Hiển Thị</h3>
+          <div className="modal-prestige">
+            <h3 style={{ color: "#ffcc00", fontSize: 32, marginBottom: 20, fontWeight: 1000 }}>Tên Hiển Thị</h3>
             <form onSubmit={submitDisplayName}>
-              <p style={{ color: "#fff", marginBottom: 25, fontSize: 16 }}>Vui lòng nhập tên hiển thị của bạn</p>
+              <p style={{ color: "#fff", marginBottom: 30, fontSize: 18 }}>Chào mừng VIP! Vui lòng nhập tên hiển thị</p>
               <input
                 className="premium-input"
-                style={{ width: "100%", textAlign: "center", border: "2px solid #ffcc00", background: "#111", color: "#fff", padding: 15, borderRadius: 12, fontSize: 20 }}
+                style={{ width: "100%", textAlign: "center", border: "3px solid #ffcc00", background: "#111", color: "#fff", padding: 18, borderRadius: 15, fontSize: 24, fontWeight: 'bold' }}
                 value={displayName}
                 onChange={(e) => {
                   setDisplayName(e.target.value);
                   if (displayNameError) setDisplayNameError("");
                 }}
-                placeholder="Tên hiển thị (tối đa 15 ký tự)"
+                placeholder="Tên hiển thị..."
                 maxLength={15}
               />
               {displayNameError && <div style={{ color: "red", margin: "10px 0" }}>{displayNameError}</div>}
-              <button className="alert-ok-btn" style={{ marginTop: 25, background: "var(--gold-3d)", border: "none", padding: 18, borderRadius: 35, color: "#000", fontWeight: 1000, width: "100%", fontSize: 20 }}>
+              <button className="alert-ok-btn" style={{ marginTop: 30, background: "var(--gold-3d)", border: "none", padding: 20, borderRadius: 40, color: "#000", fontWeight: 1000, width: "100%", fontSize: 22 }}>
                 XÁC NHẬN
               </button>
             </form>
