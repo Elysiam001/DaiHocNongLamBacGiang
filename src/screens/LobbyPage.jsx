@@ -8,32 +8,44 @@ import {
 
 const gameCards = [
   {
-    id: "game-taixiu",
+    id: "game-taixiu-md5",
+    title: "TÀI XỈU MD5",
+    img: "/assets/banner_taixiu.png",
+    amount: "576,636,703",
+    amount2: "509,086,351",
+    badge: "MD5"
+  },
+  {
+    id: "game-taixiu-normal",
     title: "TÀI XỈU",
     img: "/assets/banner_taixiu.png",
-    poolLeft: "259,305,000",
-    poolRight: "249,756,000",
-    highlight: true
+    amount: "64,202,123,493",
+    badge: "LIVE"
   },
   {
-    id: "game-tienlen",
-    title: "TIẾN LÊN MIỀN NAM",
-    img: "/assets/tienlen_banner_1776964796317.png",
-    highlight: true
+    id: "game-xocdia",
+    title: "XÓC ĐĨA",
+    img: "/assets/bg_login.png", // Placeholder
+    amount: "4,629,988,387",
+    badge: "HOT"
   },
   {
-    id: "game-phom",
-    title: "PHỎM - TÁ LẢ",
-    img: "/assets/phom_banner_1776964820031.png",
-    highlight: true
+    id: "game-taixiu-livestream",
+    title: "TÀI XỈU LIVESTREAM",
+    img: "/assets/bg_taixiu.png",
+    amount: "13,781,615,174",
+    badge: "LIVE"
   }
 ];
+
+const tabs = ["ALL GAMES", "YÊU THÍCH", "GAME BÀI", "SLOTS", "LIVE", "KHÁC"];
 
 export default function LobbyPage() {
   const nav = useNavigate();
   const [user, setUser] = useState(() => getCurrentUser());
   const [displayName, setDisplayName] = useState("");
   const [displayNameError, setDisplayNameError] = useState("");
+  const [activeTab, setActiveTab] = useState("ALL GAMES");
 
   const visibleName = useMemo(
     () => user?.displayName || user?.username || "Player",
@@ -64,158 +76,132 @@ export default function LobbyPage() {
       {/* Top Bar */}
       <header className="top-bar">
         <div className="top-left">
-          <div className="logo">
-            <i className="fa-solid fa-crown" style={{ color: "#ffd700", fontSize: 24 }}></i>
-            <span style={{ fontWeight: 900, color: "#fff", fontStyle: "italic", fontSize: 20 }}>SUN</span>
-          </div>
-          <div className="user-profile-box">
-            <div className="avatar-wrap">
-              <img src="/assets/bg_login.png" alt="Avatar" className="avatar-img" />
-            </div>
-            <div className="username-wrap">
-              <span id="player-name">{visibleName}</span>
-            </div>
-          </div>
+          <button className="minigame-btn">
+            <i className="fa-solid fa-gamepad" style={{ fontSize: 24 }}></i>
+            <span>MINI GAME</span>
+          </button>
         </div>
 
         <div className="top-center">
-          <div className="balance-container">
-            <div className="currency-symbol">VNĐ</div>
-            <div className="balance-amount" id="player-balance">
-              {(user?.balance || 0).toLocaleString()}
-            </div>
-            <button className="btn-add-money" id="btn-deposit-top">
-              <i className="fa-solid fa-plus"></i>
-            </button>
+          <div className="logo-box">
+            <div className="logo-main">GO88</div>
+            <div className="logo-sub">GO88.COM</div>
           </div>
         </div>
 
         <div className="top-right">
-          <button className="top-icon-btn" id="btn-fullscreen">
-            <i className="fa-solid fa-expand"></i>
-            <span>Phóng To</span>
-          </button>
-          <button className="top-icon-btn">
-            <i className="fa-solid fa-bell"></i>
-            <span>Tin Tức</span>
-          </button>
-          <button className="top-icon-btn" id="btn-logout" onClick={logout}>
-            <i className="fa-solid fa-gear"></i>
-            <span>Đăng Xuất</span>
-          </button>
+          <div className="top-notice">
+            Để được giải đáp thắc mắc, vui lòng liên hệ <br />
+            <span>Livechat</span>
+          </div>
         </div>
       </header>
 
-      {/* Marquee */}
-      <div className="marquee-container">
-        <marquee behavior="scroll" direction="left" scrollamount="5">
-          Chào mừng {visibleName} đến với cổng game uy tín nhất! Chúc các bạn chơi game vui vẻ và thắng lớn!
-        </marquee>
-      </div>
-
-      {/* Main Game Area */}
-      <main className="main-lobby">
-        <div className="game-nav-bar">
-          <button className="nav-arrow"><i className="fa-solid fa-chevron-left"></i></button>
-          <div className="nav-links">
-            <button className="nav-link active">ALL</button>
-            <button className="nav-link">SLOTS</button>
-            <button className="nav-link">GAME BÀI</button>
+      {/* Tabs Bar */}
+      <nav className="tabs-bar">
+        {tabs.map((tab) => (
+          <div
+            key={tab}
+            className={`tab-item ${activeTab === tab ? "active" : ""}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
           </div>
-          <button className="nav-arrow"><i className="fa-solid fa-chevron-right"></i></button>
+        ))}
+      </nav>
+
+      {/* Main Content */}
+      <main className="main-lobby">
+        {/* Promo Card (like the one in screenshot) */}
+        <div className="game-card" style={{ border: "2px solid #00f2fe", width: 220 }}>
+          <img src="/assets/banner_taixiu.png" alt="Promo" style={{ filter: "brightness(0.7)" }} />
+          <div style={{ position: "absolute", top: 10, left: 10, background: "red", padding: "2px 10px", color: "#fff", fontWeight: "bold", fontSize: 12 }}>
+            CƯỢC NGAY
+          </div>
+          <div className="game-card-footer">
+            <div style={{ fontSize: 10 }}>CHAMPIONS LEAGUE</div>
+            <div style={{ color: "#ffcc00", fontWeight: "bold" }}>PSG vs BAYERN</div>
+            <div style={{ fontSize: 10 }}>02:00 29/04/2026</div>
+          </div>
         </div>
 
-        <div className="game-carousel">
-          {gameCards.map((card) => (
-            <div
-              key={card.id}
-              className={`game-card ${card.highlight ? "highlight" : ""}`}
-              id={card.id}
-            >
-              <img src={card.img} alt={card.title} />
-              <div className={`game-card-footer ${!card.poolLeft ? "single" : ""}`}>
-                {card.poolLeft ? (
-                  <>
-                    <div className="pool-left">
-                      TÀI <br /> <span className="small-num">{card.poolLeft}</span>
-                    </div>
-                    <div className="pool-right">
-                      <span className="small-num">{card.poolRight}</span> <br /> XỈU
-                    </div>
-                  </>
-                ) : (
-                  card.title
-                )}
-              </div>
+        {gameCards.map((card) => (
+          <div key={card.id} className="game-card">
+            <img src={card.img} alt={card.title} />
+            <div style={{ position: "absolute", top: 5, right: 5, background: "red", padding: "2px 8px", color: "#fff", borderRadius: 4, fontSize: 10, fontWeight: "bold" }}>
+              {card.badge}
             </div>
-          ))}
-        </div>
+            <div className="game-card-footer">
+              <div style={{ fontSize: 12, fontWeight: "bold", color: "#ffcc00", textTransform: "uppercase" }}>{card.title}</div>
+              <div className="card-amount">$ {card.amount}</div>
+              {card.amount2 && <div style={{ fontSize: 11, color: "#fff" }}>$ {card.amount2}</div>}
+            </div>
+          </div>
+        ))}
       </main>
 
       {/* Bottom Bar */}
-      <footer className="bottom-bar-container">
-        <div className="bottom-bar-bg">
-          <div className="bottom-left">
-            <button className="bottom-btn" id="btn-event">
-              <i className="fa-solid fa-gift"></i>
-              <span>Sự Kiện</span>
-            </button>
-            <button className="bottom-btn" id="btn-rules">
-              <i className="fa-solid fa-book-open"></i>
-              <span>Luật Chơi</span>
-            </button>
+      <footer className="bottom-bar">
+        <div className="user-info">
+          <div className="user-avatar">
+            <img src="/assets/bg_login.png" alt="Avatar" style={{ width: "100%", height: "100%", object-size: "cover" }} />
           </div>
+          <div className="user-details">
+            <div className="user-name">{visibleName}</div>
+            <div className="user-balance">{ (user?.balance || 0).toLocaleString() }</div>
+          </div>
+          <button className="nav-item" style={{ marginLeft: 20 }}>
+            <i className="fa-solid fa-money-bill-transfer"></i>
+            <span>RÚT TIỀN</span>
+          </button>
+        </div>
 
-          <div className="bottom-center">
-            <button id="btn-withdraw-center" className="btn-withdraw-massive">
-              RÚT TIỀN
-            </button>
-          </div>
+        <div className="center-action">
+          <button className="naptien-btn">NẠP TIỀN</button>
+        </div>
 
-          <div className="bottom-right">
-            <button className="bottom-btn" id="btn-hotline">
-              <i className="fa-solid fa-phone"></i>
-              <span>Hotline</span>
-            </button>
-            <button className="bottom-btn" id="btn-livechat">
-              <i className="fa-solid fa-comments"></i>
-              <span>Live Chat</span>
-            </button>
-          </div>
+        <div className="bottom-nav">
+          <button className="nav-item">
+            <i className="fa-solid fa-gem"></i>
+            <span>SĂN HŨ</span>
+          </button>
+          <button className="nav-item">
+            <i className="fa-solid fa-list-check"></i>
+            <span>NHIỆM VỤ</span>
+          </button>
+          <button className="nav-item">
+            <i className="fa-solid fa-envelope"></i>
+            <span>HỘP THƯ</span>
+          </button>
+          <button className="nav-item" onClick={logout}>
+            <i className="fa-solid fa-bars"></i>
+            <span>MENU</span>
+          </button>
         </div>
       </footer>
 
       {/* Display Name Modal */}
       {shouldAskDisplayName ? (
         <div className="modal-overlay">
-          <div className="modal-content premium-alert">
-            <h3>Tên Hiển Thị</h3>
+          <div className="modal-content premium-alert" style={{ background: "linear-gradient(145deg, #222, #000)", borderColor: "#ffcc00" }}>
+            <h3 style={{ color: "#ffcc00" }}>Tên Hiển Thị</h3>
             <form onSubmit={submitDisplayName}>
-              <p>
-                Vui lòng nhập tên hiển thị của bạn
-                <br />
-                (Tên hiển thị chỉ đặt được một lần duy nhất)
-              </p>
-
-              <div style={{ marginBottom: 20 }}>
-                <input
-                  className="premium-input"
-                  style={{ width: "100%", textAlign: "center" }}
-                  value={displayName}
-                  onChange={(e) => {
-                    setDisplayName(e.target.value);
-                    if (displayNameError) setDisplayNameError("");
-                  }}
-                  placeholder="Tên hiển thị (tối đa 15 ký tự)"
-                  maxLength={15}
-                />
-              </div>
-
-              {displayNameError ? (
-                <div style={{ color: "#ff4d4d", marginBottom: 10 }}>{displayNameError}</div>
-              ) : null}
-
-              <button className="alert-ok-btn">XÁC NHẬN</button>
+              <p>Vui lòng nhập tên hiển thị của bạn</p>
+              <input
+                className="premium-input"
+                style={{ width: "100%", textAlign: "center", border: "1px solid #ffcc00", color: "#fff" }}
+                value={displayName}
+                onChange={(e) => {
+                  setDisplayName(e.target.value);
+                  if (displayNameError) setDisplayNameError("");
+                }}
+                placeholder="Tên hiển thị (tối đa 15 ký tự)"
+                maxLength={15}
+              />
+              {displayNameError && <div style={{ color: "red", margin: "10px 0" }}>{displayNameError}</div>}
+              <button className="alert-ok-btn" style={{ background: "linear-gradient(180deg, #ffcc00, #886600)", color: "#000" }}>
+                XÁC NHẬN
+              </button>
             </form>
           </div>
         </div>
