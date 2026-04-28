@@ -98,7 +98,7 @@ export default function LoginPage() {
             <button className="primary" disabled={busy}>
               {busy ? "ĐANG ĐĂNG NHẬP..." : "ĐĂNG NHẬP"}
               <span className="primary__chev" aria-hidden="true">
-                »
+                <i className="fa-solid fa-arrow-right"></i>
               </span>
             </button>
 
