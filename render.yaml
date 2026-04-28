@@ -3,6 +3,6 @@ services:
     name: webtaixiu
     env: node
     plan: free
-    buildCommand: npm install && npm run build
+    buildCommand: rm -rf node_modules package-lock.json && npm install && npm run build
     startCommand: npm start
     autoDeploy: true
