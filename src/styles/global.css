@@ -219,42 +219,59 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 }
 .coin-icon { font-size: 16px; }
 
-/* --- CENTER: POWER BUTTON (NAP TIEN) --- */
+/* --- CENTER: POWER BUTTON (NAP TIEN REDESIGNED) --- */
 .footer-center-power {
   position: relative; width: 220px; height: 100%;
   display: flex; align-items: center; justify-content: center;
 }
 
 .nap-tien-orb-wrap {
-  position: absolute; bottom: 10px;
-  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6));
+  position: absolute; bottom: 12px;
+  filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.4));
 }
 
 .btn-nap-tien-3d {
-  width: 180px; height: 100px;
-  background: linear-gradient(180deg, #fff3a6 0%, #ffcc00 40%, #d4af37 60%, #8b6508 100%);
-  border: 2px solid #fff; border-radius: 15px;
-  clip-path: polygon(15% 0, 85% 0, 100% 100%, 0% 100%);
+  width: 190px; height: 75px;
+  background: linear-gradient(180deg, #fff9d1 0%, #ffcc00 20%, #d4af37 50%, #b8860b 100%);
+  border: 2px solid #fff;
+  border-radius: 12px; /* Smooth rounded corners instead of sharp slants */
+  box-shadow: 
+    0 8px 0 #8b6508, /* Heavy 3D depth */
+    0 15px 25px rgba(0,0,0,0.5);
   cursor: pointer; position: relative; overflow: hidden;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.1s ease;
+  display: flex; align-items: center; justify-content: center;
 }
-.btn-nap-tien-3d:hover { transform: scale(1.05) translateY(-5px); }
-.btn-nap-tien-3d:active { transform: scale(0.95); }
+
+.btn-nap-tien-3d:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-nap-tien-3d:active {
+  transform: translateY(6px);
+  box-shadow: 
+    0 2px 0 #8b6508,
+    0 5px 10px rgba(0,0,0,0.5);
+}
 
 .btn-nap-tien-3d span {
-  color: #4a0000; font-size: 30px; font-weight: 1000;
-  text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+  color: #3d2b00; /* Deep chocolate brown for contrast */
+  font-size: 28px; font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
   z-index: 2; position: relative;
+  text-shadow: 1px 1px 0px rgba(255,255,255,0.7);
 }
 
 .shine-layer {
-  position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-  transform: skewX(-25deg); animation: ultra-shine 3s infinite;
+  position: absolute; top: 0; left: -150%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+  transform: skewX(-20deg); animation: ultra-shine 2.5s infinite;
 }
 @keyframes ultra-shine {
-  0% { left: -100%; }
-  30% { left: 150%; }
+  0% { left: -150%; }
+  40% { left: 150%; }
   100% { left: 150%; }
 }
 
