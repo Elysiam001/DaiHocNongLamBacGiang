@@ -52,6 +52,9 @@ export default function LobbyPage() {
     return isNaN(parsed) ? 0 : parsed;
   }));
 
+  // Floating Mini Game position
+  const [miniGamePos, setMiniGamePos] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
     const timer = setInterval(() => {
       setJackpotValues(prev => prev.map(v => v + Math.floor(Math.random() * 5000)));
@@ -89,7 +92,7 @@ export default function LobbyPage() {
       <header className="top-bar">
         <div style={{ flex: 1 }}></div>
         <div className="logo-box">
-          <div className="logo-main" style={{ fontSize: 24 }}>ĐH Nông Lâm BG</div>
+          <div className="logo-main">ĐH Nông Lâm BG</div>
           <div className="logo-sub">bafu.D-14G(D-CNTT14A)</div>
         </div>
         <div style={{ flex: 1, textAlign: 'right' }}>
@@ -116,7 +119,16 @@ export default function LobbyPage() {
         ))}
       </main>
 
-      {/* Segmented Bottom Bar */}
+      {/* Floating Mini Game Bubble */}
+      <div className="mini-game-bubble">
+        <div className="bubble-content">
+          <i className="fa-solid fa-dice" style={{ fontSize: 32 }}></i>
+          <span>MINI GAME</span>
+        </div>
+        <div className="badge-count">31</div>
+      </div>
+
+      {/* Segmented Bottom Bar (REBALANCED) */}
       <footer className="footer-bar">
         {/* Segment 1: User Profile */}
         <div className="footer-segment user-segment">
@@ -147,7 +159,7 @@ export default function LobbyPage() {
           </button>
         </div>
 
-        {/* Segment 4: Nav Actions */}
+        {/* Segment 4: Nav Actions (REBALANCED) */}
         <div className="footer-segment nav-segments">
           <div className="nav-item-box">
             <i className="fa-solid fa-gem"></i>
@@ -160,11 +172,6 @@ export default function LobbyPage() {
           <div className="nav-item-box">
             <i className="fa-solid fa-envelope"></i>
             <span>HỘP THƯ</span>
-          </div>
-          <div className="mini-game-btn-new">
-            <i className="fa-solid fa-dice" style={{ fontSize: 32, color: '#fff' }}></i>
-            <span style={{ fontSize: 10, fontWeight: 1000, color: '#ffcc00' }}>MINI GAME</span>
-            <div className="badge-count">31</div>
           </div>
           <div className="nav-item-box" onClick={logout}>
             <i className="fa-solid fa-bars"></i>
