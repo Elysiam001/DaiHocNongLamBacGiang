@@ -144,7 +144,7 @@ export default function LobbyPage() {
       <footer className="bottom-bar">
         <div className="user-info">
           <div className="user-avatar">
-            <img src="/assets/bg_login.png" alt="Avatar" style={{ width: "100%", height: "100%", object-size: "cover" }} />
+            <img src="/assets/bg_login.png" alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
           <div className="user-details">
             <div className="user-name">{visibleName}</div>
