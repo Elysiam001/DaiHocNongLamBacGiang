@@ -83,7 +83,8 @@ export default function LobbyPage() {
         ))}
       </main>
 
-      {isTaiXiuOpen && <TaiXiuModal onClose={() => setIsTaiXiuOpen(false)} />}
+      {/* Overlay bàn Tài Xỉu */}
+      {isTaiXiuOpen && <TaiXiuModal onClose={() => setIsTaiXiuOpen(false)} jackpotValue={jackpotValues[0]} />}
 
       <footer className="footer-nav-bafu">
         <div className="nav-item-bafu active">SẢNH</div>

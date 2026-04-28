@@ -5,7 +5,7 @@ import "../styles/taixiu.css";
 
 const socket = io("https://dainochonglambacgiang.onrender.com");
 
-export default function TaiXiuModal({ onClose }) {
+export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
   const [timer, setTimer] = useState(0);
@@ -60,7 +60,6 @@ export default function TaiXiuModal({ onClose }) {
   return (
     <div className="taixiu-modal-overlay">
       <div className="go88-overlay">
-        {/* Balance Display */}
         <div className="modal-user-balance">
            <div className="coin-icon">$</div>
            <span>{balance.toLocaleString()}</span>
@@ -68,7 +67,7 @@ export default function TaiXiuModal({ onClose }) {
 
         <div className="go88-top-header">
            <div className="jackpot-container">
-              <span className="jackpot-val">74,774,407,191</span>
+              <span className="jackpot-val">{(jackpotValue || 0).toLocaleString()}</span>
            </div>
            <div className="session-tag"># {sessionId}</div>
         </div>
