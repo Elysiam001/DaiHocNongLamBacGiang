@@ -179,12 +179,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   position: relative; transition: 0.3s;
 }
 
-/* User Section - REFINED */
+/* User Section - LONG & FLEXIBLE */
 .user-segment {
-  flex: 0 0 280px; height: 75px; background: #1a1a1a;
-  clip-path: polygon(0 0, 88% 0, 100% 100%, 0% 100%);
-  display: flex; align-items: center; padding-left: 15px;
-  border-right: 2px solid #444;
+  flex: 1; height: 75px; background: #1a1a1a;
+  clip-path: polygon(0 0, 95% 0, 100% 100%, 0% 100%);
+  display: flex; align-items: center; padding-left: 20px;
+  border-right: 1px solid #444;
 }
 
 .avatar-gold-ring {
@@ -199,7 +199,8 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 .name-bal-box { 
   display: flex; flex-direction: column; gap: 0px; 
-  position: relative; margin-left: 10px; padding-top: 10px;
+  position: relative; margin-left: 15px; /* Added spacing from avatar */
+  padding-top: 10px;
   justify-content: center;
 }
 .user-label-name { 
@@ -218,12 +219,14 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
-/* Rút Tiền - Trapezoid */
+/* Rút Tiền - TOUCHING PROFILE */
 .rut-tien-segment {
-  flex: 0 0 140px; height: 75px; background: #222;
+  flex: 0 0 150px; height: 75px; background: #222;
   clip-path: polygon(15% 0, 85% 0, 100% 100%, 0% 100%);
-  margin-left: -30px; display: flex; flex-direction: column; 
+  margin-left: -40px; /* Overlap/Touch profile */
+  display: flex; flex-direction: column; 
   align-items: center; justify-content: center; gap: 4px;
+  z-index: 5;
 }
 .rut-tien-segment .nav-item-box { flex-direction: column; }
 .rut-tien-segment i { font-size: 28px; color: #ffcc00; }
