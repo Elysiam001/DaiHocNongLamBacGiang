@@ -82,20 +82,12 @@ export default function LobbyPage() {
       {/* Main Content */}
       <main className="main-lobby">
         {gameCards.map((card, idx) => (
-          <div key={card.id} className="game-card-imperial">
-            <div className="card-inner-frame">
-              <img src={card.img} alt={card.title} className="game-img-imperial" />
-              <div className="live-ribbon">
-                <span>LIVE</span>
-              </div>
-              <div className="imperial-footer-plaque">
-                <div className="imperial-title">{card.title}</div>
-                <div className="imperial-jackpot-wrap">
-                  <div className="jackpot-label">JACKPOT</div>
-                  <div className="imperial-jackpot-value">
-                    {jackpotValues[idx].toLocaleString()}
-                  </div>
-                </div>
+          <div key={card.id} className="game-card-bafu">
+            <img src="/assets/banner_taixiu_bafu.png" alt={card.title} className="game-img-bafu" />
+            <div className="jackpot-bafu-container">
+              <span className="jackpot-bafu-label">HŨ THƯỞNG:</span>
+              <span className="jackpot-bafu-value">
+                {jackpotValues[idx].toLocaleString()}
               </div>
             </div>
           </div>
