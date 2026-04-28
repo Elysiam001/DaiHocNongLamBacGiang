@@ -1,60 +1,72 @@
 .taixiu-container {
   width: 100%;
   height: 100vh;
-  background: radial-gradient(circle, #4a0404 0%, #000 100%);
+  background: radial-gradient(circle at center, #5d0707 0%, #1a0202 70%, #000 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   overflow: hidden;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Segoe UI', Roboto, sans-serif;
   color: white;
 }
 
-/* Nút quay lại */
+/* Nút thoát */
 .btn-back-lobby {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid #d4af37;
-  color: #d4af37;
-  padding: 8px 15px;
-  border-radius: 20px;
+  background: linear-gradient(180deg, #d4af37 0%, #8a6d1a 100%);
+  border: none;
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 25px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 1000;
   z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  text-transform: uppercase;
+  transition: 0.2s;
 }
+.btn-back-lobby:hover { transform: scale(1.1); filter: brightness(1.2); }
 
 /* Thông tin người chơi */
-.player-info-top {
-  margin-top: 30px;
-  z-index: 10;
-}
+.player-info-top { margin-top: 20px; z-index: 10; }
 .balance-box {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
   border: 2px solid #d4af37;
-  border-radius: 25px;
-  padding: 5px 20px;
+  border-radius: 30px;
+  padding: 8px 25px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
-.balance-box img { width: 25px; }
-.balance-box span { color: #ffcc00; font-weight: 1000; font-size: 18px; }
+.css-coin-icon {
+  width: 30px; height: 30px;
+  background: radial-gradient(circle, #ffeb3b 0%, #fbc02d 100%);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #795548; font-weight: 1000; font-size: 18px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.5), 0 2px 5px rgba(0,0,0,0.5);
+}
+.balance-box span { color: #ffcc00; font-weight: 1000; font-size: 22px; text-shadow: 0 0 10px rgba(255,204,0,0.5); }
 
 /* Bàn cược chính */
 .ruby-board {
   width: 95%;
-  max-width: 800px;
-  height: 450px;
-  background: url('/assets/board_bg.png') center/cover; /* Nếu không có ảnh sẽ dùng màu đỏ */
-  background-color: #b31d1d;
-  border: 8px solid #8b0000;
-  border-radius: 220px;
-  margin-top: 50px;
+  max-width: 850px;
+  height: 480px;
+  background: #a31414;
+  background: linear-gradient(135deg, #a31414 0%, #7d0f0f 50%, #4d0909 100%);
+  border: 10px solid #d4af37;
+  border-radius: 240px;
+  margin-top: 40px;
   position: relative;
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,0.5);
+  box-shadow: 
+    inset 0 0 100px rgba(0,0,0,0.8),
+    0 30px 60px rgba(0,0,0,0.8),
+    0 0 30px rgba(212, 175, 55, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,11 +74,11 @@
 
 .round-id {
   position: absolute;
-  top: 15px;
-  color: #ffcc00;
+  top: 20px;
+  color: rgba(255, 204, 0, 0.6);
   font-size: 14px;
   font-weight: bold;
-  opacity: 0.8;
+  letter-spacing: 1px;
 }
 
 .bet-sides {
@@ -74,114 +86,160 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 60px;
+  margin-top: 70px;
 }
 
 .side-box {
-  width: 200px;
-  height: 250px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 30px;
+  width: 220px;
+  height: 280px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: 0.2s;
-  border: 2px solid transparent;
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 3px solid rgba(255, 255, 255, 0.05);
 }
-.side-box:hover { background: rgba(255, 255, 255, 0.05); }
-.side-box.winner { 
-  border-color: #ffcc00;
-  animation: winner-glow 0.5s infinite alternate;
-}
-@keyframes winner-glow { 
-  from { box-shadow: 0 0 10px #ffcc00; } 
-  to { box-shadow: 0 0 30px #ffcc00; } 
-}
+.side-box:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.05); border-color: rgba(212, 175, 55, 0.3); }
 
 .side-title {
-  font-size: 80px;
+  font-size: 90px;
   font-weight: 1000;
-  color: #ccc;
-  text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  color: #fff;
+  text-shadow: 0 10px 20px rgba(0,0,0,0.8), 0 0 30px rgba(255,255,255,0.2);
+  margin-bottom: 0;
 }
-.tai .side-title { color: #fff; }
-.xiu .side-title { color: #fff; }
 
-.total-pool { color: #ffcc00; font-size: 24px; font-weight: bold; margin-top: 10px; }
-.my-bet { color: #aaa; font-size: 12px; margin-top: 5px; }
+.side-stats { text-align: center; }
+.total-pool { color: #ffcc00; font-size: 28px; font-weight: 1000; margin-top: -10px; }
+.my-bet { color: #00ff00; font-size: 14px; font-weight: bold; margin-top: 5px; opacity: 0.8; }
+
+.side-box.winner {
+  animation: win-blink 0.5s infinite alternate;
+  background: rgba(255, 204, 0, 0.1);
+  border-color: #ffcc00;
+}
+@keyframes win-blink {
+  from { box-shadow: 0 0 10px #ffcc00; }
+  to { box-shadow: 0 0 40px #ffcc00; }
+}
 
 /* Trung tâm: Timer & Xúc xắc */
 .center-action {
-  width: 180px;
-  height: 180px;
-  background: rgba(0, 0, 0, 0.4);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #2c2c2c 0%, #000 100%);
   border-radius: 50%;
-  border: 4px solid #d4af37;
+  border: 5px solid #d4af37;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
 }
 
 .timer-display {
-  font-size: 60px;
+  font-size: 70px;
   font-weight: 1000;
   color: #ffcc00;
-  text-shadow: 0 0 20px #ffcc00;
+  text-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+  z-index: 1;
 }
+.timer-display.emergency { color: #ff3d00; animation: pulse 0.5s infinite; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
 .dice-area {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.dice-grid {
-  display: flex;
-  gap: 5px;
-}
-.dice {
-  width: 40px; height: 40px;
-  background: white;
-  border-radius: 8px;
-  /* Giả lập xúc xắc bằng CSS hoặc dùng ảnh */
+  display: flex; align-items: center; justify-content: center;
 }
 
-.bowl-cover {
-  position: absolute;
-  width: 200px; height: 200px;
-  background: url('/assets/bowl.png') center/cover;
-  background-color: #888;
+/* CSS DICE - NO IMAGES */
+.css-dice {
+  width: 45px; height: 45px;
+  background: #fff;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: inset -3px -3px 5px rgba(0,0,0,0.2), 2px 2px 5px rgba(0,0,0,0.3);
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  padding: 5px;
+  box-sizing: border-box;
+}
+.css-dice .dot {
+  width: 8px; height: 8px;
+  background: #000;
   border-radius: 50%;
-  box-shadow: 0 10px 30px rgba(0,0,0,1);
+  margin: auto;
+}
+.css-dice.d-1 .dot { background: #ff0000; width: 14px; height: 14px; grid-area: 2 / 2; }
+/* Simplified dots for other values */
+.css-dice.d-2 .dot:nth-child(1) { grid-area: 1 / 3; }
+.css-dice.d-2 .dot:nth-child(2) { grid-area: 3 / 1; }
+.css-dice.d-3 .dot:nth-child(1) { grid-area: 1 / 3; }
+.css-dice.d-3 .dot:nth-child(2) { grid-area: 2 / 2; }
+.css-dice.d-3 .dot:nth-child(3) { grid-area: 3 / 1; }
+.css-dice.d-4 .dot:nth-child(1) { grid-area: 1 / 1; }
+.css-dice.d-4 .dot:nth-child(2) { grid-area: 1 / 3; }
+.css-dice.d-4 .dot:nth-child(3) { grid-area: 3 / 1; }
+.css-dice.d-4 .dot:nth-child(4) { grid-area: 3 / 3; }
+.css-dice.d-5 .dot:nth-child(1) { grid-area: 1 / 1; }
+.css-dice.d-5 .dot:nth-child(2) { grid-area: 1 / 3; }
+.css-dice.d-5 .dot:nth-child(3) { grid-area: 2 / 2; }
+.css-dice.d-5 .dot:nth-child(4) { grid-area: 3 / 1; }
+.css-dice.d-5 .dot:nth-child(5) { grid-area: 3 / 3; }
+.css-dice.d-6 .dot { width: 7px; height: 7px; }
+
+.dice-grid { display: flex; gap: 8px; transform: translateY(10px); }
+
+/* CSS BOWL - NO IMAGES */
+.css-bowl-cover {
+  position: absolute;
+  width: 210px; height: 210px;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #e0e0e0 40%, #a0a0a0 100%);
+  border-radius: 50%;
+  box-shadow: 
+    inset -10px -10px 20px rgba(0,0,0,0.4),
+    0 20px 40px rgba(0,0,0,0.6);
   z-index: 50;
+  display: flex; align-items: center; justify-content: center;
   transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+.bowl-knob {
+  width: 40px; height: 30px;
+  background: linear-gradient(180deg, #d4af37 0%, #8a6d1a 100%);
+  border-radius: 10px 10px 5px 5px;
+  position: absolute; top: -15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
 
-/* Thanh Chip cược */
+/* Chip Selector */
 .chip-selector {
   position: absolute;
-  bottom: -30px;
+  bottom: -40px;
   display: flex;
-  gap: 15px;
+  gap: 12px;
+  z-index: 60;
 }
 .chip {
-  width: 70px; height: 70px;
-  background: #ffcc00;
+  width: 75px; height: 75px;
   border-radius: 50%;
-  border: 4px dashed #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  font-weight: 1000;
+  border: 4px dashed rgba(255,255,255,0.6);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 1000; font-size: 16px;
   cursor: pointer;
   transition: 0.2s;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
-.chip:hover { transform: translateY(-10px); }
+.chip:nth-child(1) { background: radial-gradient(circle, #4caf50, #1b5e20); }
+.chip:nth-child(2) { background: radial-gradient(circle, #2196f3, #0d47a1); }
+.chip:nth-child(3) { background: radial-gradient(circle, #f44336, #b71c1c); }
+.chip:nth-child(4) { background: radial-gradient(circle, #9c27b0, #4a148c); }
+.chip:nth-child(5) { background: radial-gradient(circle, #ff9800, #e65100); }
+
+.chip:hover { transform: translateY(-15px) rotate(15deg); filter: brightness(1.2); }

@@ -77,41 +77,49 @@ export default function TaiXiuPage() {
       {/* Thông tin người chơi */}
       <div className="player-info-top">
         <div className="balance-box">
-          <img src="/assets/coin.png" alt="coin" />
+          <div className="css-coin-icon">$</div>
           <span>{balance.toLocaleString()}</span>
         </div>
       </div>
 
       {/* Bàn cược Ruby */}
       <div className="ruby-board">
-        <div className="round-id">#{sessionId}</div>
+        <div className="round-id">PHIÊN: #{sessionId}</div>
         
         <div className="bet-sides">
           {/* Bên TÀI */}
           <div className={`side-box tai ${phase === 'result' && dices.reduce((a,b)=>a+b,0) >= 11 ? 'winner' : ''}`} onClick={() => handleBet('tai', 100000)}>
             <div className="side-title">TÀI</div>
-            <div className="total-pool">{totalPool.tai.toLocaleString()}</div>
-            <div className="my-bet">Đã cược: {myBet.tai.toLocaleString()}</div>
+            <div className="side-stats">
+              <div className="total-pool">{totalPool.tai.toLocaleString()}</div>
+              <div className="my-bet">Bạn cược: {myBet.tai.toLocaleString()}</div>
+            </div>
           </div>
 
-          {/* Khu vực Xúc xắc & Bát */}
+          {/* Trung tâm: Timer & Xúc xắc */}
           <div className="center-action">
-            <div className="timer-display">{timer}</div>
+            <div className={`timer-display ${timer <= 5 ? 'emergency' : ''}`}>{timer}</div>
             <div className="dice-area">
               <div className="dice-grid">
                 {dices.map((d, i) => (
-                  <div key={i} className={`dice dice-${d}`}></div>
+                  <div key={i} className={`css-dice d-${d}`}>
+                    {[...Array(d)].map((_, dot) => <div key={dot} className="dot"></div>)}
+                  </div>
                 ))}
               </div>
-              {isBowlClosed && <div className="bowl-cover"></div>}
+              {isBowlClosed && <div className="css-bowl-cover">
+                <div className="bowl-knob"></div>
+              </div>}
             </div>
           </div>
 
           {/* Bên XỈU */}
           <div className={`side-box xiu ${phase === 'result' && dices.reduce((a,b)=>a+b,0) <= 10 ? 'winner' : ''}`} onClick={() => handleBet('xiu', 100000)}>
             <div className="side-title">XỈU</div>
-            <div className="total-pool">{totalPool.xiu.toLocaleString()}</div>
-            <div className="my-bet">Đã cược: {myBet.xiu.toLocaleString()}</div>
+            <div className="side-stats">
+              <div className="total-pool">{totalPool.xiu.toLocaleString()}</div>
+              <div className="my-bet">Bạn cược: {myBet.xiu.toLocaleString()}</div>
+            </div>
           </div>
         </div>
 
