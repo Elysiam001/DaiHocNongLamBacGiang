@@ -55,7 +55,7 @@ export default function RegisterPage() {
               <span className="field__label">TÊN ĐĂNG NHẬP</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
-                  👤
+                  <i className="fa-solid fa-user"></i>
                 </span>
                 <input
                   value={username}
@@ -70,7 +70,7 @@ export default function RegisterPage() {
               <span className="field__label">SỐ ĐIỆN THOẠI</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
-                  📱
+                  <i className="fa-solid fa-phone"></i>
                 </span>
                 <input
                   value={phone}
@@ -86,7 +86,7 @@ export default function RegisterPage() {
               <span className="field__label">MẬT KHẨU</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
-                  🔒
+                  <i className="fa-solid fa-lock"></i>
                 </span>
                 <input
                   type={showPw ? "text" : "password"}
@@ -101,7 +101,7 @@ export default function RegisterPage() {
                   onClick={() => setShowPw((s) => !s)}
                   aria-label={showPw ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                 >
-                  {showPw ? "🙈" : "👁️"}
+                  {showPw ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
                 </button>
               </div>
             </label>
@@ -110,7 +110,7 @@ export default function RegisterPage() {
               <span className="field__label">XÁC NHẬN MẬT KHẨU</span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
-                  ✅
+                  <i className="fa-solid fa-check"></i>
                 </span>
                 <input
                   type={showPw ? "text" : "password"}
@@ -129,7 +129,7 @@ export default function RegisterPage() {
               </span>
               <div className="input">
                 <span className="input__icon" aria-hidden="true">
-                  🎁
+                  <i className="fa-solid fa-gift"></i>
                 </span>
                 <input
                   value={referralCode}
