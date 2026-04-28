@@ -187,8 +187,8 @@ export default function LobbyPage() {
                 <span>HỘP THƯ</span>
               </div>
               <div className="nav-item-premium-large" onClick={logout}>
-                <i className="fa-solid fa-bars"></i>
-                <span>MENU</span>
+                <i className="fa-solid fa-right-from-bracket"></i>
+                <span>ĐĂNG XUẤT</span>
               </div>
             </div>
           </div>
