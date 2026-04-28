@@ -84,30 +84,12 @@ export default function LobbyPage() {
         {gameCards.map((card, idx) => (
           <div key={card.id} className="game-card">
             <img src={card.img} alt={card.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            <div style={{ position: "absolute", top: 15, right: 10, background: "red", padding: "4px 10px", color: "#fff", borderRadius: 5, fontSize: 12, fontWeight: "bold" }}>
-              {card.badge}
+            <div className="live-badge-modern">
+              LIVE
             </div>
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.95) 40%)", padding: "30px 20px 20px", textAlign: "center", borderTop: "1px solid rgba(255, 204, 0, 0.3)" }}>
-              <div style={{ 
-                fontSize: 28, 
-                fontWeight: 1000, 
-                background: "linear-gradient(180deg, #fff3a6 0%, #ffcc00 50%, #8b6508 100%)", 
-                WebkitBackgroundClip: "text", 
-                WebkitTextFillColor: "transparent",
-                textTransform: "uppercase",
-                marginBottom: 2,
-                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
-              }}>
-                {card.title}
-              </div>
-              <div style={{ fontSize: 10, color: "#aaa", fontWeight: "bold", textTransform: "uppercase", letterSpacing: 2, marginBottom: 5 }}>HŨ THƯỞNG</div>
-              <div style={{ 
-                fontSize: 34, 
-                fontWeight: 1000, 
-                color: "#fff",
-                textShadow: "0 0 10px rgba(255, 204, 0, 0.8), 0 0 20px rgba(255, 204, 0, 0.4)",
-                fontFamily: "monospace"
-              }}>
+            <div className="game-card-info-modern">
+              <div className="game-title-modern">{card.title}</div>
+              <div className="game-jackpot-modern">
                 {jackpotValues[idx].toLocaleString()}
               </div>
             </div>

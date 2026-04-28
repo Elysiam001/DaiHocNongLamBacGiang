@@ -134,30 +134,52 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .game-card:hover { transform: scale(1.05); }
 .game-card::before { content: ""; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 140px; height: 15px; background: #ffcc00; border-radius: 10px; }
 
-
-/* --- FLOATING MINI GAME BUBBLE --- */
-.mini-game-bubble {
-  position: fixed;
-  bottom: 120px; right: 20px;
-  width: 80px; height: 80px;
-  background: radial-gradient(circle, #ff0000, #500);
-  border: 3px solid #fff;
-  border-radius: 50%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(0,0,0,0.5);
-  cursor: pointer; z-index: 2000;
-  transition: 0.3s;
-  animation: float 3s ease-in-out infinite;
+/* --- MODERN GAME CARD REDESIGN --- */
+.game-card-info-modern {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 180px;
+  background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, transparent 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  padding-bottom: 30px;
 }
-.mini-game-bubble:hover { transform: scale(1.1); }
-.bubble-content { color: #fff; text-align: center; line-height: 1; }
-.bubble-content i { font-size: 32px; filter: drop-shadow(0 0 5px #fff); }
-.bubble-content span { font-size: 9px; font-weight: 900; color: #ffcc00; display: block; margin-top: 2px; }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+.game-title-modern {
+  font-size: 42px; font-weight: 900;
+  color: #ffcc00;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.9);
+  line-height: 1; margin-bottom: 5px;
 }
+
+.game-jackpot-modern {
+  font-size: 38px; font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  font-family: 'Arial Black', sans-serif;
+  letter-spacing: -1px;
+  animation: jackpot-pulse 2s infinite ease-in-out;
+}
+
+@keyframes jackpot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+}
+
+/* Redesigned LIVE Badge */
+.live-badge-modern {
+  position: absolute; top: 15px; right: 15px;
+  background: #ff0000; color: #fff;
+  font-size: 11px; font-weight: 1000;
+  padding: 3px 12px; border-radius: 4px;
+  box-shadow: 0 0 10px rgba(255,0,0,0.6);
+  display: flex; align-items: center; gap: 5px;
+}
+.live-badge-modern::before {
+  content: ""; width: 6px; height: 6px; background: #fff; border-radius: 50%;
+  animation: blink 1s infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
 
 /* ======================================================
