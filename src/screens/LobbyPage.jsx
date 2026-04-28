@@ -110,8 +110,8 @@ export default function LobbyPage() {
         </div>
 
         <div className="logo-container">
-          <div className="logo-main">GO88</div>
-          <div className="logo-sub">GO88.COM</div>
+          <div className="logo-main" style={{ fontSize: 24 }}>ĐH Nông Lâm BG</div>
+          <div className="logo-sub">bafu.D-14G(D-CNTT14A)</div>
         </div>
 
         <div className="top-right">
