@@ -82,46 +82,71 @@ export default function TaiXiuPage() {
         </div>
       </div>
 
-      {/* Bàn cược Ruby */}
-      <div className="ruby-board">
-        <div className="round-id">PHIÊN: #{sessionId}</div>
-        
-        <div className="bet-sides">
-          {/* Bên TÀI */}
-          <div className={`side-box tai ${phase === 'result' && dices.reduce((a,b)=>a+b,0) >= 11 ? 'winner' : ''}`} onClick={() => handleBet('tai', 100000)}>
-            <div className="side-title">TÀI</div>
-            <div className="side-stats">
-              <div className="total-pool">{totalPool.tai.toLocaleString()}</div>
-              <div className="my-bet">Bạn cược: {myBet.tai.toLocaleString()}</div>
+      {/* Bàn cược MD5 Premium */}
+      <div className="md5-board">
+        <div className="md5-header">
+          <div className="btn-info">i</div>
+          <div className="session-id"># {sessionId}</div>
+          <div className="btn-close" onClick={() => nav("/lobby")}>×</div>
+        </div>
+
+        <div className="md5-main-content">
+          {/* Cửa TÀI */}
+          <div className="bet-side left">
+            <div className="side-stats-top">
+              <span className="user-count">107 <i className="fas fa-user"></i></span>
             </div>
+            <div className="side-label-img tai">TÀI</div>
+            <div className="pool-value">{totalPool.tai.toLocaleString()}</div>
+            <button className="btn-bet-action" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
+            <div className="my-confirmed-bet">{myBet.tai > 0 ? `Đã cược: ${myBet.tai.toLocaleString()}` : ''}</div>
           </div>
 
-          {/* Trung tâm: Timer & Xúc xắc */}
-          <div className="center-action">
-            <div className={`timer-display ${timer <= 5 ? 'emergency' : ''}`}>{timer}</div>
-            <div className="dice-area">
-              <div className="dice-grid">
+          {/* Vòng tròn trung tâm */}
+          <div className="md5-center">
+            <div className="timer-ring">
+              <div className="timer-number">{timer}</div>
+            </div>
+            <div className="dice-display-area">
+              <div className="dice-wrap">
                 {dices.map((d, i) => (
-                  <div key={i} className={`css-dice d-${d}`}>
+                  <div key={i} className={`md5-dice d-${d}`}>
                     {[...Array(d)].map((_, dot) => <div key={dot} className="dot"></div>)}
                   </div>
                 ))}
               </div>
-              {isBowlClosed && <div className="css-bowl-cover">
-                <div className="bowl-knob"></div>
+              {isBowlClosed && <div className="md5-bowl-cover">
+                <div className="bowl-handle"></div>
               </div>}
             </div>
           </div>
 
-          {/* Bên XỈU */}
-          <div className={`side-box xiu ${phase === 'result' && dices.reduce((a,b)=>a+b,0) <= 10 ? 'winner' : ''}`} onClick={() => handleBet('xiu', 100000)}>
-            <div className="side-title">XỈU</div>
-            <div className="side-stats">
-              <div className="total-pool">{totalPool.xiu.toLocaleString()}</div>
-              <div className="my-bet">Bạn cược: {myBet.xiu.toLocaleString()}</div>
+          {/* Cửa XỈU */}
+          <div className="bet-side right">
+            <div className="side-stats-top">
+              <span className="user-count">149 <i className="fas fa-user"></i></span>
             </div>
+            <div className="side-label-img xiu">XỈU</div>
+            <div className="pool-value">{totalPool.xiu.toLocaleString()}</div>
+            <button className="btn-bet-action" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
+            <div className="my-confirmed-bet">{myBet.xiu > 0 ? `Đã cược: ${myBet.xiu.toLocaleString()}` : ''}</div>
           </div>
         </div>
+
+        {/* Lịch sử soi cầu */}
+        <div className="md5-history-bar">
+          {[...Array(20)].map((_, i) => (
+            <div key={i} className={`history-dot ${Math.random() > 0.5 ? 't' : 'x'}`}></div>
+          ))}
+        </div>
+
+        {/* Thanh Hash MD5 */}
+        <div className="md5-hash-footer">
+          <div className="hash-label">CHUỖI HASH</div>
+          <div className="hash-value">64eac0de964ce97f506ffad9dd7363db25...</div>
+          <div className="btn-copy">COPY</div>
+        </div>
+      </div>
 
         {/* Bảng chip cược */}
         <div className="chip-selector">
