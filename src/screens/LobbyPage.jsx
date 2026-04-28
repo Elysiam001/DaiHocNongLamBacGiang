@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   clearSession,
@@ -130,52 +130,55 @@ export default function LobbyPage() {
 
       {/* Segmented Bottom Bar (REBALANCED) */}
       <footer className="footer-bar">
-        {/* Segment 1: User Profile */}
-        <div className="footer-segment user-segment">
-          <div className="sdt-box">Hãy kích hoạt SĐT</div>
-          <div className="profile-wrap">
+        {/* LEFT GROUP: User + Rut Tien */}
+        <div className="footer-group-left">
+          <div className="footer-segment user-segment">
+            <div className="sdt-box">Hãy kích hoạt SĐT</div>
             <div className="avatar-gold-ring">
-              <img src="/assets/bg_login.png" alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src="/assets/bg_login.png" alt="Avatar" />
             </div>
             <div className="name-bal-box">
               <div className="user-label-name">{visibleName}</div>
-              <div className="user-label-bal">{ (user?.balance || 0).toLocaleString() }</div>
+              <div className="user-label-bal">{(user?.balance || 0).toLocaleString()}</div>
+            </div>
+          </div>
+          
+          <div className="footer-segment rut-tien-segment">
+            <div className="nav-item-box">
+              <i className="fa-solid fa-money-bill-transfer"></i>
+              <span>RÚT TIỀN</span>
             </div>
           </div>
         </div>
 
-        {/* Segment 2: Rút Tiền */}
-        <div className="footer-segment rut-tien-segment">
-          <div className="nav-item-box">
-            <i className="fa-solid fa-money-bill-transfer"></i>
-            <span>RÚT TIỀN</span>
+        {/* CENTER GROUP: Nap Tien (Perfectly Centered) */}
+        <div className="footer-group-center">
+          <div className="footer-segment nap-tien-segment">
+            <button className="btn-nap-premium">
+              <span>NẠP TIỀN</span>
+            </button>
           </div>
         </div>
 
-        {/* Segment 3: Nạp Tiền (Giant Center) */}
-        <div className="footer-segment nap-tien-segment">
-          <button className="btn-nap-premium">
-            <span>NẠP TIỀN</span>
-          </button>
-        </div>
-
-        {/* Segment 4: Nav Actions (REBALANCED) */}
-        <div className="footer-segment nav-segments">
-          <div className="nav-item-box">
-            <i className="fa-solid fa-gem"></i>
-            <span>SĂN HŨ</span>
-          </div>
-          <div className="nav-item-box">
-            <i className="fa-solid fa-gift"></i>
-            <span>NHIỆM VỤ</span>
-          </div>
-          <div className="nav-item-box">
-            <i className="fa-solid fa-envelope"></i>
-            <span>HỘP THƯ</span>
-          </div>
-          <div className="nav-item-box" onClick={logout}>
-            <i className="fa-solid fa-bars"></i>
-            <span>MENU</span>
+        {/* RIGHT GROUP: Nav Actions */}
+        <div className="footer-group-right">
+          <div className="nav-segments">
+            <div className="nav-item-box">
+              <i className="fa-solid fa-gem"></i>
+              <span>SĂN HŨ</span>
+            </div>
+            <div className="nav-item-box">
+              <i className="fa-solid fa-gift"></i>
+              <span>NHIỆM VỤ</span>
+            </div>
+            <div className="nav-item-box">
+              <i className="fa-solid fa-envelope"></i>
+              <span>HỘP THƯ</span>
+            </div>
+            <div className="nav-item-box" onClick={logout}>
+              <i className="fa-solid fa-bars"></i>
+              <span>MENU</span>
+            </div>
           </div>
         </div>
       </footer>
