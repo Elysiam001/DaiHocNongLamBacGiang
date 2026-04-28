@@ -125,12 +125,14 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .logo-main { font-size: 24px; font-weight: 1000; color: #ffcc00; }
 .logo-sub { font-size: 9px; color: #ffcc00; font-weight: bold; }
 
-.main-lobby { flex: 1; display: flex; align-items: center; justify-content: center; gap: 20px; padding: 0 40px 100px; overflow-x: auto; }
+.main-lobby { flex: 1; display: flex; align-items: center; justify-content: center; gap: 20px; padding: 0 40px 100px; }
 .game-card {
-  width: 200px; height: 320px; border: 2px solid #ffcc00; border-radius: 20px 20px 10px 10px;
-  background: #000; position: relative; overflow: hidden; flex-shrink: 0; box-shadow: 0 10px 30px #000;
+  width: 300px; height: 450px; border: 2px solid #ffcc00; border-radius: 20px 20px 10px 10px;
+  background: #000; position: relative; overflow: hidden; flex-shrink: 0; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  transition: transform 0.3s;
 }
-.game-card::before { content: ""; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 100px; height: 12px; background: #ffcc00; border-radius: 10px; }
+.game-card:hover { transform: scale(1.05); }
+.game-card::before { content: ""; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 140px; height: 15px; background: #ffcc00; border-radius: 10px; }
 
 
 /* --- FLOATING MINI GAME BUBBLE --- */

@@ -14,30 +14,6 @@ const gameCards = [
     val: "64,620,513,565",
     badge: "LIVE",
     jackpot: 7
-  },
-  {
-    id: "game-taixiu-md5",
-    title: "TÀI XỈU MD5",
-    img: "/assets/banner_taixiu.png",
-    val: "411,348,296",
-    badge: "MD5",
-    jackpot: 4
-  },
-  {
-    id: "game-xocdia",
-    title: "XÓC ĐĨA",
-    img: "/assets/bg_login.png",
-    val: "4,762,018,602",
-    badge: "HOT",
-    jackpot: 3
-  },
-  {
-    id: "game-taixiu-livestream",
-    title: "TÀI XỈU",
-    img: "/assets/bg_taixiu.png",
-    val: "13,830,137,665",
-    badge: "LIVE",
-    jackpot: 5
   }
 ];
 
@@ -111,9 +87,9 @@ export default function LobbyPage() {
             <div style={{ position: "absolute", top: 15, right: 10, background: "red", padding: "4px 10px", color: "#fff", borderRadius: 5, fontSize: 12, fontWeight: "bold" }}>
               {card.badge}
             </div>
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,0.9)", padding: 15, textAlign: "center", borderTop: "2px solid #ffcc00" }}>
-              <div style={{ fontSize: 18, fontWeight: "bold", color: "#ffcc00", marginBottom: 5 }}>{card.title}</div>
-              <div style={{ fontSize: 22, fontWeight: "bold", color: "#fff" }}>$ {jackpotValues[idx].toLocaleString()}</div>
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,0.9)", padding: 25, textAlign: "center", borderTop: "2px solid #ffcc00" }}>
+              <div style={{ fontSize: 24, fontWeight: "bold", color: "#ffcc00", marginBottom: 8 }}>{card.title}</div>
+              <div style={{ fontSize: 32, fontWeight: "bold", color: "#fff" }}>$ {jackpotValues[idx].toLocaleString()}</div>
             </div>
           </div>
         ))}
