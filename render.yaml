@@ -3,6 +3,6 @@ services:
     name: webtaixiu
     env: node
     plan: free
-    buildCommand: npm install --production=false && chmod +x ./node_modules/.bin/vite && npm run build
+    buildCommand: npm install && npm run build
     startCommand: npm run start
     autoDeploy: true
