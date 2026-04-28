@@ -172,33 +172,38 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 }
 
 
-/* --- USER & RÚT TIỀN REFINEMENT --- */
-.user-segment {
-  flex: 0 0 300px; background: transparent; border: none;
-  padding-left: 10px; justify-content: flex-start;
-  clip-path: none; /* User info is flat on the left */
-}
 
+/* --- AVATAR & INFO FIX --- */
 .avatar-gold-ring {
-  width: 70px; height: 70px; border-radius: 50%; border: 3px solid #ffcc00;
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
-  background: #000; z-index: 2;
+  width: 65px; height: 65px; border-radius: 50%; border: 3px solid #ffcc00;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+  background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.avatar-gold-ring img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
 }
 
 .name-bal-box { 
-  display: flex; flex-direction: column; gap: 2px; 
-  position: relative; margin-left: 5px; padding-top: 15px;
+  display: flex; flex-direction: column; gap: 0px; 
+  position: relative; margin-left: 10px; padding-top: 10px;
+  justify-content: center;
 }
-.user-label-name { font-size: 16px; font-weight: 1000; color: #ffcc00; text-transform: uppercase; }
-.user-label-bal { font-size: 20px; font-weight: 1000; color: #ffcc00; }
+.user-label-name { 
+  font-size: 15px; font-weight: 1000; color: #ffcc00; 
+  text-transform: uppercase; margin-bottom: -2px;
+}
+.user-label-bal { 
+  font-size: 20px; font-weight: 1000; color: #ffcc00; 
+  letter-spacing: 0.5px;
+}
 
 .sdt-box {
-  position: absolute; top: -15px; left: 0;
-  background: #111; border: 2px solid #ffcc00;
-  color: #ffcc00; padding: 1px 15px; border-radius: 20px;
-  font-size: 11px; font-weight: 900; white-space: nowrap;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-  line-height: 1.2; text-align: center;
+  position: absolute; top: -18px; left: 0;
+  background: #000; border: 2px solid #ffcc00;
+  color: #ffcc00; padding: 1px 12px; border-radius: 20px;
+  font-size: 10px; font-weight: 900; white-space: nowrap;
+  z-index: 10;
 }
 
 .rut-tien-segment {
