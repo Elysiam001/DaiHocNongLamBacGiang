@@ -33,71 +33,105 @@ const Dice3D = ({ value, isShaking }) => {
 export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
-  const [timer, setTimer] = useState(30);
-  const [phase, setPhase] = useState("betting");
-  const [dices, setDices] = useState([1, 1, 1]);
-  const [isBowlClosed, setIsBowlClosed] = useState(true);
-  const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
-  const [sessionId, setSessionId] = useState(1024);
-
-  // MODAL STATES
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [isRulesOpen, setIsRulesOpen] = useState(false);
+  
+  // Dong bo LocalStorage de khong bi reset khi reload
+  const [timer, setTimer] = useState(() => Number(localStorage.getItem("tx_timer")) || 0);
+  const [phase, setPhase] = useState(() => localStorage.getItem("tx_phase") || "betting");
+  const [dices, setDices] = useState(() => JSON.parse(localStorage.getItem("tx_dices")) || [1, 1, 1]);
+  const [isBowlClosed, setIsBowlClosed] = useState(() => localStorage.getItem("tx_bowl") !== "open");
+  const [isShaking, setIsShaking] = useState(false);
+  const [totalPool, setTotalPool] = useState(() => JSON.parse(localStorage.getItem("tx_pool")) || { tai: 0, xiu: 0 });
+  const [sessionId, setSessionId] = useState(() => Number(localStorage.getItem("tx_sid")) || 0);
+  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem("tx_history")) || []);
 
   // DRAG STATE
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  // GAME LOOP LOGIC
+  // Luu vao LocalStorage
   useEffect(() => {
-    const gameInterval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev > 1) return prev - 1;
+    localStorage.setItem("tx_timer", timer);
+    localStorage.setItem("tx_phase", phase);
+    localStorage.setItem("tx_dices", JSON.stringify(dices));
+    localStorage.setItem("tx_bowl", isBowlClosed ? "closed" : "open");
+    localStorage.setItem("tx_pool", JSON.stringify(totalPool));
+    localStorage.setItem("tx_sid", sessionId);
+    localStorage.setItem("tx_history", JSON.stringify(history));
+  }, [timer, phase, dices, isBowlClosed, totalPool, sessionId, history]);
 
-        if (phase === "betting") {
-          // OPEN BOWL AND SHOW RESULT
-          setPhase("result");
-          const randomDices = [
-            Math.floor(Math.random() * 6) + 1,
-            Math.floor(Math.random() * 6) + 1,
-            Math.floor(Math.random() * 6) + 1
-          ];
-          setDices(randomDices);
-          setIsBowlClosed(false);
-          return 10; 
-        } else {
-          // START NEW SESSION: SHAKE -> CLOSE BOWL
-          setPhase("betting");
-          setSessionId(s => s + 1);
-          setIsBowlClosed(false); // Open briefly to show shaking
-          
-          // Randomize dices while shaking
-          setDices([
-            Math.floor(Math.random() * 6) + 1,
-            Math.floor(Math.random() * 6) + 1,
-            Math.floor(Math.random() * 6) + 1
-          ]);
-
-          // Lập tức úp bát sau 1 giây tung xúc xắc
-          setTimeout(() => {
-            setIsBowlClosed(true);
-          }, 1000);
-
-          return 30;
-        }
-      });
-    }, 1000);
-
-    return () => clearInterval(gameInterval);
-  }, [phase]);
+  const handlePhaseChange = useCallback((newPhase, resultDices) => {
+    if (newPhase === "betting") {
+      setIsBowlClosed(true);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 2000); 
+    } else if (newPhase === "result") {
+      setIsShaking(true);
+      setTimeout(() => {
+        setIsShaking(false);
+        if (resultDices) setDices(resultDices);
+        setTimeout(() => setIsBowlClosed(false), 500);
+      }, 1000);
+    }
+  }, []);
 
   useEffect(() => {
     if (!session) return;
+    
     socket.emit("login", { username: session.username });
+    socket.emit("taixiuJoin");
+
     socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
-  }, [session]);
+    
+    socket.on("taixiuHistory", (data) => {
+      if (Array.isArray(data)) setHistory(data.slice(-20));
+    });
+
+    socket.on("taixiuState", (data) => {
+      if (!data) return;
+      setTimer(data.timer || 0);
+      setSessionId(data.sessionId || 0);
+      if (data.totalPool) setTotalPool(data.totalPool);
+      if (data.history) setHistory(data.history.slice(-20));
+      setPhase(data.phase);
+      if (data.phase === "result") {
+        setDices(data.dices || [1,1,1]);
+        setIsBowlClosed(false);
+        setIsShaking(false);
+      } else {
+        setIsBowlClosed(true);
+      }
+    });
+
+    socket.on("taixiuTick", (data) => {
+      if (!data) return;
+      setTimer(data.timer || 0);
+      setSessionId(data.sessionId || 0);
+      if (data.totalPool) setTotalPool(data.totalPool);
+      if (data.history) setHistory(data.history.slice(-20));
+      setPhase(prevPhase => {
+        if (data.phase && data.phase !== prevPhase) {
+          handlePhaseChange(data.phase, data.dices);
+          return data.phase;
+        }
+        return prevPhase;
+      });
+    });
+
+    const interval = setInterval(() => {
+      setTimer(prev => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+      socket.off("loginSuccess");
+      socket.off("balanceUpdate");
+      socket.off("taixiuHistory");
+      socket.off("taixiuState");
+      socket.off("taixiuTick");
+    };
+  }, [session, handlePhaseChange]);
 
   const onMouseDown = (e) => {
     if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
@@ -164,22 +198,17 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           </div>
 
           <div className="go88-timer-circle">
-             <div className={`go88-bowl-overlay ${!isBowlClosed ? 'open' : ''}`}>
-                {phase === 'betting' && isBowlClosed && <span className="go88-timer-val">{timer}</span>}
-             </div>
-             <div className="dice-container">
-                {!isBowlClosed && <div className="result-glow"></div>}
-                
-                {/* Hàng 1 (1 viên) */}
-                <div className="dice-row">
-                   <Dice3D value={dices[0]} isShaking={phase === 'betting'} />
-                </div>
-                {/* Hàng 2 (2 viên) */}
-                <div className="dice-row">
-                   <Dice3D value={dices[1]} isShaking={phase === 'betting'} />
-                   <Dice3D value={dices[2]} isShaking={phase === 'betting'} />
-                </div>
-             </div>
+             {isBowlClosed && !isShaking ? (
+               <span className="go88-timer-val">{timer}</span>
+             ) : (
+               <div className="dice-container">
+                  {!isBowlClosed && <div className="go88-result-val-top">{totalDice}</div>}
+                  <Dice3D value={dices[0]} shaking={isShaking} className="dice-1" />
+                  <Dice3D value={dices[1]} shaking={isShaking} className="dice-2" />
+                  <Dice3D value={dices[2]} shaking={isShaking} className="dice-3" />
+               </div>
+             )}
+             <div className={`go88-bowl-overlay ${isBowlClosed ? '' : 'open'}`}></div>
           </div>
 
           <div className="go88-side">
@@ -190,12 +219,11 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           </div>
 
           <div className="go88-history-row">
-            {[...Array(18)].map((_, i) => (
-              <div key={i} className={`hist-dot ${Math.random() > 0.5 ? 'tai' : 'xiu'}`}></div>
+            {history.map((res, i) => (
+              <div key={i} className={`hist-dot ${res === 1 ? 'tai' : 'xiu'}`}></div>
             ))}
           </div>
 
-          {/* History Modal */}
           {isHistoryOpen && (
             <div className="history-modal-overlay">
               <div className="history-header">
