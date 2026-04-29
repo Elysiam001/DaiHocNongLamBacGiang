@@ -204,7 +204,6 @@
   position: relative; width: 220px; height: 180px;
   margin: 0 auto;
   z-index: 5; perspective: 1000px;
-  display: flex; justify-content: center; align-items: center;
 }
 
 .dice-3d {
@@ -213,10 +212,10 @@
   transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Perfect Triangle Positions (Adjusted for 55px) */
-.dice-1 { top: 35px; left: 55px; } 
-.dice-2 { top: 35px; right: 55px; }
-.dice-3 { bottom: 25px; left: 50%; transform: translateX(-50%); }
+/* Perfect Triangle Positions - No Overlap */
+.dice-1 { top: 25px; left: 40px; } 
+.dice-2 { top: 25px; right: 40px; }
+.dice-3 { bottom: 15px; left: 50%; transform: translateX(-50%); }
 
 .dice-face {
   position: absolute; width: 55px; height: 55px;
