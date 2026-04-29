@@ -54,7 +54,25 @@ export default function TaiXiuPage() {
     });
 
     socket.on("taixiuHistory", (data) => {
-      if (Array.isArray(data)) setHistory(data.slice(-20)); // Lấy 20 phiên gần nhất
+      if (Array.isArray(data)) setHistory(data.slice(-20));
+    });
+
+    // Lắng nghe sự kiện Join thành công để cập nhật trạng thái tức thì
+    socket.on("taixiuState", (data) => {
+      if (!data) return;
+      setTimer(data.timer || 0);
+      setSessionId(data.sessionId || 0);
+      if (data.totalPool) setTotalPool(data.totalPool);
+      if (data.history) setHistory(data.history.slice(-20));
+      
+      setPhase(data.phase);
+      if (data.phase === "result") {
+        setDices(data.dices || [1,1,1]);
+        setIsBowlClosed(false); // Mở bát luôn nếu đang ở phase result
+        setIsShaking(false);
+      } else {
+        setIsBowlClosed(true);
+      }
     });
 
     socket.on("taixiuTick", (data) => {
@@ -77,6 +95,7 @@ export default function TaiXiuPage() {
       socket.off("loginSuccess");
       socket.off("balanceUpdate");
       socket.off("taixiuHistory");
+      socket.off("taixiuState");
       socket.off("taixiuTick");
     };
   }, [session, nav, handlePhaseChange]);
