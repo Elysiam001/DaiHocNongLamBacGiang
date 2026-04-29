@@ -22,21 +22,38 @@ const Dice3D = ({ value, shaking, className }) => (
 export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
+
+  // Logic tính toán thời gian thực tế ngay lập tức
+  const getGlobalState = () => {
+    const cycleTotal = 45; // 30s betting + 15s result
+    const totalSeconds = Math.floor(Date.now() / 1000);
+    const currentCycleSec = totalSeconds % cycleTotal;
+    const currentSId = Math.floor(totalSeconds / cycleTotal);
+    
+    if (currentCycleSec < 30) {
+      return { 
+        timer: 30 - currentCycleSec, 
+        phase: "betting", 
+        sessionId: currentSId,
+        isBowlClosed: true 
+      };
+    } else {
+      return { 
+        timer: cycleTotal - currentCycleSec, 
+        phase: "result", 
+        sessionId: currentSId,
+        isBowlClosed: false
+      };
+    }
+  };
+
+  // Game State - Khởi tạo giá trị đúng ngay từ Frame đầu tiên
+  const initialState = getGlobalState();
+  const [timer, setTimer] = useState(initialState.timer);
+  const [phase, setPhase] = useState(initialState.phase);
+  const [sessionId, setSessionId] = useState(initialState.sessionId);
+  const [isBowlClosed, setIsBowlClosed] = useState(initialState.isBowlClosed);
   
-  // Game State
-  const [timer, setTimer] = useState(30);
-  const [phase, setPhase] = useState("betting");
-  const [dices, setDices] = useState([1, 1, 1]);
-  const [isBowlClosed, setIsBowlClosed] = useState(true);
-  const [isShaking, setIsShaking] = useState(false);
-  const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
-  const [sessionId, setSessionId] = useState(0);
-  const [history, setHistory] = useState([]);
-
-  const lastUpdate = useRef(0);
-
-  const totalDice = dices.reduce((a, b) => a + b, 0);
-
   // Logic tạo kết quả đồng bộ dựa trên số phiên (Seed)
   const getDeterministicResult = (sId) => {
     const seed = sId * 12345;
@@ -49,6 +66,13 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       Math.floor(Math.abs(r3)) + 1
     ];
   };
+
+  const [dices, setDices] = useState(() => getDeterministicResult(initialState.sessionId));
+  const [isShaking, setIsShaking] = useState(false);
+  const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
+  const [history, setHistory] = useState([]);
+
+  const totalDice = dices.reduce((a, b) => a + b, 0);
 
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
