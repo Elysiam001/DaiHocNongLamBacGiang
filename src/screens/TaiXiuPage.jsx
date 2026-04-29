@@ -108,8 +108,8 @@ export default function TaiXiuPage() {
   const totalDice = dices.reduce((a, b) => a + b, 0);
 
   // Helper component for 3D Dice
-  const Dice3D = ({ value, shaking }) => (
-    <div className={`dice-3d ${shaking ? 'shaking' : `show-${value}`}`}>
+  const Dice3D = ({ value, shaking, className }) => (
+    <div className={`dice-3d ${className} ${shaking ? 'shaking' : `show-${value}`}`}>
       <div className="dice-face face-1"><div className="dot"></div></div>
       <div className="dice-face face-2"><div className="dot"></div><div className="dot"></div></div>
       <div className="dice-face face-3"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
@@ -165,9 +165,9 @@ export default function TaiXiuPage() {
                     <div className="go88-result-val-top">{totalDice}</div>
                   )}
 
-                  <Dice3D value={dices[0]} shaking={isShaking} />
-                  <Dice3D value={dices[1]} shaking={isShaking} />
-                  <Dice3D value={dices[2]} shaking={isShaking} />
+                  <Dice3D value={dices[0]} shaking={isShaking} className="dice-1" />
+                  <Dice3D value={dices[1]} shaking={isShaking} className="dice-2" />
+                  <Dice3D value={dices[2]} shaking={isShaking} className="dice-3" />
                </div>
              )}
              

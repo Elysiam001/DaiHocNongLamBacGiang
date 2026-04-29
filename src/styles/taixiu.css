@@ -213,9 +213,9 @@
 }
 
 /* Fixed Triangle Positions */
-.dice-3d:nth-child(2) { top: 20px; left: 30px; } /* Top Left */
-.dice-3d:nth-child(3) { top: 20px; right: 30px; } /* Top Right */
-.dice-3d:nth-child(4) { bottom: 20px; left: 50%; transform: translateX(-50%); } /* Bottom Center */
+.dice-1 { top: 20px; left: 30px; } /* Top Left */
+.dice-2 { top: 20px; right: 30px; } /* Top Right */
+.dice-3 { bottom: 20px; left: 50%; transform: translateX(-50%); } /* Bottom Center */
 
 .dice-face {
   position: absolute; width: 50px; height: 50px;
@@ -236,9 +236,9 @@
 .face-6 { transform: rotateX(-90deg) translateZ(25px); }
 
 /* PREMIUM ROLLING ANIMATIONS - Natural & Fluid */
-.dice-3d.shaking:nth-child(1) { animation: rolling-dice-1 0.6s infinite linear; }
-.dice-3d.shaking:nth-child(2) { animation: rolling-dice-2 0.7s infinite linear; }
-.dice-3d.shaking:nth-child(3) { animation: rolling-dice-3 0.65s infinite linear; }
+.dice-1.shaking { animation: rolling-dice-1 0.6s infinite linear; }
+.dice-2.shaking { animation: rolling-dice-2 0.7s infinite linear; }
+.dice-3.shaking { animation: rolling-dice-3 0.65s infinite linear; }
 
 @keyframes rolling-dice-1 {
   0% { transform: rotateX(0deg) rotateY(0deg) translateY(0); }
