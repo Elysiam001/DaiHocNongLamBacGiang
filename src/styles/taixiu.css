@@ -136,6 +136,7 @@
   box-shadow: 0 0 40px rgba(255, 204, 0, 0.5);
   z-index: 5;
   margin-top: 20px;
+  position: relative; /* Sửa lỗi: Cố định vị trí bát */
 }
 .go88-timer-val {
   color: #ffcc00; font-size: 100px; font-weight: 900;
