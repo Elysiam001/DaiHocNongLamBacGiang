@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
-const socket = io("https://dainochonglambacgiang.onrender.com", {
+const socket = io("https://daihocnonglambacgiang.onrender.com", {
   transports: ["websocket"],
   reconnection: true,
   reconnectionAttempts: 5
