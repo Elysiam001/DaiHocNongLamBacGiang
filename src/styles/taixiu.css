@@ -1,209 +1,156 @@
+/* GO88 STYLE TAI XIU - 100% FIDELITY */
 .taixiu-modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100vh;
-  background: rgba(0, 0, 0, 0.7); /* Nền mờ để nhìn thấy sảnh */
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex; align-items: center; justify-content: center; z-index: 9999;
+  font-family: 'Outfit', sans-serif;
+}
+
+.go88-main-container {
+  position: relative; width: 900px; height: 500px;
   display: flex; align-items: center; justify-content: center;
-  z-index: 9999; /* Đảm bảo nổi lên trên tất cả */
-  backdrop-filter: blur(3px); /* Làm mờ sảnh một chút cho sang */
 }
 
-.modal-user-balance {
-  position: absolute; top: 15px; left: 20px;
-  background: rgba(0,0,0,0.6); border: 1px solid #f9da62;
-  border-radius: 20px; padding: 5px 15px;
-  display: flex; align-items: center; gap: 10px;
-  color: #fff; font-weight: bold; font-size: 16px;
-  z-index: 200;
-}
-.coin-icon {
-  width: 24px; height: 24px; background: #f9da62; color: #000;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-weight: 1000; font-size: 14px;
-}
-
-.go88-overlay {
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+/* OVAL TABLE */
+.go88-table-oval {
+  width: 800px; height: 380px;
+  background: radial-gradient(circle at center, #006688 0%, #004466 100%);
+  border: 4px solid #55aacc;
+  border-radius: 200px;
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.6), 0 20px 60px rgba(0,0,0,0.8);
   position: relative;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  overflow: visible;
 }
 
-/* JACKPOT HEADER - Sát đỉnh bàn */
-.go88-top-header {
-  position: absolute; top: 12%;
-  width: 400px; height: 50px;
-  background: linear-gradient(180deg, #105e7a 0%, #041b24 100%);
-  border: 2px solid #f9da62;
-  border-radius: 25px;
+/* TOP HEADER DECORATION */
+.go88-top-deco {
+  position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+  width: 450px; height: 80px;
+  background: linear-gradient(180deg, #005577 0%, #003355 100%);
+  border: 2px solid #ffcc00; border-radius: 40px 40px 0 0;
   display: flex; align-items: center; justify-content: center;
-  z-index: 100;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+  z-index: 10;
 }
-.jackpot-val {
-  font-size: 28px; font-weight: 1000; color: #f9da62;
-  text-shadow: 0 0 10px #f9da62;
+.go88-top-deco::before {
+  content: ""; position: absolute; left: -20px; top: 10px;
+  width: 80px; height: 80px;
+  background: url('https://i.ibb.co/L9H8XyQ/gold-dragon.png') no-repeat center; /* Phác thảo rồng vàng */
+  background-size: contain;
 }
-
-/* BÀN CƯỢC CHÍNH - Tỉ lệ chuẩn */
-.go88-main-table {
-  width: 860px; height: 440px;
-  background: linear-gradient(180deg, #105e7a 0%, #0a3d50 40%, #041b24 100%);
-  border: 4px solid #f9da62;
-  border-radius: 220px;
-  position: relative;
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,1);
+.go88-top-deco::after {
+  content: ""; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 60px;
+  background: url('https://i.ibb.co/vYfD0mF/gold-coins.png') no-repeat center; /* Phác thảo tiền vàng */
+  background-size: contain;
 }
 
-/* MENU ICON - Thu nhỏ và đặt sát viền */
-.side-menu {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  display: flex; flex-direction: column; gap: 12px;
-  z-index: 110;
+.go88-jackpot-wrap {
+  background: rgba(0,0,0,0.4); padding: 5px 30px; border-radius: 20px;
+  border: 1px solid #ffcc00; text-align: center;
 }
-.side-menu.left { left: 20px; }
-.side-menu.right { right: 20px; }
+.go88-jackpot-val {
+  color: #ffcc00; font-size: 24px; font-weight: 900;
+  text-shadow: 0 0 10px rgba(255,204,0,0.8); letter-spacing: 1px;
+}
+.go88-session-id {
+  position: absolute; right: 40px; color: #ffcc00; font-size: 14px; font-weight: bold;
+}
 
-.circle-btn {
-  width: 42px; height: 42px;
-  border: 2px solid #f9da62;
-  border-radius: 50%;
+/* SIDE BUTTONS */
+.circle-icon-btn {
+  width: 55px; height: 55px; border-radius: 50%;
+  border: 2px solid #fff; cursor: pointer; transition: 0.2s;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; font-weight: 1000;
-  cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-  transition: 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  position: absolute;
 }
-.circle-btn.blue { background: radial-gradient(circle, #2196f3, #0d47a1); }
-.circle-btn.red { background: radial-gradient(circle, #f44336, #b71c1c); }
-.circle-btn.gray { background: radial-gradient(circle, #888, #444); color: #f9da62; }
+.circle-icon-btn:hover { transform: scale(1.1); }
+.circle-icon-btn i { font-size: 24px; color: #fff; }
 
-/* Vị trí uốn lượn sát mép cong */
-.side-menu.left .circle-btn:nth-child(1), .side-menu.left .circle-btn:nth-child(4) { transform: translateX(35px); }
-.side-menu.right .circle-btn:nth-child(1), .side-menu.right .circle-btn:nth-child(4) { transform: translateX(-35px); }
+.btn-info { top: -20px; left: 110px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-close { top: -20px; right: 110px; background: radial-gradient(circle, #cc3333, #880000); }
 
-/* NỘI DUNG BÀN */
-.table-content {
-  width: 100%; height: 100%;
-  display: flex; justify-content: center; align-items: center;
-  position: relative;
-}
+/* Left Column Buttons */
+.btn-chart { left: -30px; top: 40px; background: radial-gradient(circle, #cc3333, #880000); }
+.btn-help { left: -45px; top: 120px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-log { left: -30px; top: 200px; background: radial-gradient(circle, #446688, #223344); }
 
-.door {
-  width: 250px; display: flex; flex-direction: column; align-items: center;
-  z-index: 50;
-}
-.door.tai { margin-right: 220px; }
-.door.xiu { margin-left: 220px; }
+/* Right Column Buttons */
+.btn-rank { right: -30px; top: 40px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-chat { right: -45px; top: 120px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-mute { right: -30px; top: 200px; background: radial-gradient(circle, #888, #444); }
 
-.user-stats {
-  background: rgba(0,0,0,0.5); padding: 2px 10px; border-radius: 10px;
-  color: #ffcc00; font-size: 14px; display: flex; align-items: center; gap: 5px;
-}
-
-.metallic-text {
-  font-size: 90px; font-weight: 1000;
-  background: linear-gradient(180deg, #fff 0%, #aaa 45%, #666 50%, #888 55%, #fff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 5px 10px rgba(0,0,0,1));
-  margin: -10px 0;
-}
-
-.pool-amount {
-  font-size: 32px; font-weight: 1000; color: #f9da62;
-  text-shadow: 0 2px 4px #000; margin-bottom: 15px;
-}
-
-.glossy-bet-btn {
-  width: 140px; height: 45px;
-  background: linear-gradient(180deg, #f9da62 0%, #ff8f00 100%);
-  border: none; border-radius: 22px;
-  color: #fff; font-size: 18px; font-weight: 1000;
-  cursor: pointer; box-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.6);
-}
-
-/* VÒNG TRÒN MD5 TRUNG TÂM - Cân đối */
-.md5-center-circle {
-  width: 210px; height: 210px;
-  background: radial-gradient(circle, #2c2c2c 0%, #000 100%);
-  border: 8px solid #0a3d50;
-  border-radius: 50%;
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  box-shadow: 0 0 30px rgba(0,0,0,1), inset 0 0 20px #000;
-  display: flex; flex-direction: column; align-items: center;
-  z-index: 60;
-}
-.md5-center-circle::after {
-  content: ""; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
-  border: 3px solid #f9da62; border-radius: 50%;
-}
-
-.timer-box { margin-top: 15px; height: 60px; display: flex; align-items: center; }
-.timer-num {
-  font-size: 60px; font-weight: 1000; color: #f9da62;
-  text-shadow: 0 0 20px #f9da62;
-}
-
-.dice-container { width: 100%; display: flex; justify-content: center; margin-top: 5px; }
-.dice-group { display: flex; gap: 5px; z-index: 10; }
-.real-dice {
-  width: 38px; height: 38px; background: #c62828;
-  border-radius: 6px; display: grid; grid-template: repeat(3, 1fr)/repeat(3, 1fr);
-  padding: 5px; box-sizing: border-box;
-}
-.real-dice .dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; margin: auto; }
-.real-dice.d-1 .dot { width: 12px; height: 12px; grid-area: 2/2; }
-
-.real-bowl {
-  position: absolute; top: 0; left: 0; width: 210px; height: 210px;
-  background: radial-gradient(circle at 35% 35%, #fff 0%, #bbb 45%, #666 100%);
-  border-radius: 50%; z-index: 70;
-  box-shadow: 0 20px 40px rgba(0,0,0,1);
-  transition: 0.8s;
-}
-
-/* LỊCH SỬ BOTTOM - Cân chỉnh */
-.history-line {
-  position: absolute; bottom: 65px; left: 50%; transform: translateX(-50%);
-  width: 320px; height: 28px;
-  background: rgba(0,0,0,0.5); border: 1.5px solid #0a3d50;
-  border-radius: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;
-  z-index: 80;
-}
-.dot-h { width: 12px; height: 12px; border-radius: 50%; }
-.dot-h.white { background: #fff; box-shadow: 0 0 8px #fff; }
-.dot-h.black { background: #222; border: 1px solid #444; }
-.last-res {
-  width: 24px; height: 24px; background: #f9da62; color: #000;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-weight: 1000; font-size: 12px;
-}
-
-/* HASH BAR */
-.hash-footer-bar {
-  position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-  width: 480px; height: 35px;
-  background: #3e1a0d; border: 1.5px solid #8b5d2e;
-  border-radius: 20px; display: flex; align-items: center; padding: 0 5px;
-  z-index: 80;
-}
-.label-hash {
-  background: #8b5d2e; color: #f9da62; padding: 3px 12px;
-  border-radius: 15px; font-size: 11px; font-weight: bold;
-}
-.val-hash { flex: 1; text-align: center; color: #fff; font-size: 12px; opacity: 0.8; }
-.copy-action { color: #f9da62; font-weight: bold; cursor: pointer; padding: 0 10px; font-size: 12px; }
-
-/* CHIPS BAR - Căn giữa chuẩn */
-.go88-chips-bar {
-  position: absolute; bottom: 8%;
-  display: flex; gap: 15px; z-index: 150;
-}
-.go88-chip-item {
-  width: 65px; height: 65px; background: #ffcc00;
-  border: 4px dashed #fff; border-radius: 50%;
+/* CENTER TIMER */
+.go88-timer-circle {
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, #222, #000);
+  border: 6px solid #ffcc00; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: #000; font-weight: 1000; font-size: 16px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
-  cursor: pointer; transition: 0.2s;
+  box-shadow: 0 0 30px rgba(255, 204, 0, 0.4);
+  z-index: 5;
 }
-.go88-chip-item:hover { transform: translateY(-10px) scale(1.1); }
+.go88-timer-val {
+  color: #ffcc00; font-size: 80px; font-weight: 900;
+  text-shadow: 2px 2px 10px rgba(255, 204, 0, 0.8);
+}
+
+/* SIDE CONTENT (TAI / XIU) */
+.go88-side {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.go88-text-metallic {
+  font-size: 70px; font-weight: 1000; color: #ddd;
+  background: linear-gradient(180deg, #fff 0%, #aaa 50%, #888 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.8));
+  letter-spacing: 5px;
+}
+.go88-pool-val {
+  color: #ffcc00; font-size: 28px; font-weight: 900;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+.go88-user-count {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(0,0,0,0.5); padding: 2px 15px; border-radius: 10px;
+  color: #ffcc00; font-size: 14px; font-weight: bold;
+}
+
+/* CƯỢC BUTTON */
+.btn-cuoc-glossy {
+  width: 160px; height: 55px;
+  background: linear-gradient(180deg, #ff9900 0%, #cc6600 100%);
+  border: 2px solid #fff; border-radius: 30px;
+  color: #fff; font-size: 22px; font-weight: 1000;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  cursor: pointer; position: relative; overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+.btn-cuoc-glossy::before {
+  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+  background: rgba(255,255,255,0.2);
+}
+
+/* HISTORY DOTS */
+.go88-history-row {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px;
+  background: rgba(0,0,0,0.4); padding: 5px 20px; border-radius: 20px;
+}
+.hist-dot {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff;
+}
+.hist-dot.tai { background: #fff; }
+.hist-dot.xiu { background: #000; }
+
+/* DICE ANIMATION (WHEN RESULT) */
+.dice-result-wrap {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  display: flex; gap: 10px; z-index: 10;
+}
+.go88-dice {
+  width: 50px; height: 50px; background: #fff; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
