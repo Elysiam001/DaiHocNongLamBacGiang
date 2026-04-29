@@ -23,15 +23,29 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
   
-  // Game State
-  const [timer, setTimer] = useState(30);
-  const [phase, setPhase] = useState("betting");
-  const [dices, setDices] = useState([1, 1, 1]);
-  const [isBowlClosed, setIsBowlClosed] = useState(true);
+  // Game State - Khoi phuc tinh nang nho bo nho
+  const [timer, setTimer] = useState(() => {
+    const saved = Number(localStorage.getItem("tx_timer"));
+    return (saved > 0 && saved <= 30) ? saved : 30;
+  });
+  const [phase, setPhase] = useState(() => localStorage.getItem("tx_phase") || "betting");
+  const [dices, setDices] = useState(() => JSON.parse(localStorage.getItem("tx_dices")) || [1, 1, 1]);
+  const [isBowlClosed, setIsBowlClosed] = useState(() => localStorage.getItem("tx_bowl") !== "open");
   const [isShaking, setIsShaking] = useState(false);
-  const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
-  const [sessionId, setSessionId] = useState(() => Math.floor(Date.now() / 60000));
-  const [history, setHistory] = useState([]);
+  const [totalPool, setTotalPool] = useState(() => JSON.parse(localStorage.getItem("tx_pool")) || { tai: 0, xiu: 0 });
+  const [sessionId, setSessionId] = useState(() => Number(localStorage.getItem("tx_sid")) || Math.floor(Date.now() / 60000));
+  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem("tx_history")) || []);
+
+  // Luu vao LocalStorage moi khi trang thai thay doi
+  useEffect(() => {
+    localStorage.setItem("tx_timer", timer);
+    localStorage.setItem("tx_phase", phase);
+    localStorage.setItem("tx_dices", JSON.stringify(dices));
+    localStorage.setItem("tx_bowl", isBowlClosed ? "closed" : "open");
+    localStorage.setItem("tx_pool", JSON.stringify(totalPool));
+    localStorage.setItem("tx_sid", sessionId);
+    localStorage.setItem("tx_history", JSON.stringify(history));
+  }, [timer, phase, dices, isBowlClosed, totalPool, sessionId, history]);
 
   // Refs to handle sync vs local
   const lastServerTick = useRef(0);
