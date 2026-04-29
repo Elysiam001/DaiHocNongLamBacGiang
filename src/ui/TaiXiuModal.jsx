@@ -1,34 +1,20 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
 const socket = io("https://dainochonglambacgiang.onrender.com");
 
-const Dice3D = ({ value, isShaking }) => {
-  const getRotation = (v) => {
-    switch (v) {
-      case 1: return "rotateX(-20deg) rotateY(-25deg)";
-      case 2: return "rotateX(-20deg) rotateY(155deg)";
-      case 3: return "rotateX(-20deg) rotateY(-115deg)";
-      case 4: return "rotateX(-20deg) rotateY(65deg)";
-      case 5: return "rotateX(-110deg) rotateY(0deg)";
-      case 6: return "rotateX(70deg) rotateY(0deg)";
-      default: return "";
-    }
-  };
-
-  return (
-    <div className={`dice-3d ${isShaking ? 'shaking' : ''}`} style={{ transform: isShaking ? "" : getRotation(value) }}>
-      <div className="dice-face face-1"><div className="dot"></div></div>
-      <div className="dice-face face-2"><div className="dot"></div><div className="dot"></div></div>
-      <div className="dice-face face-3"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-      <div className="dice-face face-4"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-      <div className="dice-face face-5"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-      <div className="dice-face face-6"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-    </div>
-  );
-};
+const Dice3D = ({ value, shaking, className }) => (
+  <div className={`dice-3d ${className} ${shaking ? 'shaking' : `show-${value}`}`}>
+    <div className="dice-face face-1"><div className="dot"></div></div>
+    <div className="dice-face face-2"><div className="dot"></div><div className="dot"></div></div>
+    <div className="dice-face face-3"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+    <div className="dice-face face-4"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+    <div className="dice-face face-5"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+    <div className="dice-face face-6"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+  </div>
+);
 
 export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
@@ -48,6 +34,11 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
+
+  const totalDice = dices.reduce((a, b) => a + b, 0);
 
   // Luu vao LocalStorage
   useEffect(() => {
@@ -77,7 +68,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
   useEffect(() => {
     if (!session) return;
-    
     socket.emit("login", { username: session.username });
     socket.emit("taixiuJoin");
 
@@ -159,14 +149,8 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
   const handleBet = (side, amount) => {
     if (phase !== "betting" || !isBowlClosed) return;
-    setBalance(prev => prev - amount);
+    // Logic cuoc thuc te qua socket se them sau
   };
-
-  const mockHistory = [
-    { session: sessionId - 1, time: "12:35:10", bet: "100,000", win: "+196,000", detail: "Tài (1-5-6)" },
-    { session: sessionId - 2, time: "12:34:05", bet: "50,000", win: "-50,000", detail: "Xỉu (2-2-1)" },
-    { session: sessionId - 3, time: "12:33:00", bet: "200,000", win: "+392,000", detail: "Tài (4-4-6)" },
-  ];
 
   return (
     <div className="taixiu-modal-overlay">
@@ -231,34 +215,20 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
                 <div className="history-close-btn" onClick={() => setIsHistoryOpen(false)}><i className="fa-solid fa-xmark"></i></div>
               </div>
               <div className="history-body">
-                <div className="history-table-head">
-                  <div className="history-col">Phiên</div><div className="history-col">Thời Gian</div><div className="history-col">Tổng Cược</div><div className="history-col">Tiền Thắng</div><div className="history-col">Chi Tiết Chơi</div>
-                </div>
-                <div className="history-list">
-                  {mockHistory.map((item, index) => (
-                    <div key={index} className="history-row">
-                      <div className="history-cell">#{item.session}</div><div className="history-cell">{item.time}</div><div className="history-cell">{item.bet}</div><div className={`history-cell ${item.win.startsWith('+') ? 'win' : 'loss'}`}>{item.win}</div><div className="history-cell">{item.detail}</div>
-                    </div>
-                  ))}
-                </div>
+                <p style={{color: '#fff', textAlign: 'center', padding: 20}}>Dữ liệu lịch sử đang được cập nhật...</p>
               </div>
-              <div className="history-footer">Trang: 1</div>
             </div>
           )}
 
-          {/* Rules Modal */}
           {isRulesOpen && (
             <div className="history-modal-overlay">
               <div className="history-header">
-                <div className="history-title">Luật Chơi Tài Xỉu</div>
+                <div className="history-title">Luật Chơi</div>
                 <div className="history-close-btn" onClick={() => setIsRulesOpen(false)}><i className="fa-solid fa-xmark"></i></div>
               </div>
-              <div className="history-body rules-content" style={{ overflowY: 'auto', color: '#fff', padding: 20 }}>
-                <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>GIỚI THIỆU</h4>
-                <p style={{ fontSize: 13, marginBottom: 15 }}>Tài Xỉu là game hot nhất hiện nay tại Việt Nam. Người chơi lựa chọn đặt cược vào cửa Tài hoặc Xỉu để giành chiến thắng.</p>
-                <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>CÁCH TÍNH NỔ HŨ</h4>
-                <p style={{ fontSize: 13, marginBottom: 5 }}>Hũ sẽ nổ khi kết quả xúc xắc rơi vào trường hợp đặc biệt:</p>
-                <ul style={{ fontSize: 13, marginLeft: 20, marginBottom: 15 }}><li>Xỉu nổ hũ: 1-1-1 (Tổng 3)</li><li>Tài nổ hũ: 6-6-6 (Tổng 18)</li></ul>
+              <div className="history-body" style={{color: '#fff', padding: 20}}>
+                <p>4-10: Xỉu</p>
+                <p>11-17: Tài</p>
               </div>
             </div>
           )}
