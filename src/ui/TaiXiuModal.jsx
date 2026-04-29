@@ -15,6 +15,9 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
   const [sessionId, setSessionId] = useState(0);
 
+  // MODAL STATES
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
   // DRAG STATE
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -59,6 +62,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   // DRAG HANDLERS
   const onMouseDown = (e) => {
     if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
+       if (isHistoryOpen) return; // Disable drag when history is open
        setIsDragging(true);
        setDragOffset({
          x: e.clientX - position.x,
@@ -92,6 +96,12 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
     socket.emit("taixiuBet", { username: session?.username, side, amount });
   };
 
+  const mockHistory = [
+    { session: sessionId - 1, time: "12:35:10", bet: "100,000", win: "+196,000", detail: "Tài (1-5-6)" },
+    { session: sessionId - 2, time: "12:34:05", bet: "50,000", win: "-50,000", detail: "Xỉu (2-2-1)" },
+    { session: sessionId - 3, time: "12:33:00", bet: "200,000", win: "+392,000", detail: "Tài (4-4-6)" },
+  ];
+
   return (
     <div className="taixiu-modal-overlay">
       <div 
@@ -103,8 +113,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
         {/* OVAL TABLE */}
         <div className="go88-table-oval">
           
-          {/* ALL BUTTONS INSIDE OVAL FOR PRECISION */}
-          <div className="circle-icon-btn btn-info"><i className="fa-solid fa-info"></i></div>
+          <div className="circle-icon-btn btn-info" onClick={() => setIsHistoryOpen(true)}><i className="fa-solid fa-info"></i></div>
           <div className="circle-icon-btn btn-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></div>
 
           <div className="circle-icon-btn btn-chart"><i className="fa-solid fa-chart-line"></i></div>
@@ -156,6 +165,39 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
               <div key={i} className={`hist-dot ${Math.random() > 0.5 ? 'tai' : 'xiu'}`}></div>
             ))}
           </div>
+
+          {/* BET HISTORY MODAL OVERLAY */}
+          {isHistoryOpen && (
+            <div className="history-modal-overlay">
+              <div className="history-header">
+                <div className="history-title">Lịch Sử Cược</div>
+                <div className="history-close-btn" onClick={() => setIsHistoryOpen(false)}>
+                   <i className="fa-solid fa-xmark"></i>
+                </div>
+              </div>
+              <div className="history-body">
+                <div className="history-table-head">
+                  <div className="history-col">Phiên</div>
+                  <div className="history-col">Thời Gian</div>
+                  <div className="history-col">Tổng Cược</div>
+                  <div className="history-col">Tiền Thắng</div>
+                  <div className="history-col">Chi Tiết Chơi</div>
+                </div>
+                <div className="history-list">
+                  {mockHistory.map((item, index) => (
+                    <div key={index} className="history-row">
+                      <div className="history-cell">#{item.session}</div>
+                      <div className="history-cell">{item.time}</div>
+                      <div className="history-cell">{item.bet}</div>
+                      <div className={`history-cell ${item.win.startsWith('+') ? 'win' : 'loss'}`}>{item.win}</div>
+                      <div className="history-cell">{item.detail}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="history-footer">Trang: 1</div>
+            </div>
+          )}
 
         </div>
       </div>
