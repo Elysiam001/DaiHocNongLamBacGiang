@@ -17,6 +17,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
   // MODAL STATES
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
 
   // DRAG STATE
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -62,7 +63,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   // DRAG HANDLERS
   const onMouseDown = (e) => {
     if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
-       if (isHistoryOpen) return; // Disable drag when history is open
+       if (isHistoryOpen || isRulesOpen) return;
        setIsDragging(true);
        setDragOffset({
          x: e.clientX - position.x,
@@ -117,7 +118,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           <div className="circle-icon-btn btn-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></div>
 
           <div className="circle-icon-btn btn-chart"><i className="fa-solid fa-chart-line"></i></div>
-          <div className="circle-icon-btn btn-help"><i className="fa-solid fa-question"></i></div>
+          <div className="circle-icon-btn btn-help" onClick={() => setIsRulesOpen(true)}><i className="fa-solid fa-question"></i></div>
           <div className="circle-icon-btn btn-log"><i className="fa-solid fa-scroll"></i></div>
 
           <div className="circle-icon-btn btn-rank"><i className="fa-solid fa-trophy"></i></div>
@@ -166,7 +167,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             ))}
           </div>
 
-          {/* BET HISTORY MODAL OVERLAY */}
+          {/* BET HISTORY MODAL */}
           {isHistoryOpen && (
             <div className="history-modal-overlay">
               <div className="history-header">
@@ -196,6 +197,36 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
                 </div>
               </div>
               <div className="history-footer">Trang: 1</div>
+            </div>
+          )}
+
+          {/* GAME RULES MODAL */}
+          {isRulesOpen && (
+            <div className="history-modal-overlay">
+              <div className="history-header">
+                <div className="history-title">Luật Chơi Tài Xỉu</div>
+                <div className="history-close-btn" onClick={() => setIsRulesOpen(false)}>
+                   <i className="fa-solid fa-xmark"></i>
+                </div>
+              </div>
+              <div className="history-body rules-content" style={{ overflowY: 'auto', color: '#fff' }}>
+                <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>GIỚI THIỆU</h4>
+                <p style={{ fontSize: 13, marginBottom: 15 }}>Tài Xỉu là game hot nhất hiện nay tại Việt Nam. Người chơi lựa chọn đặt cược vào cửa Tài hoặc Xỉu để giành chiến thắng.</p>
+                
+                <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>CÁCH TÍNH NỔ HŨ</h4>
+                <p style={{ fontSize: 13, marginBottom: 5 }}>Hũ sẽ nổ khi kết quả xúc xắc rơi vào trường hợp đặc biệt:</p>
+                <ul style={{ fontSize: 13, marginLeft: 20, marginBottom: 15 }}>
+                  <li>Xỉu nổ hũ: 1-1-1 (Tổng 3)</li>
+                  <li>Tài nổ hũ: 6-6-6 (Tổng 18)</li>
+                </ul>
+
+                <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>CHIA TIỀN THƯỞNG</h4>
+                <p style={{ fontSize: 13 }}>Tiền thắng hũ sẽ được chia theo tỷ lệ cược của người chơi:</p>
+                <div style={{ background: 'rgba(0,0,0,0.5)', padding: 10, borderRadius: 5, marginTop: 10, textAlign: 'center' }}>
+                   <div style={{ borderBottom: '1px solid #fff', paddingBottom: 5, marginBottom: 5 }}>Tiền cược x Tiền hũ</div>
+                   <div>Tổng tiền đặt</div>
+                </div>
+              </div>
             </div>
           )}
 
