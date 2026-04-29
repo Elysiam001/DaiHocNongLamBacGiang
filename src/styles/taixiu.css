@@ -263,11 +263,26 @@
 
 /* Tư thế dừng của xúc xắc */
 .dice-3d.show-1 { transform: rotateX(0deg) rotateY(0deg); }
-.dice-3d.show-2 { transform: rotateY(-180deg); }
-.dice-3d.show-3 { transform: rotateY(-90deg); }
-.dice-3d.show-4 { transform: rotateY(90deg); }
-.dice-3d.show-5 { transform: rotateX(-90deg); }
-.dice-3d.show-6 { transform: rotateX(90deg); }
+.dice-3d.show-2 { transform: rotateX(0deg) rotateY(-180deg); }
+.dice-3d.show-3 { transform: rotateX(0deg) rotateY(-90deg); }
+.dice-3d.show-4 { transform: rotateX(0deg) rotateY(90deg); }
+.dice-3d.show-5 { transform: rotateX(-90deg) rotateY(0deg); }
+.dice-3d.show-6 { transform: rotateX(90deg) rotateY(0deg); }
+
+/* RESULT BANNER */
+.go88-result-banner {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%);
+  color: #000; padding: 5px 25px; border-radius: 30px;
+  font-size: 24px; font-weight: 1000; z-index: 100;
+  box-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
+  border: 2px solid #fff;
+  animation: pop-up 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes pop-up {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
 
 /* Indented Dots Styling */
 .dice-face .dot { 

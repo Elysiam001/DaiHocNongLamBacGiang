@@ -141,6 +141,13 @@ export default function TaiXiuPage() {
                   <div className="dice-row">
                     <Dice3D value={dices[2]} shaking={isShaking} />
                   </div>
+                  
+                  {/* Banner hiển thị tổng điểm và kết quả khi mở bát */}
+                  {!isBowlClosed && (
+                    <div className="go88-result-banner">
+                      {totalDice} - {totalDice >= 11 ? "TÀI" : "XỈU"}
+                    </div>
+                  )}
                </div>
              )}
              
