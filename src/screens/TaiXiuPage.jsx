@@ -14,6 +14,7 @@ export default function TaiXiuPage() {
   const [phase, setPhase] = useState("betting");
   const [dices, setDices] = useState([1, 1, 1]);
   const [isBowlClosed, setIsBowlClosed] = useState(true);
+  const [isShaking, setIsShaking] = useState(false);
   const [myBet, setMyBet] = useState({ tai: 0, xiu: 0 });
   const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
   const [sessionId, setSessionId] = useState(0);
@@ -21,10 +22,16 @@ export default function TaiXiuPage() {
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
       setIsBowlClosed(true);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 2000); // Rung lắc 2 giây khi bắt đầu
       setMyBet({ tai: 0, xiu: 0 });
     } else if (newPhase === "result") {
-      if (resultDices) setDices(resultDices);
-      setTimeout(() => setIsBowlClosed(false), 500);
+      setIsShaking(true);
+      setTimeout(() => {
+        setIsShaking(false);
+        if (resultDices) setDices(resultDices);
+        setTimeout(() => setIsBowlClosed(false), 500);
+      }, 1000); // Rung lắc 1 giây trước khi mở bát
     }
   }, []);
 
@@ -74,99 +81,100 @@ export default function TaiXiuPage() {
 
   const totalDice = dices.reduce((a, b) => a + b, 0);
 
+  // Helper component for 3D Dice
+  const Dice3D = ({ value, shaking }) => (
+    <div className={`dice-3d ${shaking ? 'shaking' : `show-${value}`}`}>
+      <div className="dice-face face-1"><div className="dot"></div></div>
+      <div className="dice-face face-2"><div className="dot"></div><div className="dot"></div></div>
+      <div className="dice-face face-3"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+      <div className="dice-face face-4"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+      <div className="dice-face face-5"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+      <div className="dice-face face-6">
+        <div className="dot"></div><div className="dot"></div><div className="dot"></div>
+        <div className="dot"></div><div className="dot"></div><div className="dot"></div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="go88-container">
-      <div className="go88-overlay">
+    <div className="taixiu-modal-overlay">
+      <div className="go88-main-container">
         {/* Jackpot & Header Area */}
-        <div className="go88-top-header">
-           <div className="dragon-left"></div>
-           <div className="jackpot-container">
-              <span className="jackpot-val">74,611,761,253</span>
+        <div className="go88-top-deco">
+           <div className="go88-jackpot-wrap">
+              <span className="go88-jackpot-val">74,611,761,253</span>
            </div>
-           <div className="session-tag"># {sessionId}</div>
+           <div className="go88-session-id"># {sessionId}</div>
         </div>
 
-        {/* Bàn cược Capsule */}
-        <div className="go88-main-table">
-          {/* Icon Trái uốn lượn */}
-          <div className="side-menu left">
-            <div className="circle-btn info blue">i</div>
-            <div className="circle-btn chart red"></div>
-            <div className="circle-btn help blue">?</div>
-            <div className="circle-btn log red"></div>
+        {/* Dragon Decoration */}
+        <div className="dragon-decor left"></div>
+        <div className="dragon-decor right"></div>
+
+        {/* Bàn cược Oval */}
+        <div className="go88-table-oval">
+          {/* Icon Menu */}
+          <div className="circle-icon-btn btn-info"><i>i</i></div>
+          <div className="circle-icon-btn btn-chart"></div>
+          <div className="circle-icon-btn btn-help"><i>?</i></div>
+          <div className="circle-icon-btn btn-log"></div>
+
+          <div className="circle-icon-btn btn-close" onClick={() => nav("/lobby")}><i>×</i></div>
+          <div className="circle-icon-btn btn-rank"></div>
+          <div className="circle-icon-btn btn-chat"></div>
+          <div className="circle-icon-btn btn-mute"></div>
+
+          {/* Cửa TÀI */}
+          <div className="go88-side">
+            <div className="go88-user-count">👤 641</div>
+            <div className="go88-text-metallic">TÀI</div>
+            <div className="go88-pool-val">{totalPool.tai.toLocaleString()}</div>
+            <button className="btn-cuoc-glossy" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
           </div>
 
-          {/* Icon Phải uốn lượn */}
-          <div className="side-menu right">
-            <div className="circle-btn close red" onClick={() => nav("/lobby")}>×</div>
-            <div className="circle-btn rank blue"></div>
-            <div className="circle-btn chat blue"></div>
-            <div className="circle-btn sound gray"></div>
-          </div>
-
-          <div className="table-content">
-            {/* Cửa TÀI */}
-            <div className="door tai">
-              <div className="user-stats">
-                 <span className="user-icon"></span> 641
-              </div>
-              <div className="metallic-text">TÀI</div>
-              <div className="pool-amount">{totalPool.tai.toLocaleString()}</div>
-              <button className="glossy-bet-btn" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
-            </div>
-
-            {/* Vòng quay MD5 chính giữa */}
-            <div className="md5-center-circle">
-               <div className="timer-box">
-                  <span className="timer-num">{timer}</span>
-               </div>
+          {/* Timer & Dice Center */}
+          <div className="go88-timer-circle">
+             {isBowlClosed && !isShaking ? (
+               <span className="go88-timer-val">{timer}</span>
+             ) : (
                <div className="dice-container">
-                  <div className="dice-group">
-                    {dices.map((d, i) => (
-                      <div key={i} className={`real-dice d-${d}`}>
-                        {[...Array(d)].map((_, dot) => <div key={dot} className="dot"></div>)}
-                      </div>
-                    ))}
+                  <div className="dice-row">
+                    <Dice3D value={dices[0]} shaking={isShaking} />
+                    <Dice3D value={dices[1]} shaking={isShaking} />
                   </div>
-                  {isBowlClosed && <div className="real-bowl"></div>}
+                  <div className="dice-row">
+                    <Dice3D value={dices[2]} shaking={isShaking} />
+                  </div>
                </div>
-            </div>
+             )}
+             
+             <div className={`go88-bowl-overlay ${isBowlClosed ? '' : 'open'}`}></div>
+          </div>
 
-            {/* Cửa XỈU */}
-            <div className="door xiu">
-              <div className="user-stats">
-                 <span className="user-icon"></span> 384
-              </div>
-              <div className="metallic-text">XỈU</div>
-              <div className="pool-amount">{totalPool.xiu.toLocaleString()}</div>
-              <button className="glossy-bet-btn" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
-            </div>
+          {/* Cửa XỈU */}
+          <div className="go88-side">
+            <div className="go88-user-count">👤 384</div>
+            <div className="go88-text-metallic">XỈU</div>
+            <div className="go88-pool-val">{totalPool.xiu.toLocaleString()}</div>
+            <button className="btn-cuoc-glossy" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
           </div>
 
           {/* Lịch sử soi cầu bottom */}
-          <div className="history-line">
+          <div className="go88-history-row">
              {[...Array(15)].map((_, i) => (
-               <div key={i} className={`dot-h ${Math.random() > 0.5 ? 'white' : 'black'}`}></div>
+               <div key={i} className={`hist-dot ${Math.random() > 0.5 ? 'tai' : 'xiu'}`}></div>
              ))}
-             <div className="last-res">14</div>
           </div>
         </div>
 
-        {/* MD5 Hash Footer */}
-        <div className="hash-footer-bar">
-           <div className="label-hash">CHUỖI HASH</div>
-           <div className="val-hash">64eac0de964ce97f506ffad9dd7363db25...</div>
-           <div className="copy-action">COPY</div>
+        {/* Chips selector */}
+        <div className="go88-chips-bar" style={{ position: 'absolute', bottom: '-80px' }}>
+          {[10000, 50000, 100000, 500000, 1000000].map(val => (
+            <div key={val} className="go88-chip-item">
+              {val >= 1000000 ? (val/1000000)+'M' : (val/1000)+'K'}
+            </div>
+          ))}
         </div>
-      </div>
-
-      {/* Chips selector */}
-      <div className="go88-chips-bar">
-        {[10000, 50000, 100000, 500000, 1000000].map(val => (
-          <div key={val} className="go88-chip-item">
-            {val >= 1000000 ? (val/1000000)+'M' : (val/1000)+'K'}
-          </div>
-        ))}
       </div>
     </div>
   );
