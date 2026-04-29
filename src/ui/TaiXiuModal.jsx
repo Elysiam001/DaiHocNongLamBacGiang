@@ -126,7 +126,15 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
     });
 
     const interval = setInterval(() => {
-      setTimer(prev => (prev > 0 ? prev - 1 : 0));
+      setTimer(prev => {
+        if (prev > 1) return prev - 1;
+        
+        // Neu ve den 0 ma van dang o pha betting thi tu dong chuyen sang result (local fallback)
+        if (prev === 1 && phase === "betting") {
+          handlePhaseChange("result", null); // Tung xuc xac cho server tra ket qua
+        }
+        return 0;
+      });
     }, 1000);
 
     return () => {
