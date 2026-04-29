@@ -18,12 +18,13 @@ export default function TaiXiuPage() {
   const [myBet, setMyBet] = useState({ tai: 0, xiu: 0 });
   const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
   const [sessionId, setSessionId] = useState(0);
+  const [history, setHistory] = useState([]); // Lưu lịch sử thực tế từ server
 
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
       setIsBowlClosed(true);
       setIsShaking(true);
-      setTimeout(() => setIsShaking(false), 2000); // Rung lắc 2 giây khi bắt đầu
+      setTimeout(() => setIsShaking(false), 2000); 
       setMyBet({ tai: 0, xiu: 0 });
     } else if (newPhase === "result") {
       setIsShaking(true);
@@ -31,7 +32,7 @@ export default function TaiXiuPage() {
         setIsShaking(false);
         if (resultDices) setDices(resultDices);
         setTimeout(() => setIsBowlClosed(false), 500);
-      }, 1000); // Rung lắc 1 giây trước khi mở bát
+      }, 1000);
     }
   }, []);
 
@@ -52,11 +53,16 @@ export default function TaiXiuPage() {
       if (data && data.username === session.username) setBalance(data.newBalance);
     });
 
+    socket.on("taixiuHistory", (data) => {
+      if (Array.isArray(data)) setHistory(data.slice(-20)); // Lấy 20 phiên gần nhất
+    });
+
     socket.on("taixiuTick", (data) => {
       if (!data) return;
       setTimer(data.timer || 0);
       setSessionId(data.sessionId || 0);
       if (data.totalPool) setTotalPool(data.totalPool);
+      if (data.history) setHistory(data.history.slice(-20));
       
       setPhase((prevPhase) => {
         if (data.phase && data.phase !== prevPhase) {
@@ -70,6 +76,7 @@ export default function TaiXiuPage() {
     return () => {
       socket.off("loginSuccess");
       socket.off("balanceUpdate");
+      socket.off("taixiuHistory");
       socket.off("taixiuTick");
     };
   }, [session, nav, handlePhaseChange]);
@@ -160,10 +167,10 @@ export default function TaiXiuPage() {
             <button className="btn-cuoc-glossy" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
           </div>
 
-          {/* Lịch sử soi cầu bottom */}
+          {/* Lịch sử soi cầu bottom (Sử dụng dữ liệu thật) */}
           <div className="go88-history-row">
-             {[...Array(15)].map((_, i) => (
-               <div key={i} className={`hist-dot ${Math.random() > 0.5 ? 'tai' : 'xiu'}`}></div>
+             {history.map((res, i) => (
+               <div key={i} className={`hist-dot ${res === 1 ? 'tai' : 'xiu'}`}></div>
              ))}
           </div>
         </div>
