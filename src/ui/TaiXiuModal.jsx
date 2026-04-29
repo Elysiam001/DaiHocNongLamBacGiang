@@ -6,7 +6,6 @@ import "../styles/taixiu.css";
 const socket = io("https://dainochonglambacgiang.onrender.com");
 
 const Dice3D = ({ value, isShaking }) => {
-  // Dynamic rotation to show faces in a tilted 3D perspective (like in reference image 2)
   const getRotation = (v) => {
     switch (v) {
       case 1: return "rotateX(-20deg) rotateY(-25deg)";
@@ -21,7 +20,7 @@ const Dice3D = ({ value, isShaking }) => {
 
   return (
     <div className={`dice-3d ${isShaking ? 'shaking' : ''}`} style={{ transform: isShaking ? "" : getRotation(value) }}>
-      <div className="dice-face face-1"><div className="dot red"></div></div>
+      <div className="dice-face face-1"><div className="dot"></div></div>
       <div className="dice-face face-2"><div className="dot"></div><div className="dot"></div></div>
       <div className="dice-face face-3"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
       <div className="dice-face face-4"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
@@ -57,6 +56,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
         if (prev > 1) return prev - 1;
 
         if (phase === "betting") {
+          // OPEN BOWL AND SHOW RESULT
           setPhase("result");
           const randomDices = [
             Math.floor(Math.random() * 6) + 1,
@@ -67,9 +67,23 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           setIsBowlClosed(false);
           return 10; 
         } else {
+          // START NEW SESSION: SHAKE -> CLOSE BOWL
           setPhase("betting");
-          setIsBowlClosed(true);
           setSessionId(s => s + 1);
+          setIsBowlClosed(false); // Open briefly to show shaking
+          
+          // Randomize dices while shaking
+          setDices([
+            Math.floor(Math.random() * 6) + 1,
+            Math.floor(Math.random() * 6) + 1,
+            Math.floor(Math.random() * 6) + 1
+          ]);
+
+          // Lập tức úp bát sau 1 giây tung xúc xắc
+          setTimeout(() => {
+            setIsBowlClosed(true);
+          }, 1000);
+
           return 30;
         }
       });
@@ -110,7 +124,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   }, [isDragging, dragOffset]);
 
   const handleBet = (side, amount) => {
-    if (phase !== "betting") return;
+    if (phase !== "betting" || !isBowlClosed) return;
     setBalance(prev => prev - amount);
   };
 
@@ -138,9 +152,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           <div className="circle-icon-btn btn-mute"><i className="fa-solid fa-hand-dots"></i></div>
 
           <div className="go88-top-deco" style={{ cursor: 'grab' }}>
-             <div className="go88-jackpot-wrap">
-                <span className="go88-jackpot-val">{(jackpotValue || 0).toLocaleString()}</span>
-             </div>
+             <div className="go88-jackpot-wrap"><span className="go88-jackpot-val">{(jackpotValue || 0).toLocaleString()}</span></div>
              <div className="go88-session-id">#{sessionId}</div>
           </div>
 
@@ -153,11 +165,20 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
           <div className="go88-timer-circle">
              <div className={`go88-bowl-overlay ${!isBowlClosed ? 'open' : ''}`}>
-                <span className="go88-timer-val">{timer}</span>
+                {phase === 'betting' && isBowlClosed && <span className="go88-timer-val">{timer}</span>}
              </div>
              <div className="dice-container">
                 {!isBowlClosed && <div className="result-glow"></div>}
-                {dices.map((v, i) => <Dice3D key={i} value={v} isShaking={phase === 'betting'} />)}
+                
+                {/* Hàng 1 (1 viên) */}
+                <div className="dice-row">
+                   <Dice3D value={dices[0]} isShaking={phase === 'betting'} />
+                </div>
+                {/* Hàng 2 (2 viên) */}
+                <div className="dice-row">
+                   <Dice3D value={dices[1]} isShaking={phase === 'betting'} />
+                   <Dice3D value={dices[2]} isShaking={phase === 'betting'} />
+                </div>
              </div>
           </div>
 
@@ -174,7 +195,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             ))}
           </div>
 
-          {/* Modals ... */}
+          {/* History Modal */}
           {isHistoryOpen && (
             <div className="history-modal-overlay">
               <div className="history-header">
@@ -197,6 +218,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             </div>
           )}
 
+          {/* Rules Modal */}
           {isRulesOpen && (
             <div className="history-modal-overlay">
               <div className="history-header">
@@ -209,10 +231,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
                 <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>CÁCH TÍNH NỔ HŨ</h4>
                 <p style={{ fontSize: 13, marginBottom: 5 }}>Hũ sẽ nổ khi kết quả xúc xắc rơi vào trường hợp đặc biệt:</p>
                 <ul style={{ fontSize: 13, marginLeft: 20, marginBottom: 15 }}><li>Xỉu nổ hũ: 1-1-1 (Tổng 3)</li><li>Tài nổ hũ: 6-6-6 (Tổng 18)</li></ul>
-                <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>CHIA TIỀN THƯỞNG</h4>
-                <div style={{ background: 'rgba(0,0,0,0.5)', padding: 10, borderRadius: 5, marginTop: 10, textAlign: 'center' }}>
-                   <div style={{ borderBottom: '1px solid #fff', paddingBottom: 5, marginBottom: 5 }}>Tiền cược x Tiền hũ</div><div>Tổng tiền đặt</div>
-                </div>
               </div>
             </div>
           )}
