@@ -34,12 +34,12 @@ const Dice3D = ({ value }) => {
 export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
-  const [timer, setTimer] = useState(0);
+  const [timer, setTimer] = useState(30); // Khởi tạo 30s
   const [phase, setPhase] = useState("betting");
   const [dices, setDices] = useState([1, 1, 1]);
   const [isBowlClosed, setIsBowlClosed] = useState(true);
   const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
-  const [sessionId, setSessionId] = useState(0);
+  const [sessionId, setSessionId] = useState(1024); // Giả lập mã phiên bắt đầu từ 1024
 
   // MODAL STATES
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -50,62 +50,64 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  const handlePhaseChange = useCallback((newPhase, resultDices) => {
-    if (newPhase === "betting") {
-      setIsBowlClosed(true);
-    } else if (newPhase === "result") {
-      if (resultDices) setDices(resultDices);
-      // Wait a bit then open bowl
-      setTimeout(() => setIsBowlClosed(false), 500);
-    }
-  }, []);
+  // GAME LOOP LOGIC (30s Betting -> 10s Result)
+  useEffect(() => {
+    const gameInterval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev > 1) return prev - 1;
+
+        // KHI HẾT GIỜ
+        if (phase === "betting") {
+          // CHUYỂN SANG MỞ BÁT (10 giây)
+          setPhase("result");
+          const randomDices = [
+            Math.floor(Math.random() * 6) + 1,
+            Math.floor(Math.random() * 6) + 1,
+            Math.floor(Math.random() * 6) + 1
+          ];
+          setDices(randomDices);
+          setIsBowlClosed(false); // Mở bát
+          return 10; 
+        } else {
+          // QUAY LẠI ĐẶT CƯỢC (30 giây)
+          setPhase("betting");
+          setIsBowlClosed(true); // Úp bát
+          setSessionId(s => s + 1); // Tăng mã phiên
+          // Fake pool update
+          setTotalPool({ 
+             tai: Math.floor(Math.random() * 100000000), 
+             xiu: Math.floor(Math.random() * 100000000) 
+          });
+          return 30;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(gameInterval);
+  }, [phase]);
 
   useEffect(() => {
     if (!session) return;
     socket.emit("login", { username: session.username });
-    socket.emit("taixiuJoin");
     socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
-    socket.on("taixiuTick", (data) => {
-      if (!data) return;
-      setTimer(data.timer || 0);
-      setSessionId(data.sessionId || 0);
-      if (data.totalPool) setTotalPool(data.totalPool);
-      
-      if (data.phase && data.phase !== phase) {
-        handlePhaseChange(data.phase, data.dices);
-        setPhase(data.phase);
-      }
-    });
-    return () => {
-      socket.off("loginSuccess");
-      socket.off("balanceUpdate");
-      socket.off("taixiuTick");
-    };
-  }, [session, phase, handlePhaseChange]);
+  }, [session]);
 
   // DRAG HANDLERS
   const onMouseDown = (e) => {
     if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
        if (isHistoryOpen || isRulesOpen) return;
        setIsDragging(true);
-       setDragOffset({
-         x: e.clientX - position.x,
-         y: e.clientY - position.y
-       });
+       setDragOffset({ x: e.clientX - position.x, y: e.clientY - position.y });
     }
   };
 
   useEffect(() => {
     const onMouseMove = (e) => {
       if (!isDragging) return;
-      setPosition({
-        x: e.clientX - dragOffset.x,
-        y: e.clientY - dragOffset.y
-      });
+      setPosition({ x: e.clientX - dragOffset.x, y: e.clientY - dragOffset.y });
     };
     const onMouseUp = () => setIsDragging(false);
-
     if (isDragging) {
       window.addEventListener('mousemove', onMouseMove);
       window.addEventListener('mouseup', onMouseUp);
@@ -118,7 +120,8 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
   const handleBet = (side, amount) => {
     if (phase !== "betting") return;
-    socket.emit("taixiuBet", { username: session?.username, side, amount });
+    setBalance(prev => prev - amount);
+    // Emit socket bet if needed
   };
 
   const mockHistory = [
@@ -134,21 +137,16 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
         style={{ transform: `translate(${position.x}px, ${position.y}px)`, cursor: isDragging ? 'grabbing' : 'default' }}
         onMouseDown={onMouseDown}
       >
-        {/* OVAL TABLE */}
         <div className="go88-table-oval">
-          
           <div className="circle-icon-btn btn-info" onClick={() => setIsHistoryOpen(true)}><i className="fa-solid fa-info"></i></div>
           <div className="circle-icon-btn btn-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></div>
-
           <div className="circle-icon-btn btn-chart"><i className="fa-solid fa-chart-line"></i></div>
           <div className="circle-icon-btn btn-help" onClick={() => setIsRulesOpen(true)}><i className="fa-solid fa-question"></i></div>
           <div className="circle-icon-btn btn-log"><i className="fa-solid fa-scroll"></i></div>
-
           <div className="circle-icon-btn btn-rank"><i className="fa-solid fa-trophy"></i></div>
           <div className="circle-icon-btn btn-chat"><i className="fa-solid fa-comment-dots"></i></div>
           <div className="circle-icon-btn btn-mute"><i className="fa-solid fa-hand-dots"></i></div>
 
-          {/* HEADER DECO */}
           <div className="go88-top-deco" style={{ cursor: 'grab' }}>
              <div className="go88-jackpot-wrap">
                 <span className="go88-jackpot-val">{(jackpotValue || 0).toLocaleString()}</span>
@@ -156,7 +154,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
              <div className="go88-session-id">#{sessionId}</div>
           </div>
 
-          {/* TÀI SIDE */}
           <div className="go88-side">
             <div className="go88-user-count"><i className="fa-solid fa-user"></i> 577</div>
             <div className="go88-text-metallic">TÀI</div>
@@ -164,21 +161,16 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             <button className="btn-cuoc-glossy" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
           </div>
 
-          {/* TIMER CENTER - BOWL & DICE AREA */}
           <div className="go88-timer-circle">
-             {/* THE BOWL */}
              <div className={`go88-bowl-overlay ${!isBowlClosed ? 'open' : ''}`}>
-                {phase === 'betting' && <span className="go88-timer-val">{timer}</span>}
+                <span className="go88-timer-val">{timer}</span>
              </div>
-
-             {/* THE DICES */}
              <div className="dice-container">
                 {!isBowlClosed && <div className="result-glow"></div>}
                 {dices.map((v, i) => <Dice3D key={i} value={v} />)}
              </div>
           </div>
 
-          {/* XỈU SIDE */}
           <div className="go88-side">
             <div className="go88-user-count"><i className="fa-solid fa-user"></i> 1,178</div>
             <div className="go88-text-metallic">XỈU</div>
@@ -186,14 +178,12 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             <button className="btn-cuoc-glossy" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
           </div>
 
-          {/* HISTORY DOTS */}
           <div className="go88-history-row">
             {[...Array(18)].map((_, i) => (
               <div key={i} className={`hist-dot ${Math.random() > 0.5 ? 'tai' : 'xiu'}`}></div>
             ))}
           </div>
 
-          {/* MODALS ... */}
           {isHistoryOpen && (
             <div className="history-modal-overlay">
               <div className="history-header">
@@ -222,7 +212,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
                 <div className="history-title">Luật Chơi Tài Xỉu</div>
                 <div className="history-close-btn" onClick={() => setIsRulesOpen(false)}><i className="fa-solid fa-xmark"></i></div>
               </div>
-              <div className="history-body rules-content" style={{ overflowY: 'auto', color: '#fff' }}>
+              <div className="history-body rules-content" style={{ overflowY: 'auto', color: '#fff', padding: 20 }}>
                 <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>GIỚI THIỆU</h4>
                 <p style={{ fontSize: 13, marginBottom: 15 }}>Tài Xỉu là game hot nhất hiện nay tại Việt Nam. Người chơi lựa chọn đặt cược vào cửa Tài hoặc Xỉu để giành chiến thắng.</p>
                 <h4 style={{ color: '#ffcc00', marginBottom: 10 }}>CÁCH TÍNH NỔ HŨ</h4>
@@ -235,7 +225,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
               </div>
             </div>
           )}
-
         </div>
       </div>
     </div>
