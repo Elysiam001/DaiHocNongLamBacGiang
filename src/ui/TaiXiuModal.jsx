@@ -64,12 +64,13 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 2000); 
     } else if (newPhase === "result") {
+      // Bien mat bat ngay lap tuc de xem tung xuc xac
+      setIsBowlClosed(false);
       setIsShaking(true);
       setTimeout(() => {
         setIsShaking(false);
         if (resultDices) setDices(resultDices);
-        setTimeout(() => setIsBowlClosed(false), 500);
-      }, 1000);
+      }, 1500);
     }
   }, []);
 

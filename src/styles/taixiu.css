@@ -201,39 +201,39 @@
 
 /* PREMIUM RUBY RED 3D CUBE DICE */
 .dice-container {
-  position: relative; width: 200px; height: 180px;
+  position: relative; width: 220px; height: 200px;
   margin: 0 auto;
   z-index: 5; perspective: 1000px;
 }
 
 .dice-3d {
-  width: 50px; height: 50px; position: absolute;
+  width: 62px; height: 62px; position: absolute;
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Fixed Triangle Positions - Absolute */
-.dice-1 { top: 10px; left: 20px; } 
-.dice-2 { top: 10px; right: 20px; }
-.dice-3 { bottom: 10px; left: 50%; transform: translateX(-50%); }
+/* Fixed Triangle Positions - Absolute (Adjusted for 62px) */
+.dice-1 { top: 10px; left: 30px; } 
+.dice-2 { top: 10px; right: 30px; }
+.dice-3 { bottom: 15px; left: 50%; transform: translateX(-50%); }
 
 .dice-face {
-  position: absolute; width: 50px; height: 50px;
-  background: rgba(255, 0, 0, 0.6); /* Trong suốt như pha lê */
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  border-radius: 10px;
+  position: absolute; width: 62px; height: 62px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 50, 50, 0.8) 0%, rgba(180, 0, 0, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.4), 0 5px 15px rgba(0,0,0,0.3);
   backface-visibility: hidden;
 }
 
-/* Face positions for 50px dice */
-.face-1 { transform: translateZ(25px); }
-.face-2 { transform: rotateY(180deg) translateZ(25px); }
-.face-3 { transform: rotateY(90deg) translateZ(25px); }
-.face-4 { transform: rotateY(-90deg) translateZ(25px); }
-.face-5 { transform: rotateX(90deg) translateZ(25px); }
-.face-6 { transform: rotateX(-90deg) translateZ(25px); }
+/* Face positions for 62px dice (TranslateZ = 31px) */
+.face-1 { transform: translateZ(31px); }
+.face-2 { transform: rotateY(180deg) translateZ(31px); }
+.face-3 { transform: rotateY(90deg) translateZ(31px); }
+.face-4 { transform: rotateY(-90deg) translateZ(31px); }
+.face-5 { transform: rotateX(90deg) translateZ(31px); }
+.face-6 { transform: rotateX(-90deg) translateZ(31px); }
 
 /* PREMIUM ROLLING ANIMATIONS - Natural & Fluid */
 .dice-1.shaking { animation: rolling-dice-1 0.6s infinite linear; }
