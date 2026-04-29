@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
 const socket = io("https://daihocnonglambacgiang.onrender.com", {
-  transports: ["websocket", "polling"]
+  transports: ["websocket", "polling"],
+  reconnection: true
 });
 
 const Dice3D = ({ value, shaking, className }) => (
@@ -22,44 +23,44 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
   
-  const [timer, setTimer] = useState(() => Number(localStorage.getItem("tx_timer")) || 30);
-  const [phase, setPhase] = useState(() => localStorage.getItem("tx_phase") || "betting");
-  const [dices, setDices] = useState(() => JSON.parse(localStorage.getItem("tx_dices")) || [1, 1, 1]);
-  const [isBowlClosed, setIsBowlClosed] = useState(() => localStorage.getItem("tx_bowl") !== "open");
+  // Game State
+  const [timer, setTimer] = useState(30);
+  const [phase, setPhase] = useState("betting");
+  const [dices, setDices] = useState([1, 1, 1]);
+  const [isBowlClosed, setIsBowlClosed] = useState(true);
   const [isShaking, setIsShaking] = useState(false);
-  const [totalPool, setTotalPool] = useState(() => JSON.parse(localStorage.getItem("tx_pool")) || { tai: 0, xiu: 0 });
-  const [sessionId, setSessionId] = useState(() => Number(localStorage.getItem("tx_sid")) || 0);
-  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem("tx_history")) || []);
+  const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
+  const [sessionId, setSessionId] = useState(() => Math.floor(Date.now() / 60000));
+  const [history, setHistory] = useState([]);
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [isRulesOpen, setIsRulesOpen] = useState(false);
+  // Refs to handle sync vs local
+  const lastServerTick = useRef(0);
+  const isOnline = useRef(false);
 
   const totalDice = dices.reduce((a, b) => a + b, 0);
-
-  useEffect(() => {
-    localStorage.setItem("tx_timer", timer);
-    localStorage.setItem("tx_phase", phase);
-    localStorage.setItem("tx_dices", JSON.stringify(dices));
-    localStorage.setItem("tx_bowl", isBowlClosed ? "closed" : "open");
-    localStorage.setItem("tx_pool", JSON.stringify(totalPool));
-    localStorage.setItem("tx_sid", sessionId);
-    localStorage.setItem("tx_history", JSON.stringify(history));
-  }, [timer, phase, dices, isBowlClosed, totalPool, sessionId, history]);
 
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
       setIsBowlClosed(true);
       setIsShaking(true);
+      setTimer(30);
+      setSessionId(s => s + 1);
       setTimeout(() => setIsShaking(false), 2000); 
     } else if (newPhase === "result") {
       setIsBowlClosed(false);
       setIsShaking(true);
       setTimeout(() => {
         setIsShaking(false);
-        if (resultDices) setDices(resultDices);
+        if (resultDices) {
+          setDices(resultDices);
+        } else {
+          // Local Random Result if no server dices
+          setDices([
+            Math.floor(Math.random() * 6) + 1,
+            Math.floor(Math.random() * 6) + 1,
+            Math.floor(Math.random() * 6) + 1
+          ]);
+        }
       }, 1500);
     }
   }, []);
@@ -67,27 +68,29 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   useEffect(() => {
     if (!session) return;
 
-    // 1. DANG KY TAI NGHE TRUOC
+    // Listeners
     socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
     socket.on("taixiuHistory", (data) => Array.isArray(data) && setHistory(data.slice(-20)));
 
     socket.on("taixiuState", (data) => {
       if (!data) return;
-      if (typeof data.timer === 'number') setTimer(data.timer);
-      setSessionId(data.sessionId || 0);
-      if (data.totalPool) setTotalPool(data.totalPool);
-      if (data.history) setHistory(data.history.slice(-20));
+      isOnline.current = true;
+      lastServerTick.current = Date.now();
+      setTimer(data.timer);
+      setSessionId(data.sessionId);
       setPhase(data.phase);
+      setDices(data.dices || [1,1,1]);
       setIsBowlClosed(data.phase !== "result");
     });
 
     socket.on("taixiuTick", (data) => {
       if (!data) return;
-      if (typeof data.timer === 'number') setTimer(data.timer);
-      setSessionId(data.sessionId || 0);
+      isOnline.current = true;
+      lastServerTick.current = Date.now();
+      setTimer(data.timer);
+      setSessionId(data.sessionId);
       if (data.totalPool) setTotalPool(data.totalPool);
-      if (data.history) setHistory(data.history.slice(-20));
       setPhase(prevPhase => {
         if (data.phase && data.phase !== prevPhase) {
           handlePhaseChange(data.phase, data.dices);
@@ -97,20 +100,40 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       });
     });
 
-    // 2. GUI LENH SAU
+    // Connection
     const onConnect = () => {
       socket.emit("login", { username: session.username });
       socket.emit("taixiuJoin");
     };
+    if (socket.connected) onConnect();
+    else socket.on("connect", onConnect);
 
-    if (socket.connected) {
-      onConnect();
-    } else {
-      socket.on("connect", onConnect);
-    }
-
+    // Hybrid Game Loop
     const interval = setInterval(() => {
-      setTimer(prev => (prev > 0 ? prev - 1 : 0));
+      const now = Date.now();
+      // Check if server is inactive for more than 3 seconds
+      if (now - lastServerTick.current > 3000) {
+        isOnline.current = false;
+      }
+
+      if (!isOnline.current) {
+        // LOCAL LOGIC
+        setTimer(prev => {
+          if (prev > 1) return prev - 1;
+          if (prev === 1) {
+             if (phase === "betting") {
+               setPhase("result");
+               handlePhaseChange("result", null);
+               return 10; // Result phase lasts 10s
+             } else {
+               setPhase("betting");
+               handlePhaseChange("betting", null);
+               return 30; // Betting phase lasts 30s
+             }
+          }
+          return 0;
+        });
+      }
     }, 1000);
 
     return () => {
@@ -118,20 +141,21 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       socket.off("connect", onConnect);
       socket.off("loginSuccess");
       socket.off("balanceUpdate");
-      socket.off("taixiuHistory");
-      socket.off("taixiuState");
       socket.off("taixiuTick");
+      socket.off("taixiuState");
     };
-  }, [session, handlePhaseChange]);
+  }, [session, phase, handlePhaseChange]);
 
+  // DRAG LOGIC
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const onMouseDown = (e) => {
     if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
-       if (isHistoryOpen || isRulesOpen) return;
        setIsDragging(true);
        setDragOffset({ x: e.clientX - position.x, y: e.clientY - position.y });
     }
   };
-
   useEffect(() => {
     const onMouseMove = (e) => {
       if (!isDragging) return;
@@ -156,10 +180,10 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
         onMouseDown={onMouseDown}
       >
         <div className="go88-table-oval">
-          <div className="circle-icon-btn btn-info" onClick={() => setIsHistoryOpen(true)}><i className="fa-solid fa-info"></i></div>
+          <div className="circle-icon-btn btn-info"><i className="fa-solid fa-info"></i></div>
           <div className="circle-icon-btn btn-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></div>
           <div className="circle-icon-btn btn-chart"><i className="fa-solid fa-chart-line"></i></div>
-          <div className="circle-icon-btn btn-help" onClick={() => setIsRulesOpen(true)}><i className="fa-solid fa-question"></i></div>
+          <div className="circle-icon-btn btn-help"><i className="fa-solid fa-question"></i></div>
           <div className="circle-icon-btn btn-log"><i className="fa-solid fa-scroll"></i></div>
           <div className="circle-icon-btn btn-rank"><i className="fa-solid fa-trophy"></i></div>
           <div className="circle-icon-btn btn-chat"><i className="fa-solid fa-comment-dots"></i></div>
@@ -199,35 +223,12 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           </div>
 
           <div className="go88-history-row">
-            {history.map((res, i) => (
-              <div key={i} className={`hist-dot ${res === 1 ? 'tai' : 'xiu'}`}></div>
-            ))}
+             {history.length > 0 ? history.map((res, i) => (
+                <div key={i} className={`hist-dot ${res === 1 ? 'tai' : 'xiu'}`}></div>
+             )) : [...Array(15)].map((_, i) => (
+                <div key={i} className={`hist-dot ${i % 2 === 0 ? 'tai' : 'xiu'}`}></div>
+             ))}
           </div>
-
-          {isHistoryOpen && (
-            <div className="history-modal-overlay">
-              <div className="history-header">
-                <div className="history-title">Lịch Sử Cược</div>
-                <div className="history-close-btn" onClick={() => setIsHistoryOpen(false)}><i className="fa-solid fa-xmark"></i></div>
-              </div>
-              <div className="history-body">
-                <p style={{color: '#fff', textAlign: 'center', padding: 20}}>Dữ liệu lịch sử đang được cập nhật...</p>
-              </div>
-            </div>
-          )}
-
-          {isRulesOpen && (
-            <div className="history-modal-overlay">
-              <div className="history-header">
-                <div className="history-title">Luật Chơi</div>
-                <div className="history-close-btn" onClick={() => setIsRulesOpen(false)}><i className="fa-solid fa-xmark"></i></div>
-              </div>
-              <div className="history-body" style={{color: '#fff', padding: 20}}>
-                <p>4-10: Xỉu</p>
-                <p>11-17: Tài</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
