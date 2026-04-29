@@ -36,13 +36,13 @@
 .go88-top-deco::before {
   content: ""; position: absolute; left: -20px; top: 10px;
   width: 80px; height: 80px;
-  background: url('https://i.ibb.co/L9H8XyQ/gold-dragon.png') no-repeat center; /* Phác thảo rồng vàng */
+  background: url('/assets/gold_dragon.png') no-repeat center;
   background-size: contain;
 }
 .go88-top-deco::after {
   content: ""; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
   width: 120px; height: 60px;
-  background: url('https://i.ibb.co/vYfD0mF/gold-coins.png') no-repeat center; /* Phác thảo tiền vàng */
+  background: url('/assets/gold_coins.png') no-repeat center;
   background-size: contain;
 }
 
