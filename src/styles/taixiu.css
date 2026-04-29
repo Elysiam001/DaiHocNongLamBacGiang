@@ -199,63 +199,70 @@
   opacity: 0; pointer-events: none;
 }
 
-/* RUBY RED 3D CUBE DICE - COMPACT TRIANGLE LAYOUT */
+/* PREMIUM RUBY RED 3D CUBE DICE */
 .dice-container {
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
-  z-index: 5; perspective: 1000px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  z-index: 5; perspective: 1200px;
 }
-.dice-row { display: flex; gap: 20px; }
+.dice-row { display: flex; gap: 25px; }
 
 .dice-3d {
-  width: 40px; height: 40px; position: relative;
+  width: 42px; height: 42px; position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  transition: transform 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
 }
 
 .dice-face {
-  position: absolute; width: 40px; height: 40px;
-  background: rgba(200, 0, 0, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
+  position: absolute; width: 42px; height: 42px;
+  background: rgba(180, 0, 0, 0.9); /* Đỏ sậm hơn chút cho sang */
+  border: 1px solid rgba(255, 255, 255, 0.4); /* Viền bo cạnh */
+  border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2), 0 3px 10px rgba(0,0,0,0.5);
+  /* Hiệu ứng nhựa cao cấp: bóng trong, bóng ngoài */
+  box-shadow: 
+    inset 0 0 12px rgba(255, 255, 255, 0.2), 
+    inset 0 0 5px rgba(0, 0, 0, 0.5),
+    0 4px 10px rgba(0,0,0,0.6);
   backface-visibility: hidden;
-  background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 70%);
+  background-image: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%, rgba(0,0,0,0.2) 100%);
 }
 
-/* Face positions for 40px cube */
-.face-1 { transform: translateZ(20px); }
-.face-2 { transform: rotateY(180deg) translateZ(20px); }
-.face-3 { transform: rotateY(90deg) translateZ(20px); }
-.face-4 { transform: rotateY(-90deg) translateZ(20px); }
-.face-5 { transform: rotateX(90deg) translateZ(20px); }
-.face-6 { transform: rotateX(-90deg) translateZ(20px); }
+/* Precise face positions for 42px */
+.face-1 { transform: translateZ(21px); }
+.face-2 { transform: rotateY(180deg) translateZ(21px); }
+.face-3 { transform: rotateY(90deg) translateZ(21px); }
+.face-4 { transform: rotateY(-90deg) translateZ(21px); }
+.face-5 { transform: rotateX(90deg) translateZ(21px); }
+.face-6 { transform: rotateX(-90deg) translateZ(21px); }
 
-/* Shaking animation */
+/* Shaking animation speed up */
 .dice-3d.shaking {
-  animation: shake-dice 0.4s infinite linear;
+  animation: shake-dice 0.35s infinite linear;
 }
 
-/* Dots Styling */
-.dice-face .dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; position: absolute; }
-.face-1 .dot { width: 12px; height: 12px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+/* Indented Dots Styling */
+.dice-face .dot { 
+  width: 9px; height: 9px; background: #fff; border-radius: 50%; position: absolute; 
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.6); /* Tạo độ sâu cho dấu chấm */
+}
+.face-1 .dot { width: 13px; height: 13px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .face-2 .dot:nth-child(1) { top: 8px; left: 8px; }
 .face-2 .dot:nth-child(2) { bottom: 8px; right: 8px; }
-.face-3 .dot:nth-child(1) { top: 6px; left: 6px; }
+.face-3 .dot:nth-child(1) { top: 7px; left: 7px; }
 .face-3 .dot:nth-child(2) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-.face-3 .dot:nth-child(3) { bottom: 6px; right: 6px; }
-.face-4 .dot:nth-child(1) { top: 6px; left: 6px; }
-.face-4 .dot:nth-child(2) { top: 6px; right: 6px; }
-.face-4 .dot:nth-child(3) { bottom: 6px; left: 6px; }
-.face-4 .dot:nth-child(4) { bottom: 6px; right: 6px; }
-.face-5 .dot:nth-child(1) { top: 6px; left: 6px; }
-.face-5 .dot:nth-child(2) { top: 6px; right: 6px; }
-.face-5 .dot:nth-child(3) { bottom: 6px; left: 6px; }
-.face-5 .dot:nth-child(4) { bottom: 6px; right: 6px; }
+.face-3 .dot:nth-child(3) { bottom: 7px; right: 7px; }
+.face-4 .dot:nth-child(1) { top: 7px; left: 7px; }
+.face-4 .dot:nth-child(2) { top: 7px; right: 7px; }
+.face-4 .dot:nth-child(3) { bottom: 7px; left: 7px; }
+.face-4 .dot:nth-child(4) { bottom: 7px; right: 7px; }
+.face-5 .dot:nth-child(1) { top: 7px; left: 7px; }
+.face-5 .dot:nth-child(2) { top: 7px; right: 7px; }
+.face-5 .dot:nth-child(3) { bottom: 7px; left: 7px; }
+.face-5 .dot:nth-child(4) { bottom: 7px; right: 7px; }
 .face-5 .dot:nth-child(5) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-.face-6 .dot:nth-child(1) { left: 8px; top: 6px; }
-.face-6 .dot:nth-child(2) { left: 8px; top: 50%; transform: translateY(-50%); }
-.face-6 .dot:nth-child(3) { left: 8px; bottom: 6px; }
-.face-6 .dot:nth-child(4) { right: 8px; top: 6px; }
-.face-6 .dot:nth-child(5) { right: 8px; top: 50%; transform: translateY(-50%); }
-.face-6 .dot:nth-child(6) { right: 8px; bottom: 6px; }
+.face-6 .dot:nth-child(1) { left: 9px; top: 7px; }
+.face-6 .dot:nth-child(2) { left: 9px; top: 50%; transform: translateY(-50%); }
+.face-6 .dot:nth-child(3) { left: 9px; bottom: 7px; }
+.face-6 .dot:nth-child(4) { right: 9px; top: 7px; }
+.face-6 .dot:nth-child(5) { right: 9px; top: 50%; transform: translateY(-50%); }
+.face-6 .dot:nth-child(6) { right: 9px; bottom: 7px; }
