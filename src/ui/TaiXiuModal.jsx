@@ -8,7 +8,6 @@ const socket = io("/", {
   reconnection: true
 });
 
-// Thanh phan hien thi xuc xac 3D thuc thu
 const Dice3D = memo(({ value, shaking, className }) => (
   <div className={`dice-3d ${className} ${shaking ? 'shaking' : `show-${value}`}`}>
     <div className="dice-face face-1"><div className="dot"></div></div>
@@ -24,7 +23,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
 
-  // Logic tinh toan thoi gian thuc te ngay lap tuc
   const getGlobalState = () => {
     const cycleTotal = 45; // 30s betting + 15s result
     const totalSeconds = Math.floor(Date.now() / 1000);
@@ -54,29 +52,31 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
   const [dices, setDices] = useState(() => getDeterministicResult(initialState.sessionId));
   const [isShaking, setIsShaking] = useState(false);
-  const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
-  const [history, setHistory] = useState([]);
+  const [isBowlShaking, setIsBowlShaking] = useState(false);
 
   const totalDice = dices.reduce((a, b) => a + b, 0);
+  const isTai = totalDice > 10;
 
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
       setIsBowlClosed(true);
-      setIsShaking(true);
-      setTimeout(() => setIsShaking(false), 2000); 
+      setIsBowlShaking(true);
+      setTimeout(() => setIsBowlShaking(false), 2000); 
     } else if (newPhase === "result") {
-      setIsBowlClosed(false);
-      setIsShaking(true);
+      // Shaking before opening
+      setIsBowlShaking(true);
       setTimeout(() => {
-        setIsShaking(false);
+        setIsBowlShaking(false);
+        setIsBowlClosed(false);
         setDices(resultDices);
-      }, 1500);
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 1000);
+      }, 1000);
     }
   }, []);
 
   useEffect(() => {
     if (!session) return;
-
     socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
 
@@ -103,7 +103,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
     };
   }, [session, phase, handlePhaseChange]);
 
-  // DRAG LOGIC
+  // DRAG
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -147,30 +147,29 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
              <div className="go88-session-id">#{sessionId}</div>
           </div>
 
+          {/* TAI SIDE */}
           <div className="go88-side">
-            <div className="go88-user-count"><i className="fa-solid fa-user"></i> 577</div>
-            <div className="go88-text-metallic">TÀI</div>
+            <div className={`go88-text-metallic ${phase === "result" && isTai ? 'winner-active' : ''}`}>TÀI</div>
             <div className="go88-pool-val">{(sessionId * 1234).toLocaleString()}</div>
             <button className="btn-cuoc-glossy">CƯỢC</button>
           </div>
 
           <div className="go88-timer-circle">
              {isBowlClosed && !isShaking ? (
-               <span className="go88-timer-val" style={{ zIndex: 20 }}>{timer}</span>
+               <span className={`go88-timer-val ${timer <= 5 ? 'timer-low' : ''}`}>{timer}</span>
              ) : (
-               <div className="dice-container" style={{ transform: 'translateZ(0)' }}>
-                  {!isBowlClosed && <div className="go88-result-val-top">{totalDice}</div>}
+               <div className="dice-container">
                   <Dice3D value={dices[0]} shaking={isShaking} className="dice-1" />
                   <Dice3D value={dices[1]} shaking={isShaking} className="dice-2" />
                   <Dice3D value={dices[2]} shaking={isShaking} className="dice-3" />
                </div>
              )}
-             <div className={`go88-bowl-overlay ${isBowlClosed ? '' : 'open'}`}></div>
+             <div className={`go88-bowl-overlay ${isBowlClosed ? '' : 'open'} ${isBowlShaking ? 'shaking' : ''}`}></div>
           </div>
 
+          {/* XIU SIDE */}
           <div className="go88-side">
-            <div className="go88-user-count"><i className="fa-solid fa-user"></i> 1,178</div>
-            <div className="go88-text-metallic">XỈU</div>
+            <div className={`go88-text-metallic ${phase === "result" && !isTai ? 'winner-active' : ''}`}>XỈU</div>
             <div className="go88-pool-val">{(sessionId * 987).toLocaleString()}</div>
             <button className="btn-cuoc-glossy">CƯỢC</button>
           </div>
