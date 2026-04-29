@@ -6,26 +6,25 @@ import "../styles/taixiu.css";
 const socket = io("https://dainochonglambacgiang.onrender.com");
 
 const Dice3D = ({ value, isShaking }) => {
-  // Rotation mapping to bring the target face to the front/top view
+  // Dynamic rotation to show faces in a tilted 3D perspective (like in reference image 2)
   const getRotation = (v) => {
     switch (v) {
-      case 1: return "rotateX(0deg) rotateY(0deg)";
-      case 2: return "rotateX(0deg) rotateY(180deg)";
-      case 3: return "rotateX(0deg) rotateY(-90deg)";
-      case 4: return "rotateX(0deg) rotateY(90deg)";
-      case 5: return "rotateX(-90deg) rotateY(0deg)";
-      case 6: return "rotateX(90deg) rotateY(0deg)";
+      case 1: return "rotateX(-20deg) rotateY(-25deg)";
+      case 2: return "rotateX(-20deg) rotateY(155deg)";
+      case 3: return "rotateX(-20deg) rotateY(-115deg)";
+      case 4: return "rotateX(-20deg) rotateY(65deg)";
+      case 5: return "rotateX(-110deg) rotateY(0deg)";
+      case 6: return "rotateX(70deg) rotateY(0deg)";
       default: return "";
     }
   };
 
   return (
     <div className={`dice-3d ${isShaking ? 'shaking' : ''}`} style={{ transform: isShaking ? "" : getRotation(value) }}>
-      {/* 6 Faces of the cube */}
       <div className="dice-face face-1"><div className="dot red"></div></div>
       <div className="dice-face face-2"><div className="dot"></div><div className="dot"></div></div>
       <div className="dice-face face-3"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-      <div className="dice-face face-4"><div className="dot red"></div><div className="dot red"></div><div className="dot red"></div><div className="dot red"></div></div>
+      <div className="dice-face face-4"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
       <div className="dice-face face-5"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
       <div className="dice-face face-6"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
     </div>
@@ -175,7 +174,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             ))}
           </div>
 
-          {/* Modals for History and Rules */}
+          {/* Modals ... */}
           {isHistoryOpen && (
             <div className="history-modal-overlay">
               <div className="history-header">

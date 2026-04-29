@@ -199,64 +199,65 @@
   opacity: 0; pointer-events: none;
 }
 
-/* REAL 3D CUBE DICE */
+/* RUBY RED 3D CUBE DICE */
 .dice-container {
-  display: flex; gap: 25px; z-index: 5; perspective: 1000px;
+  display: flex; gap: 30px; z-index: 5; perspective: 1000px;
 }
 
 .dice-3d {
-  width: 50px; height: 50px; position: relative;
+  width: 55px; height: 55px; position: relative;
   transform-style: preserve-3d;
-  transition: transform 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  transition: transform 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
 }
 
 .dice-face {
-  position: absolute; width: 50px; height: 50px;
-  background: #fff; border: 2px solid #ccc; border-radius: 8px;
+  position: absolute; width: 55px; height: 55px;
+  background: rgba(200, 0, 0, 0.9); /* Màu đỏ ruby */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0,0,0,0.5);
   backface-visibility: hidden;
+  /* Hiệu ứng bóng loáng */
+  background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 70%);
 }
 
-/* Face positions for a real cube */
-.face-1 { transform: translateZ(25px); }
-.face-2 { transform: rotateY(180deg) translateZ(25px); }
-.face-3 { transform: rotateY(90deg) translateZ(25px); }
-.face-4 { transform: rotateY(-90deg) translateZ(25px); }
-.face-5 { transform: rotateX(90deg) translateZ(25px); }
-.face-6 { transform: rotateX(-90deg) translateZ(25px); }
+/* Face positions */
+.face-1 { transform: translateZ(27.5px); }
+.face-2 { transform: rotateY(180deg) translateZ(27.5px); }
+.face-3 { transform: rotateY(90deg) translateZ(27.5px); }
+.face-4 { transform: rotateY(-90deg) translateZ(27.5px); }
+.face-5 { transform: rotateX(90deg) translateZ(27.5px); }
+.face-6 { transform: rotateX(-90deg) translateZ(27.5px); }
 
-/* Shaking animation when betting */
+/* Shaking animation */
 .dice-3d.shaking {
-  animation: shake-dice 0.5s infinite linear;
-}
-@keyframes shake-dice {
-  0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) translate(2px, 2px); }
-  25% { transform: rotateX(180deg) rotateY(90deg) rotateZ(45deg) translate(-2px, 2px); }
-  50% { transform: rotateX(360deg) rotateY(180deg) rotateZ(90deg) translate(-2px, -2px); }
-  75% { transform: rotateX(540deg) rotateY(270deg) rotateZ(135deg) translate(2px, -2px); }
-  100% { transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg) translate(2px, 2px); }
+  animation: shake-dice 0.6s infinite linear;
 }
 
-/* Dots Styling */
-.dice-face .dot { width: 10px; height: 10px; background: #000; border-radius: 50%; position: absolute; }
-.dice-face .dot.red { background: #ff0000; }
+/* Dots Styling - All White for Ruby Dice */
+.dice-face .dot { width: 11px; height: 11px; background: #fff; border-radius: 50%; position: absolute; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.dice-face .dot.red { background: #fff; } /* Override previous red dots */
 
-/* Dot positions for each face */
-.face-1 .dot { width: 15px; height: 15px; } /* Center dot */
-.face-2 .dot:nth-child(1) { top: 10px; left: 10px; }
-.face-2 .dot:nth-child(2) { bottom: 10px; right: 10px; }
-.face-3 .dot:nth-child(1) { top: 8px; left: 8px; }
+/* Dot positions (optimized for 55px face) */
+.face-1 .dot { width: 16px; height: 16px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.face-2 .dot:nth-child(1) { top: 12px; left: 12px; }
+.face-2 .dot:nth-child(2) { bottom: 12px; right: 12px; }
+.face-3 .dot:nth-child(1) { top: 10px; left: 10px; }
 .face-3 .dot:nth-child(2) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-.face-3 .dot:nth-child(3) { bottom: 8px; right: 8px; }
-.face-4 .dot:nth-child(1) { top: 8px; left: 8px; }
-.face-4 .dot:nth-child(2) { top: 8px; right: 8px; }
-.face-4 .dot:nth-child(3) { bottom: 8px; left: 8px; }
-.face-4 .dot:nth-child(4) { bottom: 8px; right: 8px; }
+.face-3 .dot:nth-child(3) { bottom: 10px; right: 10px; }
+.face-4 .dot:nth-child(1) { top: 10px; left: 10px; }
+.face-4 .dot:nth-child(2) { top: 10px; right: 10px; }
+.face-4 .dot:nth-child(3) { bottom: 10px; left: 10px; }
+.face-4 .dot:nth-child(4) { bottom: 10px; right: 10px; }
+.face-5 .dot:nth-child(1) { top: 10px; left: 10px; }
+.face-5 .dot:nth-child(2) { top: 10px; right: 10px; }
+.face-5 .dot:nth-child(3) { bottom: 10px; left: 10px; }
+.face-5 .dot:nth-child(4) { bottom: 10px; right: 10px; }
 .face-5 .dot:nth-child(5) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-.face-6 .dot:nth-child(1) { left: 10px; top: 8px; }
-.face-6 .dot:nth-child(2) { left: 10px; top: 50%; transform: translateY(-50%); }
-.face-6 .dot:nth-child(3) { left: 10px; bottom: 8px; }
-.face-6 .dot:nth-child(4) { right: 10px; top: 8px; }
-.face-6 .dot:nth-child(5) { right: 10px; top: 50%; transform: translateY(-50%); }
-.face-6 .dot:nth-child(6) { right: 10px; bottom: 8px; }
+.face-6 .dot:nth-child(1) { left: 12px; top: 8px; }
+.face-6 .dot:nth-child(2) { left: 12px; top: 50%; transform: translateY(-50%); }
+.face-6 .dot:nth-child(3) { left: 12px; bottom: 8px; }
+.face-6 .dot:nth-child(4) { right: 12px; top: 8px; }
+.face-6 .dot:nth-child(5) { right: 12px; top: 50%; transform: translateY(-50%); }
+.face-6 .dot:nth-child(6) { right: 12px; bottom: 8px; }
