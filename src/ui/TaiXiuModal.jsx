@@ -159,6 +159,15 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
                <span className={`go88-timer-val ${timer <= 5 ? 'timer-low' : ''}`}>{timer}</span>
              ) : (
                <div className="dice-container">
+                  {!isBowlClosed && !isShaking && (
+                    <div className="go88-result-val-top" style={{
+                      position: 'absolute', top: '-45px', left: '50%', transform: 'translateX(-50%)',
+                      fontSize: '32px', color: '#ffd700', fontWeight: '900', textShadow: '0 0 10px #000',
+                      zIndex: 10, background: 'rgba(0,0,0,0.7)', padding: '2px 15px', borderRadius: '15px'
+                    }}>
+                      {totalDice}
+                    </div>
+                  )}
                   <Dice3D value={dices[0]} shaking={isShaking} className="dice-1" />
                   <Dice3D value={dices[1]} shaking={isShaking} className="dice-2" />
                   <Dice3D value={dices[2]} shaking={isShaking} className="dice-3" />
