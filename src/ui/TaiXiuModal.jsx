@@ -58,7 +58,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
   // DRAG HANDLERS
   const onMouseDown = (e) => {
-    // Only drag if clicking the header or specific area
     if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
        setIsDragging(true);
        setDragOffset({
@@ -101,20 +100,21 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
         style={{ transform: `translate(${position.x}px, ${position.y}px)`, cursor: isDragging ? 'grabbing' : 'default' }}
         onMouseDown={onMouseDown}
       >
-        
-        {/* SIDE BUTTONS - LEFT COLUMN */}
-        <div className="circle-icon-btn btn-chart"><i className="fa-solid fa-chart-line"></i></div>
-        <div className="circle-icon-btn btn-help"><i className="fa-solid fa-question"></i></div>
-        <div className="circle-icon-btn btn-log"><i className="fa-solid fa-scroll"></i></div>
-
-        {/* SIDE BUTTONS - RIGHT COLUMN */}
-        <div className="circle-icon-btn btn-rank"><i className="fa-solid fa-trophy"></i></div>
-        <div className="circle-icon-btn btn-chat"><i className="fa-solid fa-comment-dots"></i></div>
-        <div className="circle-icon-btn btn-mute"><i className="fa-solid fa-hand-dots"></i></div>
-
         {/* OVAL TABLE */}
         <div className="go88-table-oval">
           
+          {/* ALL BUTTONS INSIDE OVAL FOR PRECISION */}
+          <div className="circle-icon-btn btn-info"><i className="fa-solid fa-info"></i></div>
+          <div className="circle-icon-btn btn-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></div>
+
+          <div className="circle-icon-btn btn-chart"><i className="fa-solid fa-chart-line"></i></div>
+          <div className="circle-icon-btn btn-help"><i className="fa-solid fa-question"></i></div>
+          <div className="circle-icon-btn btn-log"><i className="fa-solid fa-scroll"></i></div>
+
+          <div className="circle-icon-btn btn-rank"><i className="fa-solid fa-trophy"></i></div>
+          <div className="circle-icon-btn btn-chat"><i className="fa-solid fa-comment-dots"></i></div>
+          <div className="circle-icon-btn btn-mute"><i className="fa-solid fa-hand-dots"></i></div>
+
           {/* HEADER DECO */}
           <div className="go88-top-deco" style={{ cursor: 'grab' }}>
              <div className="go88-jackpot-wrap">
@@ -123,12 +123,9 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
              <div className="go88-session-id">#{sessionId}</div>
           </div>
 
-          <div className="circle-icon-btn btn-info"><i className="fa-solid fa-info"></i></div>
-          <div className="circle-icon-btn btn-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></div>
-
           {/* TÀI SIDE */}
           <div className="go88-side">
-            <div className="go88-user-count"><i className="fa-solid fa-user"></i> 287</div>
+            <div className="go88-user-count"><i className="fa-solid fa-user"></i> 577</div>
             <div className="go88-text-metallic">TÀI</div>
             <div className="go88-pool-val">{totalPool.tai.toLocaleString()}</div>
             <button className="btn-cuoc-glossy" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
@@ -147,7 +144,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
           {/* XỈU SIDE */}
           <div className="go88-side">
-            <div className="go88-user-count"><i className="fa-solid fa-user"></i> 226</div>
+            <div className="go88-user-count"><i className="fa-solid fa-user"></i> 1,178</div>
             <div className="go88-text-metallic">XỈU</div>
             <div className="go88-pool-val">{totalPool.xiu.toLocaleString()}</div>
             <button className="btn-cuoc-glossy" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
