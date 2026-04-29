@@ -102,9 +102,12 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       if (!data) return;
       isOnline.current = true;
       lastServerTick.current = Date.now();
-      setTimer(data.timer);
-      setSessionId(data.sessionId);
+      
+      if (typeof data.timer === 'number') setTimer(data.timer);
+      setSessionId(data.sessionId || 0);
       if (data.totalPool) setTotalPool(data.totalPool);
+      if (data.history) setHistory(data.history.slice(-20));
+      
       setPhase(prevPhase => {
         if (data.phase && data.phase !== prevPhase) {
           handlePhaseChange(data.phase, data.dices);
@@ -114,36 +117,18 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       });
     });
 
-    // Connection
-    const onConnect = () => {
-      socket.emit("login", { username: session.username });
-      socket.emit("taixiuJoin");
-    };
-    if (socket.connected) onConnect();
-    else socket.on("connect", onConnect);
-
-    // Hybrid Game Loop
     const interval = setInterval(() => {
       const now = Date.now();
-      // Check if server is inactive for more than 3 seconds
-      if (now - lastServerTick.current > 3000) {
-        isOnline.current = false;
-      }
+      if (now - lastServerTick.current > 3000) isOnline.current = false;
 
       if (!isOnline.current) {
-        // LOCAL LOGIC
         setTimer(prev => {
           if (prev > 1) return prev - 1;
           if (prev === 1) {
-             if (phase === "betting") {
-               setPhase("result");
-               handlePhaseChange("result", null);
-               return 10; // Result phase lasts 10s
-             } else {
-               setPhase("betting");
-               handlePhaseChange("betting", null);
-               return 30; // Betting phase lasts 30s
-             }
+             const nextPhase = phase === "betting" ? "result" : "betting";
+             handlePhaseChange(nextPhase, null);
+             setPhase(nextPhase);
+             return nextPhase === "betting" ? 30 : 10;
           }
           return 0;
         });
@@ -157,8 +142,18 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       socket.off("balanceUpdate");
       socket.off("taixiuTick");
       socket.off("taixiuState");
+      socket.off("taixiuHistory");
     };
   }, [session, phase, handlePhaseChange]);
+
+  // Sync bowl with phase automatically
+  useEffect(() => {
+    if (phase === "betting") {
+      setIsBowlClosed(true);
+    } else {
+      setIsBowlClosed(false);
+    }
+  }, [phase]);
 
   // DRAG LOGIC
   const [position, setPosition] = useState({ x: 0, y: 0 });
