@@ -201,39 +201,40 @@
 
 /* PREMIUM RUBY RED 3D CUBE DICE */
 .dice-container {
-  position: relative; width: 220px; height: 200px;
+  position: relative; width: 220px; height: 180px;
   margin: 0 auto;
   z-index: 5; perspective: 1000px;
+  display: flex; justify-content: center; align-items: center;
 }
 
 .dice-3d {
-  width: 62px; height: 62px; position: absolute;
+  width: 55px; height: 55px; position: absolute;
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Fixed Triangle Positions - Absolute (Adjusted for 62px) */
-.dice-1 { top: 10px; left: 30px; } 
-.dice-2 { top: 10px; right: 30px; }
-.dice-3 { bottom: 15px; left: 50%; transform: translateX(-50%); }
+/* Perfect Triangle Positions (Adjusted for 55px) */
+.dice-1 { top: 35px; left: 55px; } 
+.dice-2 { top: 35px; right: 55px; }
+.dice-3 { bottom: 25px; left: 50%; transform: translateX(-50%); }
 
 .dice-face {
-  position: absolute; width: 62px; height: 62px;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 50, 50, 0.8) 0%, rgba(180, 0, 0, 0.9) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 12px;
+  position: absolute; width: 55px; height: 55px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 50, 50, 0.85) 0%, rgba(160, 0, 0, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.4), 0 5px 15px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.5), 0 4px 10px rgba(0,0,0,0.4);
   backface-visibility: hidden;
 }
 
-/* Face positions for 62px dice (TranslateZ = 31px) */
-.face-1 { transform: translateZ(31px); }
-.face-2 { transform: rotateY(180deg) translateZ(31px); }
-.face-3 { transform: rotateY(90deg) translateZ(31px); }
-.face-4 { transform: rotateY(-90deg) translateZ(31px); }
-.face-5 { transform: rotateX(90deg) translateZ(31px); }
-.face-6 { transform: rotateX(-90deg) translateZ(31px); }
+/* Face positions for 55px dice (TranslateZ = 27.5px) */
+.face-1 { transform: translateZ(27.5px); }
+.face-2 { transform: rotateY(180deg) translateZ(27.5px); }
+.face-3 { transform: rotateY(90deg) translateZ(27.5px); }
+.face-4 { transform: rotateY(-90deg) translateZ(27.5px); }
+.face-5 { transform: rotateX(90deg) translateZ(27.5px); }
+.face-6 { transform: rotateX(-90deg) translateZ(27.5px); }
 
 /* PREMIUM ROLLING ANIMATIONS - Natural & Fluid */
 .dice-1.shaking { animation: rolling-dice-1 0.6s infinite linear; }
