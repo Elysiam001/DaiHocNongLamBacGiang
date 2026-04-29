@@ -91,7 +91,13 @@ export default function TaiXiuPage() {
       });
     });
 
+    // Bo dem nguoc local de thoi gian muot ma hon
+    const interval = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
     return () => {
+      clearInterval(interval);
       socket.off("loginSuccess");
       socket.off("balanceUpdate");
       socket.off("taixiuHistory");

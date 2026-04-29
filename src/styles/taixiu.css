@@ -201,8 +201,8 @@
 
 /* PREMIUM RUBY RED 3D CUBE DICE */
 .dice-container {
-  position: relative; width: 160px; height: 160px;
-  display: flex; align-items: center; justify-content: center;
+  position: relative; width: 200px; height: 180px;
+  margin: 0 auto;
   z-index: 5; perspective: 1000px;
 }
 
@@ -212,10 +212,10 @@
   transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Fixed Triangle Positions */
-.dice-1 { top: 20px; left: 30px; } /* Top Left */
-.dice-2 { top: 20px; right: 30px; } /* Top Right */
-.dice-3 { bottom: 20px; left: 50%; transform: translateX(-50%); } /* Bottom Center */
+/* Fixed Triangle Positions - Absolute */
+.dice-1 { top: 10px; left: 20px; } 
+.dice-2 { top: 10px; right: 20px; }
+.dice-3 { bottom: 10px; left: 50%; transform: translateX(-50%); }
 
 .dice-face {
   position: absolute; width: 50px; height: 50px;
