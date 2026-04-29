@@ -27,7 +27,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   // Dong bo LocalStorage de khong bi reset khi reload
   const [timer, setTimer] = useState(() => {
     const saved = Number(localStorage.getItem("tx_timer"));
-    return saved > 0 ? saved : 60; // Mac dinh 60 de thay no chay
+    return saved > 0 ? (saved > 30 ? 30 : saved) : 30; // Chinh xuong 30s nhu yeu cau
   });
   const [phase, setPhase] = useState(() => localStorage.getItem("tx_phase") || "betting");
   const [dices, setDices] = useState(() => JSON.parse(localStorage.getItem("tx_dices")) || [1, 1, 1]);
