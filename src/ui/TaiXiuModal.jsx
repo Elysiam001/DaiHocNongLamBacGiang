@@ -3,10 +3,8 @@ import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
-const socket = io("/", {
-  reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 1000
+const socket = io("https://daihocnonglambacgiang.onrender.com", {
+  transports: ["websocket", "polling"]
 });
 
 const Dice3D = ({ value, shaking, className }) => (
@@ -24,11 +22,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
   
-  // Dong bo LocalStorage de khong bi reset khi reload
-  const [timer, setTimer] = useState(() => {
-    const saved = Number(localStorage.getItem("tx_timer"));
-    return saved > 0 ? (saved > 30 ? 30 : saved) : 30; // Chinh xuong 30s nhu yeu cau
-  });
+  const [timer, setTimer] = useState(() => Number(localStorage.getItem("tx_timer")) || 30);
   const [phase, setPhase] = useState(() => localStorage.getItem("tx_phase") || "betting");
   const [dices, setDices] = useState(() => JSON.parse(localStorage.getItem("tx_dices")) || [1, 1, 1]);
   const [isBowlClosed, setIsBowlClosed] = useState(() => localStorage.getItem("tx_bowl") !== "open");
@@ -37,17 +31,14 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const [sessionId, setSessionId] = useState(() => Number(localStorage.getItem("tx_sid")) || 0);
   const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem("tx_history")) || []);
 
-  // DRAG STATE
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isRulesOpen, setIsRulesOpen] = useState(false);
 
   const totalDice = dices.reduce((a, b) => a + b, 0);
 
-  // Luu vao LocalStorage
   useEffect(() => {
     localStorage.setItem("tx_timer", timer);
     localStorage.setItem("tx_phase", phase);
@@ -64,7 +55,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 2000); 
     } else if (newPhase === "result") {
-      // Bien mat bat ngay lap tuc de xem tung xuc xac
       setIsBowlClosed(false);
       setIsShaking(true);
       setTimeout(() => {
@@ -77,23 +67,10 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   useEffect(() => {
     if (!session) return;
 
-    const onConnect = () => {
-      socket.emit("login", { username: session.username });
-      socket.emit("taixiuJoin");
-    };
-
-    if (socket.connected) {
-      onConnect();
-    } else {
-      socket.on("connect", onConnect);
-    }
-
+    // 1. DANG KY TAI NGHE TRUOC
     socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
-    
-    socket.on("taixiuHistory", (data) => {
-      if (Array.isArray(data)) setHistory(data.slice(-20));
-    });
+    socket.on("taixiuHistory", (data) => Array.isArray(data) && setHistory(data.slice(-20)));
 
     socket.on("taixiuState", (data) => {
       if (!data) return;
@@ -102,13 +79,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       if (data.totalPool) setTotalPool(data.totalPool);
       if (data.history) setHistory(data.history.slice(-20));
       setPhase(data.phase);
-      if (data.phase === "result") {
-        setDices(data.dices || [1,1,1]);
-        setIsBowlClosed(false);
-        setIsShaking(false);
-      } else {
-        setIsBowlClosed(true);
-      }
+      setIsBowlClosed(data.phase !== "result");
     });
 
     socket.on("taixiuTick", (data) => {
@@ -126,20 +97,25 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       });
     });
 
+    // 2. GUI LENH SAU
+    const onConnect = () => {
+      socket.emit("login", { username: session.username });
+      socket.emit("taixiuJoin");
+    };
+
+    if (socket.connected) {
+      onConnect();
+    } else {
+      socket.on("connect", onConnect);
+    }
+
     const interval = setInterval(() => {
-      setTimer(prev => {
-        if (prev > 1) return prev - 1;
-        
-        // Neu ve den 0 ma van dang o pha betting thi tu dong chuyen sang result (local fallback)
-        if (prev === 1 && phase === "betting") {
-          handlePhaseChange("result", null); // Tung xuc xac cho server tra ket qua
-        }
-        return 0;
-      });
+      setTimer(prev => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => {
       clearInterval(interval);
+      socket.off("connect", onConnect);
       socket.off("loginSuccess");
       socket.off("balanceUpdate");
       socket.off("taixiuHistory");
@@ -172,11 +148,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
     };
   }, [isDragging, dragOffset]);
 
-  const handleBet = (side, amount) => {
-    if (phase !== "betting" || !isBowlClosed) return;
-    // Logic cuoc thuc te qua socket se them sau
-  };
-
   return (
     <div className="taixiu-modal-overlay">
       <div 
@@ -203,17 +174,13 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             <div className="go88-user-count"><i className="fa-solid fa-user"></i> 577</div>
             <div className="go88-text-metallic">TÀI</div>
             <div className="go88-pool-val">{totalPool.tai.toLocaleString()}</div>
-            <button className="btn-cuoc-glossy" onClick={() => handleBet('tai', 100000)}>CƯỢC</button>
+            <button className="btn-cuoc-glossy">CƯỢC</button>
           </div>
 
           <div className="go88-timer-circle">
-             {/* Bộ đếm giây - Luôn nằm trên cùng khi úp bát */}
-             {isBowlClosed && !isShaking && (
+             {isBowlClosed && !isShaking ? (
                <span className="go88-timer-val" style={{ zIndex: 20 }}>{timer}</span>
-             )}
-
-             {/* Xúc xắc - Chỉ hiện khi mở bát hoặc đang lắc */}
-             {(!isBowlClosed || isShaking) && (
+             ) : (
                <div className="dice-container">
                   {!isBowlClosed && <div className="go88-result-val-top">{totalDice}</div>}
                   <Dice3D value={dices[0]} shaking={isShaking} className="dice-1" />
@@ -221,8 +188,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
                   <Dice3D value={dices[2]} shaking={isShaking} className="dice-3" />
                </div>
              )}
-             
-             {/* Cái Bát - Có z-index là 15 */}
              <div className={`go88-bowl-overlay ${isBowlClosed ? '' : 'open'}`}></div>
           </div>
 
@@ -230,7 +195,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             <div className="go88-user-count"><i className="fa-solid fa-user"></i> 1,178</div>
             <div className="go88-text-metallic">XỈU</div>
             <div className="go88-pool-val">{totalPool.xiu.toLocaleString()}</div>
-            <button className="btn-cuoc-glossy" onClick={() => handleBet('xiu', 100000)}>CƯỢC</button>
+            <button className="btn-cuoc-glossy">CƯỢC</button>
           </div>
 
           <div className="go88-history-row">
