@@ -133,21 +133,19 @@ export default function TaiXiuPage() {
              {isBowlClosed && !isShaking ? (
                <span className="go88-timer-val">{timer}</span>
              ) : (
-               <div className="dice-container">
-                  <div className="dice-row">
+               <div className="dice-container" style={{ position: 'relative' }}>
+                  {/* Điểm số hiện lên ở trên đầu bộ xúc xắc */}
+                  {!isBowlClosed && (
+                    <div className="go88-result-val-top">{totalDice}</div>
+                  )}
+
+                  <div className="dice-row" style={{ gap: '40px' }}>
                     <Dice3D value={dices[0]} shaking={isShaking} />
                     <Dice3D value={dices[1]} shaking={isShaking} />
                   </div>
-                  <div className="dice-row">
+                  <div className="dice-row" style={{ marginTop: '-10px' }}>
                     <Dice3D value={dices[2]} shaking={isShaking} />
                   </div>
-                  
-                  {/* Banner hiển thị tổng điểm và kết quả khi mở bát */}
-                  {!isBowlClosed && (
-                    <div className="go88-result-banner">
-                      {totalDice} - {totalDice >= 11 ? "TÀI" : "XỈU"}
-                    </div>
-                  )}
                </div>
              )}
              
