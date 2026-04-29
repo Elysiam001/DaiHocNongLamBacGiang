@@ -182,9 +182,13 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           </div>
 
           <div className="go88-timer-circle">
-             {isBowlClosed && !isShaking ? (
-               <span className="go88-timer-val">{timer}</span>
-             ) : (
+             {/* Bộ đếm giây - Luôn nằm trên cùng khi úp bát */}
+             {isBowlClosed && !isShaking && (
+               <span className="go88-timer-val" style={{ zIndex: 20 }}>{timer}</span>
+             )}
+
+             {/* Xúc xắc - Chỉ hiện khi mở bát hoặc đang lắc */}
+             {(!isBowlClosed || isShaking) && (
                <div className="dice-container">
                   {!isBowlClosed && <div className="go88-result-val-top">{totalDice}</div>}
                   <Dice3D value={dices[0]} shaking={isShaking} className="dice-1" />
@@ -192,6 +196,8 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
                   <Dice3D value={dices[2]} shaking={isShaking} className="dice-3" />
                </div>
              )}
+             
+             {/* Cái Bát - Có z-index là 15 */}
              <div className={`go88-bowl-overlay ${isBowlClosed ? '' : 'open'}`}></div>
           </div>
 
