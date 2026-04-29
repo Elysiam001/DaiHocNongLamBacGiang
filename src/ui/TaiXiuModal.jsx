@@ -68,8 +68,17 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
   useEffect(() => {
     if (!session) return;
-    socket.emit("login", { username: session.username });
-    socket.emit("taixiuJoin");
+
+    const onConnect = () => {
+      socket.emit("login", { username: session.username });
+      socket.emit("taixiuJoin");
+    };
+
+    if (socket.connected) {
+      onConnect();
+    } else {
+      socket.on("connect", onConnect);
+    }
 
     socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
@@ -80,7 +89,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
     socket.on("taixiuState", (data) => {
       if (!data) return;
-      setTimer(data.timer || 0);
+      if (typeof data.timer === 'number') setTimer(data.timer);
       setSessionId(data.sessionId || 0);
       if (data.totalPool) setTotalPool(data.totalPool);
       if (data.history) setHistory(data.history.slice(-20));
@@ -96,7 +105,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
     socket.on("taixiuTick", (data) => {
       if (!data) return;
-      setTimer(data.timer || 0);
+      if (typeof data.timer === 'number') setTimer(data.timer);
       setSessionId(data.sessionId || 0);
       if (data.totalPool) setTotalPool(data.totalPool);
       if (data.history) setHistory(data.history.slice(-20));
