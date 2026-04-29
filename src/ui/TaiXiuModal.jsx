@@ -3,9 +3,11 @@ import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
-const socket = io("https://daihocnonglambacgiang.onrender.com", {
+// Ket noi toi Server - Ưu tiên địa chỉ hiện tại của trình duyệt để đồng bộ 100%
+const socket = io("/", {
   transports: ["websocket", "polling"],
-  reconnection: true
+  reconnection: true,
+  reconnectionDelay: 1000
 });
 
 const Dice3D = ({ value, shaking, className }) => (
@@ -23,33 +25,17 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
   
-  // Game State - Khoi phuc tinh nang nho bo nho
-  const [timer, setTimer] = useState(() => {
-    const saved = Number(localStorage.getItem("tx_timer"));
-    return (saved > 0 && saved <= 30) ? saved : 30;
-  });
-  const [phase, setPhase] = useState(() => localStorage.getItem("tx_phase") || "betting");
-  const [dices, setDices] = useState(() => JSON.parse(localStorage.getItem("tx_dices")) || [1, 1, 1]);
-  const [isBowlClosed, setIsBowlClosed] = useState(() => localStorage.getItem("tx_bowl") !== "open");
+  // Game State - Không dùng LocalStorage cho Timer để đảm bảo tính Multiplayer
+  const [timer, setTimer] = useState(null); // Để null để biết là đang chờ Server
+  const [phase, setPhase] = useState("betting");
+  const [dices, setDices] = useState([1, 1, 1]);
+  const [isBowlClosed, setIsBowlClosed] = useState(true);
   const [isShaking, setIsShaking] = useState(false);
-  const [totalPool, setTotalPool] = useState(() => JSON.parse(localStorage.getItem("tx_pool")) || { tai: 0, xiu: 0 });
-  const [sessionId, setSessionId] = useState(() => Number(localStorage.getItem("tx_sid")) || Math.floor(Date.now() / 60000));
-  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem("tx_history")) || []);
+  const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
+  const [sessionId, setSessionId] = useState(0);
+  const [history, setHistory] = useState([]);
 
-  // Luu vao LocalStorage moi khi trang thai thay doi
-  useEffect(() => {
-    localStorage.setItem("tx_timer", timer);
-    localStorage.setItem("tx_phase", phase);
-    localStorage.setItem("tx_dices", JSON.stringify(dices));
-    localStorage.setItem("tx_bowl", isBowlClosed ? "closed" : "open");
-    localStorage.setItem("tx_pool", JSON.stringify(totalPool));
-    localStorage.setItem("tx_sid", sessionId);
-    localStorage.setItem("tx_history", JSON.stringify(history));
-  }, [timer, phase, dices, isBowlClosed, totalPool, sessionId, history]);
-
-  // Refs to handle sync vs local
-  const lastServerTick = useRef(0);
-  const isOnline = useRef(false);
+  const isSynced = useRef(false);
 
   const totalDice = dices.reduce((a, b) => a + b, 0);
 
@@ -57,24 +43,13 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
     if (newPhase === "betting") {
       setIsBowlClosed(true);
       setIsShaking(true);
-      setTimer(30);
-      setSessionId(s => s + 1);
       setTimeout(() => setIsShaking(false), 2000); 
     } else if (newPhase === "result") {
       setIsBowlClosed(false);
       setIsShaking(true);
       setTimeout(() => {
         setIsShaking(false);
-        if (resultDices) {
-          setDices(resultDices);
-        } else {
-          // Local Random Result if no server dices
-          setDices([
-            Math.floor(Math.random() * 6) + 1,
-            Math.floor(Math.random() * 6) + 1,
-            Math.floor(Math.random() * 6) + 1
-          ]);
-        }
+        if (resultDices) setDices(resultDices);
       }, 1500);
     }
   }, []);
@@ -82,29 +57,30 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   useEffect(() => {
     if (!session) return;
 
-    // Listeners
+    const onConnect = () => {
+      socket.emit("login", { username: session.username });
+      socket.emit("taixiuJoin");
+    };
+
     socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
-    socket.on("taixiuHistory", (data) => Array.isArray(data) && setHistory(data.slice(-20)));
-
+    
     socket.on("taixiuState", (data) => {
       if (!data) return;
-      isOnline.current = true;
-      lastServerTick.current = Date.now();
+      isSynced.current = true;
       setTimer(data.timer);
       setSessionId(data.sessionId);
       setPhase(data.phase);
-      setDices(data.dices || [1,1,1]);
-      setIsBowlClosed(data.phase !== "result");
+      if (data.dices) setDices(data.dices);
+      if (data.totalPool) setTotalPool(data.totalPool);
+      if (data.history) setHistory(data.history.slice(-20));
     });
 
     socket.on("taixiuTick", (data) => {
       if (!data) return;
-      isOnline.current = true;
-      lastServerTick.current = Date.now();
-      
-      if (typeof data.timer === 'number') setTimer(data.timer);
-      setSessionId(data.sessionId || 0);
+      isSynced.current = true;
+      setTimer(data.timer);
+      setSessionId(data.sessionId);
       if (data.totalPool) setTotalPool(data.totalPool);
       if (data.history) setHistory(data.history.slice(-20));
       
@@ -117,22 +93,12 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       });
     });
 
-    const interval = setInterval(() => {
-      const now = Date.now();
-      if (now - lastServerTick.current > 3000) isOnline.current = false;
+    if (socket.connected) onConnect();
+    else socket.on("connect", onConnect);
 
-      if (!isOnline.current) {
-        setTimer(prev => {
-          if (prev > 1) return prev - 1;
-          if (prev === 1) {
-             const nextPhase = phase === "betting" ? "result" : "betting";
-             handlePhaseChange(nextPhase, null);
-             setPhase(nextPhase);
-             return nextPhase === "betting" ? 30 : 10;
-          }
-          return 0;
-        });
-      }
+    // Countdown locally to keep it smooth between ticks
+    const interval = setInterval(() => {
+      setTimer(prev => (prev !== null && prev > 0) ? prev - 1 : prev);
     }, 1000);
 
     return () => {
@@ -140,19 +106,14 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       socket.off("connect", onConnect);
       socket.off("loginSuccess");
       socket.off("balanceUpdate");
-      socket.off("taixiuTick");
       socket.off("taixiuState");
-      socket.off("taixiuHistory");
+      socket.off("taixiuTick");
     };
-  }, [session, phase, handlePhaseChange]);
+  }, [session, handlePhaseChange]);
 
-  // Sync bowl with phase automatically
+  // Sync bowl with phase
   useEffect(() => {
-    if (phase === "betting") {
-      setIsBowlClosed(true);
-    } else {
-      setIsBowlClosed(false);
-    }
+    setIsBowlClosed(phase === "betting");
   }, [phase]);
 
   // DRAG LOGIC
@@ -200,7 +161,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
           <div className="go88-top-deco" style={{ cursor: 'grab' }}>
              <div className="go88-jackpot-wrap"><span className="go88-jackpot-val">{(jackpotValue || 0).toLocaleString()}</span></div>
-             <div className="go88-session-id">#{sessionId}</div>
+             <div className="go88-session-id">#{sessionId || '...'}</div>
           </div>
 
           <div className="go88-side">
@@ -212,7 +173,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
           <div className="go88-timer-circle">
              {isBowlClosed && !isShaking ? (
-               <span className="go88-timer-val" style={{ zIndex: 20 }}>{timer}</span>
+               <span className="go88-timer-val" style={{ zIndex: 20 }}>{timer !== null ? timer : '...'}</span>
              ) : (
                <div className="dice-container">
                   {!isBowlClosed && <div className="go88-result-val-top">{totalDice}</div>}
@@ -232,11 +193,9 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           </div>
 
           <div className="go88-history-row">
-             {history.length > 0 ? history.map((res, i) => (
-                <div key={i} className={`hist-dot ${res === 1 ? 'tai' : 'xiu'}`}></div>
-             )) : [...Array(15)].map((_, i) => (
-                <div key={i} className={`hist-dot ${i % 2 === 0 ? 'tai' : 'xiu'}`}></div>
-             ))}
+            {history.map((res, i) => (
+              <div key={i} className={`hist-dot ${res === 1 ? 'tai' : 'xiu'}`}></div>
+            ))}
           </div>
         </div>
       </div>
