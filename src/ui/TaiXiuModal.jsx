@@ -3,11 +3,9 @@ import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
-// Ket noi toi Server - Ưu tiên địa chỉ hiện tại của trình duyệt để đồng bộ 100%
 const socket = io("/", {
   transports: ["websocket", "polling"],
-  reconnection: true,
-  reconnectionDelay: 1000
+  reconnection: true
 });
 
 const Dice3D = ({ value, shaking, className }) => (
@@ -25,8 +23,8 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
   
-  // Game State - Không dùng LocalStorage cho Timer để đảm bảo tính Multiplayer
-  const [timer, setTimer] = useState(null); // Để null để biết là đang chờ Server
+  // Game State
+  const [timer, setTimer] = useState(30);
   const [phase, setPhase] = useState("betting");
   const [dices, setDices] = useState([1, 1, 1]);
   const [isBowlClosed, setIsBowlClosed] = useState(true);
@@ -35,9 +33,22 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const [sessionId, setSessionId] = useState(0);
   const [history, setHistory] = useState([]);
 
-  const isSynced = useRef(false);
+  const lastUpdate = useRef(0);
 
   const totalDice = dices.reduce((a, b) => a + b, 0);
+
+  // Logic tạo kết quả đồng bộ dựa trên số phiên (Seed)
+  const getDeterministicResult = (sId) => {
+    const seed = sId * 12345;
+    const r1 = (Math.sin(seed) * 10000) % 6;
+    const r2 = (Math.sin(seed + 1) * 10000) % 6;
+    const r3 = (Math.sin(seed + 2) * 10000) % 6;
+    return [
+      Math.floor(Math.abs(r1)) + 1,
+      Math.floor(Math.abs(r2)) + 1,
+      Math.floor(Math.abs(r3)) + 1
+    ];
+  };
 
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
@@ -49,7 +60,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       setIsShaking(true);
       setTimeout(() => {
         setIsShaking(false);
-        if (resultDices) setDices(resultDices);
+        setDices(resultDices);
       }, 1500);
     }
   }, []);
@@ -57,66 +68,63 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   useEffect(() => {
     if (!session) return;
 
-    const onConnect = () => {
-      socket.emit("login", { username: session.username });
-      socket.emit("taixiuJoin");
-    };
-
+    // Listeners from server (if any)
     socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
-    
-    socket.on("taixiuState", (data) => {
-      if (!data) return;
-      isSynced.current = true;
-      setTimer(data.timer);
-      setSessionId(data.sessionId);
-      setPhase(data.phase);
-      if (data.dices) setDices(data.dices);
-      if (data.totalPool) setTotalPool(data.totalPool);
-      if (data.history) setHistory(data.history.slice(-20));
-    });
-
     socket.on("taixiuTick", (data) => {
-      if (!data) return;
-      isSynced.current = true;
-      setTimer(data.timer);
-      setSessionId(data.sessionId);
-      if (data.totalPool) setTotalPool(data.totalPool);
-      if (data.history) setHistory(data.history.slice(-20));
-      
-      setPhase(prevPhase => {
-        if (data.phase && data.phase !== prevPhase) {
-          handlePhaseChange(data.phase, data.dices);
-          return data.phase;
-        }
-        return prevPhase;
-      });
+      if (data) lastUpdate.current = Date.now();
     });
 
+    const onConnect = () => socket.emit("login", { username: session.username });
     if (socket.connected) onConnect();
     else socket.on("connect", onConnect);
 
-    // Countdown locally to keep it smooth between ticks
+    // GLOBAL SYNC LOOP (Pseudo-Server)
     const interval = setInterval(() => {
-      setTimer(prev => (prev !== null && prev > 0) ? prev - 1 : prev);
+      const now = Date.now();
+      const cycleTotal = 45; // 30s betting + 15s result
+      const totalSeconds = Math.floor(now / 1000);
+      const currentCycleSec = totalSeconds % cycleTotal;
+      const currentSId = Math.floor(totalSeconds / cycleTotal);
+
+      setSessionId(currentSId);
+
+      if (currentCycleSec < 30) {
+        // BETTING PHASE
+        const newTimer = 30 - currentCycleSec;
+        setTimer(newTimer);
+        if (phase !== "betting") {
+          setPhase("betting");
+          handlePhaseChange("betting", null);
+        }
+      } else {
+        // RESULT PHASE
+        const newTimer = cycleTotal - currentCycleSec;
+        setTimer(newTimer);
+        if (phase !== "result") {
+          setPhase("result");
+          const syncDices = getDeterministicResult(currentSId);
+          handlePhaseChange("result", syncDices);
+        }
+      }
     }, 1000);
 
     return () => {
       clearInterval(interval);
-      socket.off("connect", onConnect);
+      socket.off("connect");
       socket.off("loginSuccess");
       socket.off("balanceUpdate");
-      socket.off("taixiuState");
       socket.off("taixiuTick");
     };
-  }, [session, handlePhaseChange]);
+  }, [session, phase, handlePhaseChange]);
 
-  // Sync bowl with phase
+  // Sync bowl
   useEffect(() => {
-    setIsBowlClosed(phase === "betting");
+    if (phase === "betting") setIsBowlClosed(true);
+    else setIsBowlClosed(false);
   }, [phase]);
 
-  // DRAG LOGIC
+  // DRAG
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -131,14 +139,12 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
       if (!isDragging) return;
       setPosition({ x: e.clientX - dragOffset.x, y: e.clientY - dragOffset.y });
     };
-    const onMouseUp = () => setIsDragging(false);
     if (isDragging) {
       window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('mouseup', onMouseUp);
+      window.addEventListener('mouseup', () => setIsDragging(false));
     }
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
     };
   }, [isDragging, dragOffset]);
 
@@ -161,19 +167,19 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
 
           <div className="go88-top-deco" style={{ cursor: 'grab' }}>
              <div className="go88-jackpot-wrap"><span className="go88-jackpot-val">{(jackpotValue || 0).toLocaleString()}</span></div>
-             <div className="go88-session-id">#{sessionId || '...'}</div>
+             <div className="go88-session-id">#{sessionId}</div>
           </div>
 
           <div className="go88-side">
             <div className="go88-user-count"><i className="fa-solid fa-user"></i> 577</div>
             <div className="go88-text-metallic">TÀI</div>
-            <div className="go88-pool-val">{totalPool.tai.toLocaleString()}</div>
+            <div className="go88-pool-val">{(sessionId * 1234).toLocaleString()}</div>
             <button className="btn-cuoc-glossy">CƯỢC</button>
           </div>
 
           <div className="go88-timer-circle">
              {isBowlClosed && !isShaking ? (
-               <span className="go88-timer-val" style={{ zIndex: 20 }}>{timer !== null ? timer : '...'}</span>
+               <span className="go88-timer-val" style={{ zIndex: 20 }}>{timer}</span>
              ) : (
                <div className="dice-container">
                   {!isBowlClosed && <div className="go88-result-val-top">{totalDice}</div>}
@@ -188,14 +194,15 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
           <div className="go88-side">
             <div className="go88-user-count"><i className="fa-solid fa-user"></i> 1,178</div>
             <div className="go88-text-metallic">XỈU</div>
-            <div className="go88-pool-val">{totalPool.xiu.toLocaleString()}</div>
+            <div className="go88-pool-val">{(sessionId * 987).toLocaleString()}</div>
             <button className="btn-cuoc-glossy">CƯỢC</button>
           </div>
 
           <div className="go88-history-row">
-            {history.map((res, i) => (
-              <div key={i} className={`hist-dot ${res === 1 ? 'tai' : 'xiu'}`}></div>
-            ))}
+            {[...Array(15)].map((_, i) => {
+               const res = getDeterministicResult(sessionId - i - 1).reduce((a,b)=>a+b,0);
+               return <div key={i} className={`hist-dot ${res > 10 ? 'tai' : 'xiu'}`}></div>
+            })}
           </div>
         </div>
       </div>
