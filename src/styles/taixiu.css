@@ -58,18 +58,18 @@
 .circle-icon-btn:hover { transform: scale(1.1); }
 .circle-icon-btn i { font-size: 24px; color: #fff; }
 
-.btn-info { top: -20px; left: 45px; background: radial-gradient(circle, #0088cc, #004466); }
-.btn-close { top: -20px; right: 45px; background: radial-gradient(circle, #cc3333, #880000); }
+.btn-info { top: -15px; left: 140px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-close { top: -15px; right: 140px; background: radial-gradient(circle, #cc3333, #880000); }
 
 /* Left Column Buttons */
-.btn-chart { left: 55px; top: 75px; background: radial-gradient(circle, #cc3333, #880000); }
-.btn-help { left: 40px; top: 165px; background: radial-gradient(circle, #0088cc, #004466); }
-.btn-log { left: 55px; top: 255px; background: radial-gradient(circle, #446688, #223344); }
+.btn-chart { left: 80px; top: 45px; background: radial-gradient(circle, #cc3333, #880000); }
+.btn-help { left: 55px; top: 165px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-log { left: 80px; top: 285px; background: radial-gradient(circle, #446688, #223344); }
 
 /* Right Column Buttons */
-.btn-rank { right: 55px; top: 75px; background: radial-gradient(circle, #0088cc, #004466); }
-.btn-chat { right: 40px; top: 165px; background: radial-gradient(circle, #0088cc, #004466); }
-.btn-mute { right: 55px; top: 255px; background: radial-gradient(circle, #888, #444); }
+.btn-rank { right: 80px; top: 45px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-chat { right: 55px; top: 165px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-mute { right: 80px; top: 285px; background: radial-gradient(circle, #888, #444); }
 
 /* CENTER TIMER */
 .go88-timer-circle {
