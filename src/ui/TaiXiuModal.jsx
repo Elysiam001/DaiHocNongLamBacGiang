@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
@@ -14,6 +14,12 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const [isBowlClosed, setIsBowlClosed] = useState(true);
   const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
   const [sessionId, setSessionId] = useState(0);
+
+  // DRAG STATE
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const containerRef = useRef(null);
 
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
@@ -50,16 +56,51 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
     };
   }, [session, handlePhaseChange]);
 
+  // DRAG HANDLERS
+  const onMouseDown = (e) => {
+    // Only drag if clicking the header or specific area
+    if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
+       setIsDragging(true);
+       setDragOffset({
+         x: e.clientX - position.x,
+         y: e.clientY - position.y
+       });
+    }
+  };
+
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (!isDragging) return;
+      setPosition({
+        x: e.clientX - dragOffset.x,
+        y: e.clientY - dragOffset.y
+      });
+    };
+    const onMouseUp = () => setIsDragging(false);
+
+    if (isDragging) {
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [isDragging, dragOffset]);
+
   const handleBet = (side, amount) => {
     if (phase !== "betting") return;
     socket.emit("taixiuBet", { username: session?.username, side, amount });
   };
 
-  const totalDice = dices.reduce((a, b) => a + b, 0);
-
   return (
     <div className="taixiu-modal-overlay">
-      <div className="go88-main-container">
+      <div 
+        className="go88-main-container" 
+        ref={containerRef}
+        style={{ transform: `translate(${position.x}px, ${position.y}px)`, cursor: isDragging ? 'grabbing' : 'default' }}
+        onMouseDown={onMouseDown}
+      >
         
         {/* SIDE BUTTONS - LEFT COLUMN */}
         <div className="circle-icon-btn btn-chart"><i className="fa-solid fa-chart-line"></i></div>
@@ -75,7 +116,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
         <div className="go88-table-oval">
           
           {/* HEADER DECO */}
-          <div className="go88-top-deco">
+          <div className="go88-top-deco" style={{ cursor: 'grab' }}>
              <div className="go88-jackpot-wrap">
                 <span className="go88-jackpot-val">{(jackpotValue || 0).toLocaleString()}</span>
              </div>
