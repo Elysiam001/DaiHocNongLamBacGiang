@@ -61,14 +61,14 @@
 .btn-close { top: -20px; right: 110px; background: radial-gradient(circle, #cc3333, #880000); }
 
 /* Left Column Buttons */
-.btn-chart { left: 45px; top: 80px; background: radial-gradient(circle, #cc3333, #880000); }
-.btn-help { left: 15px; top: 165px; background: radial-gradient(circle, #0088cc, #004466); }
-.btn-log { left: 45px; top: 250px; background: radial-gradient(circle, #446688, #223344); }
+.btn-chart { left: 80px; top: 75px; background: radial-gradient(circle, #cc3333, #880000); }
+.btn-help { left: 45px; top: 165px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-log { left: 80px; top: 255px; background: radial-gradient(circle, #446688, #223344); }
 
 /* Right Column Buttons */
-.btn-rank { right: 45px; top: 80px; background: radial-gradient(circle, #0088cc, #004466); }
-.btn-chat { right: 15px; top: 165px; background: radial-gradient(circle, #0088cc, #004466); }
-.btn-mute { right: 45px; top: 250px; background: radial-gradient(circle, #888, #444); }
+.btn-rank { right: 80px; top: 75px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-chat { right: 45px; top: 165px; background: radial-gradient(circle, #0088cc, #004466); }
+.btn-mute { right: 80px; top: 255px; background: radial-gradient(circle, #888, #444); }
 
 /* CENTER TIMER */
 .go88-timer-circle {
