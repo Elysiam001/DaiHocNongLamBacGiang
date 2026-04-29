@@ -107,10 +107,6 @@ export default function TaiXiuPage() {
            <div className="go88-session-id"># {sessionId}</div>
         </div>
 
-        {/* Dragon Decoration */}
-        <div className="dragon-decor left"></div>
-        <div className="dragon-decor right"></div>
-
         {/* Bàn cược Oval */}
         <div className="go88-table-oval">
           {/* Icon Menu */}
