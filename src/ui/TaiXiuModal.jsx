@@ -3,7 +3,11 @@ import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
-const socket = io("https://dainochonglambacgiang.onrender.com");
+const socket = io("https://dainochonglambacgiang.onrender.com", {
+  transports: ["websocket"],
+  reconnection: true,
+  reconnectionAttempts: 5
+});
 
 const Dice3D = ({ value, shaking, className }) => (
   <div className={`dice-3d ${className} ${shaking ? 'shaking' : `show-${value}`}`}>
@@ -21,7 +25,10 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const [balance, setBalance] = useState(0);
   
   // Dong bo LocalStorage de khong bi reset khi reload
-  const [timer, setTimer] = useState(() => Number(localStorage.getItem("tx_timer")) || 0);
+  const [timer, setTimer] = useState(() => {
+    const saved = Number(localStorage.getItem("tx_timer"));
+    return saved > 0 ? saved : 60; // Mac dinh 60 de thay no chay
+  });
   const [phase, setPhase] = useState(() => localStorage.getItem("tx_phase") || "betting");
   const [dices, setDices] = useState(() => JSON.parse(localStorage.getItem("tx_dices")) || [1, 1, 1]);
   const [isBowlClosed, setIsBowlClosed] = useState(() => localStorage.getItem("tx_bowl") !== "open");
