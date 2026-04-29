@@ -140,19 +140,15 @@ export default function TaiXiuPage() {
              {isBowlClosed && !isShaking ? (
                <span className="go88-timer-val">{timer}</span>
              ) : (
-               <div className="dice-container" style={{ position: 'relative' }}>
-                  {/* Điểm số hiện lên ở trên đầu bộ xúc xắc */}
+               <div className="dice-container">
+                  {/* Điểm số hiện lên ở trên đầu */}
                   {!isBowlClosed && (
                     <div className="go88-result-val-top">{totalDice}</div>
                   )}
 
-                  <div className="dice-row" style={{ gap: '40px' }}>
-                    <Dice3D value={dices[0]} shaking={isShaking} />
-                    <Dice3D value={dices[1]} shaking={isShaking} />
-                  </div>
-                  <div className="dice-row" style={{ marginTop: '-10px' }}>
-                    <Dice3D value={dices[2]} shaking={isShaking} />
-                  </div>
+                  <Dice3D value={dices[0]} shaking={isShaking} />
+                  <Dice3D value={dices[1]} shaking={isShaking} />
+                  <Dice3D value={dices[2]} shaking={isShaking} />
                </div>
              )}
              
