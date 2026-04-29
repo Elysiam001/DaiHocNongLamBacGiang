@@ -3,10 +3,10 @@ import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
 import "../styles/taixiu.css";
 
-const socket = io("https://daihocnonglambacgiang.onrender.com", {
-  transports: ["websocket"],
+const socket = io("/", {
   reconnection: true,
-  reconnectionAttempts: 5
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000
 });
 
 const Dice3D = ({ value, shaking, className }) => (
