@@ -9,16 +9,29 @@ const socket = io("https://dainochonglambacgiang.onrender.com");
 export default function TaiXiuPage() {
   const nav = useNavigate();
   const session = getSession();
+  
+  // Khoi tao state tu LocalStorage de khong bi ve 0 khi reload
   const [balance, setBalance] = useState(0);
-  const [timer, setTimer] = useState(0);
-  const [phase, setPhase] = useState("betting");
-  const [dices, setDices] = useState([1, 1, 1]);
-  const [isBowlClosed, setIsBowlClosed] = useState(true);
+  const [timer, setTimer] = useState(() => Number(localStorage.getItem("tx_timer")) || 0);
+  const [phase, setPhase] = useState(() => localStorage.getItem("tx_phase") || "betting");
+  const [dices, setDices] = useState(() => JSON.parse(localStorage.getItem("tx_dices")) || [1, 1, 1]);
+  const [isBowlClosed, setIsBowlClosed] = useState(() => localStorage.getItem("tx_bowl") !== "open");
   const [isShaking, setIsShaking] = useState(false);
   const [myBet, setMyBet] = useState({ tai: 0, xiu: 0 });
-  const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
-  const [sessionId, setSessionId] = useState(0);
-  const [history, setHistory] = useState([]); // Lưu lịch sử thực tế từ server
+  const [totalPool, setTotalPool] = useState(() => JSON.parse(localStorage.getItem("tx_pool")) || { tai: 0, xiu: 0 });
+  const [sessionId, setSessionId] = useState(() => Number(localStorage.getItem("tx_sid")) || 0);
+  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem("tx_history")) || []);
+
+  // Luu vao LocalStorage moi khi co thay doi
+  useEffect(() => {
+    localStorage.setItem("tx_timer", timer);
+    localStorage.setItem("tx_phase", phase);
+    localStorage.setItem("tx_dices", JSON.stringify(dices));
+    localStorage.setItem("tx_bowl", isBowlClosed ? "closed" : "open");
+    localStorage.setItem("tx_pool", JSON.stringify(totalPool));
+    localStorage.setItem("tx_sid", sessionId);
+    localStorage.setItem("tx_history", JSON.stringify(history));
+  }, [timer, phase, dices, isBowlClosed, totalPool, sessionId, history]);
 
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
