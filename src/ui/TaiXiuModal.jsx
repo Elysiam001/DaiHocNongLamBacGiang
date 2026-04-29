@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import io from "socket.io-client";
 import { getSession } from "../services/authStorage.js";
+import { gsap } from "gsap";
+import * as THREE from "three";
 import "../styles/taixiu.css";
 
 const socket = io("/", {
@@ -8,16 +10,139 @@ const socket = io("/", {
   reconnection: true
 });
 
-const Dice3D = memo(({ value, shaking, className }) => (
-  <div className={`dice-3d ${className} ${shaking ? 'shaking' : `show-${value}`}`}>
-    <div className="dice-face face-1"><div className="dot"></div></div>
-    <div className="dice-face face-2"><div className="dot"></div><div className="dot"></div></div>
-    <div className="dice-face face-3"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-    <div className="dice-face face-4"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-    <div className="dice-face face-5"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-    <div className="dice-face face-6"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
-  </div>
-));
+/* 
+  THÀNH PHẦN XÚC XẮC 3D THẬT (THREE.JS)
+*/
+const ThreeDiceWorld = ({ dices, isShaking, phase }) => {
+  const mountRef = useRef(null);
+  const sceneRef = useRef(null);
+  const diceRefs = useRef([]);
+
+  useEffect(() => {
+    // 1. Setup Scene
+    const scene = new THREE.Scene();
+    sceneRef.current = scene;
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    camera.position.set(0, 8, 12);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(240, 240);
+    renderer.shadowMap.enabled = true;
+    mountRef.current.appendChild(renderer.domElement);
+
+    // 2. Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const spotLight = new THREE.SpotLight(0xffffff, 1);
+    spotLight.position.set(5, 10, 5);
+    spotLight.castShadow = true;
+    scene.add(spotLight);
+
+    // 3. Create Dice Meshes
+    const createDice = (x, z) => {
+      const geometry = new THREE.BoxGeometry(2.2, 2.2, 2.2);
+      
+      // Tạo các mặt xúc xắc bằng Canvas để đẹp và thật
+      const materials = [1, 6, 2, 5, 3, 4].map(num => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128; canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#cc0000'; // Đỏ Ruby
+        ctx.fillRect(0, 0, 128, 128);
+        ctx.fillStyle = '#ffffff';
+        // Vẽ dấu chấm dựa trên số
+        const drawDot = (dx, dy) => {
+          ctx.beginPath(); ctx.arc(dx, dy, 12, 0, Math.PI * 2); ctx.fill();
+        };
+        const centers = {
+          1: [[64, 64]],
+          2: [[32, 32], [96, 96]],
+          3: [[32, 32], [64, 64], [96, 96]],
+          4: [[32, 32], [32, 96], [96, 32], [96, 96]],
+          5: [[32, 32], [32, 96], [64, 64], [96, 32], [96, 96]],
+          6: [[32, 32], [32, 64], [32, 96], [96, 32], [96, 64], [96, 96]]
+        };
+        centers[num].forEach(pos => drawDot(pos[0], pos[1]));
+        const texture = new THREE.CanvasTexture(canvas);
+        return new THREE.MeshStandardMaterial({ map: texture, roughness: 0.3, metalness: 0.2 });
+      });
+
+      const dice = new THREE.Mesh(geometry, materials);
+      dice.position.set(x, 0, z);
+      dice.castShadow = true;
+      scene.add(dice);
+      return dice;
+    };
+
+    diceRefs.current = [
+      createDice(-2.5, -1.5),
+      createDice(2.5, -1.5),
+      createDice(0, 2.5)
+    ];
+
+    // 4. Render Loop
+    const animate = () => {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    return () => {
+      if (mountRef.current) mountRef.current.removeChild(renderer.domElement);
+    };
+  }, []);
+
+  // 5. Handle Animations (GSAP)
+  useEffect(() => {
+    if (isShaking) {
+      diceRefs.current.forEach((dice, i) => {
+        gsap.to(dice.rotation, {
+          x: Math.random() * Math.PI * 10,
+          y: Math.random() * Math.PI * 10,
+          z: Math.random() * Math.PI * 10,
+          duration: 2,
+          ease: "power2.inOut"
+        });
+        gsap.to(dice.position, {
+          x: dice.position.x + (Math.random() - 0.5) * 2,
+          z: dice.position.z + (Math.random() - 0.5) * 2,
+          y: 2 + Math.random() * 2,
+          duration: 0.2,
+          repeat: 10,
+          yoyo: true
+        });
+      });
+    } else if (phase === "result") {
+      const getRotationForValue = (val) => {
+        const rots = {
+          1: { x: 0, y: 0, z: 0 },
+          2: { x: 0, y: Math.PI / 2, z: 0 },
+          3: { x: -Math.PI / 2, y: 0, z: 0 },
+          4: { x: Math.PI / 2, y: 0, z: 0 },
+          5: { x: 0, y: -Math.PI / 2, z: 0 },
+          6: { x: Math.PI, y: 0, z: 0 }
+        };
+        return rots[val] || rots[1];
+      };
+
+      diceRefs.current.forEach((dice, i) => {
+        const targetRot = getRotationForValue(dices[i]);
+        gsap.to(dice.rotation, {
+          x: targetRot.x + Math.PI * 4,
+          y: targetRot.y + Math.PI * 4,
+          z: targetRot.z,
+          duration: 1.5,
+          ease: "back.out(1.7)"
+        });
+        gsap.to(dice.position, { y: 0, duration: 0.5, ease: "bounce.out" });
+      });
+    }
+  }, [isShaking, phase, dices]);
+
+  return <div ref={mountRef} className="three-dice-container" />;
+};
 
 export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
@@ -29,11 +154,8 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
     const currentCycleSec = totalSeconds % cycleTotal;
     const currentSId = Math.floor(totalSeconds / cycleTotal);
     
-    if (currentCycleSec < 30) {
-      return { timer: 30 - currentCycleSec, phase: "betting", sessionId: currentSId, isBowlClosed: true };
-    } else {
-      return { timer: cycleTotal - currentCycleSec, phase: "result", sessionId: currentSId, isBowlClosed: false };
-    }
+    if (currentCycleSec < 30) return { timer: 30 - currentCycleSec, phase: "betting", sessionId: currentSId, isBowlClosed: true };
+    return { timer: cycleTotal - currentCycleSec, phase: "result", sessionId: currentSId, isBowlClosed: false };
   };
 
   const initialState = getGlobalState();
@@ -60,135 +182,102 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const handlePhaseChange = useCallback((newPhase, resultDices) => {
     if (newPhase === "betting") {
       setIsBowlClosed(true);
-      setIsBowlShaking(true);
-      setTimeout(() => setIsBowlShaking(false), 2000); 
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 2500); 
     } else if (newPhase === "result") {
-      // Shaking before opening
       setIsBowlShaking(true);
       setTimeout(() => {
         setIsBowlShaking(false);
         setIsBowlClosed(false);
         setDices(resultDices);
-        setIsShaking(true);
-        setTimeout(() => setIsShaking(false), 1000);
       }, 1000);
     }
   }, []);
 
   useEffect(() => {
     if (!session) return;
-    socket.on("loginSuccess", (data) => data && data.balance !== undefined && setBalance(data.balance));
-    socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
-
     const interval = setInterval(() => {
       const state = getGlobalState();
       setSessionId(state.sessionId);
       setTimer(state.timer);
       if (state.phase !== phase) {
         setPhase(state.phase);
-        const syncDices = getDeterministicResult(state.sessionId);
-        handlePhaseChange(state.phase, syncDices);
+        handlePhaseChange(state.phase, getDeterministicResult(state.sessionId));
       }
     }, 1000);
-
-    const onConnect = () => socket.emit("login", { username: session.username });
-    if (socket.connected) onConnect();
-    else socket.on("connect", onConnect);
-
-    return () => {
-      clearInterval(interval);
-      socket.off("connect");
-      socket.off("loginSuccess");
-      socket.off("balanceUpdate");
-    };
+    return () => clearInterval(interval);
   }, [session, phase, handlePhaseChange]);
-
-  // DRAG
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const onMouseDown = (e) => {
-    if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
-       setIsDragging(true);
-       setDragOffset({ x: e.clientX - position.x, y: e.clientY - position.y });
-    }
-  };
-  useEffect(() => {
-    const onMouseMove = (e) => {
-      if (!isDragging) return;
-      setPosition({ x: e.clientX - dragOffset.x, y: e.clientY - dragOffset.y });
-    };
-    if (isDragging) {
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('mouseup', () => setIsDragging(false));
-    }
-    return () => window.removeEventListener('mousemove', onMouseMove);
-  }, [isDragging, dragOffset]);
 
   return (
     <div className="taixiu-modal-overlay">
-      <div 
-        className="go88-main-container" 
-        style={{ transform: `translate3d(${position.x}px, ${position.y}px, 0)`, cursor: isDragging ? 'grabbing' : 'default' }}
-        onMouseDown={onMouseDown}
-      >
-        <div className="go88-table-oval">
-          <div className="circle-icon-btn btn-info"><i className="fa-solid fa-info"></i></div>
-          <div className="circle-icon-btn btn-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></div>
-          <div className="circle-icon-btn btn-chart"><i className="fa-solid fa-chart-line"></i></div>
-          <div className="circle-icon-btn btn-help"><i className="fa-solid fa-question"></i></div>
-          <div className="circle-icon-btn btn-log"><i className="fa-solid fa-scroll"></i></div>
-          <div className="circle-icon-btn btn-rank"><i className="fa-solid fa-trophy"></i></div>
-          <div className="circle-icon-btn btn-chat"><i className="fa-solid fa-comment-dots"></i></div>
-          <div className="circle-icon-btn btn-mute"><i className="fa-solid fa-hand-dots"></i></div>
-
-          <div className="go88-top-deco" style={{ cursor: 'grab' }}>
-             <div className="go88-jackpot-wrap"><span className="go88-jackpot-val">{(jackpotValue || 0).toLocaleString()}</span></div>
-             <div className="go88-session-id">#{sessionId}</div>
+      <div className="casino-mobile-layout">
+        <div className="casino-table">
+          {/* HEADER */}
+          <div className="casino-header">
+             <div className="jackpot-area">
+                <div className="jackpot-label">HŨ THƯỞNG</div>
+                <div className="jackpot-value">{(jackpotValue || 99313706286).toLocaleString()}</div>
+                <div className="session-id">#{sessionId}</div>
+             </div>
+             <div className="close-btn" onClick={onClose}>×</div>
           </div>
 
-          {/* TAI SIDE */}
-          <div className="go88-side">
-            <div className={`go88-text-metallic ${phase === "result" && isTai ? 'winner-active' : ''}`}>TÀI</div>
-            <div className="go88-pool-val">{(sessionId * 1234).toLocaleString()}</div>
-            <button className="btn-cuoc-glossy">CƯỢC</button>
+          <div className="casino-main-row">
+             {/* TAI SIDE */}
+             <div className={`bet-side tai-side ${phase === "result" && isTai ? 'winner-glow' : phase === "result" ? 'side-dim' : ''}`}>
+                <div className="bet-title">TÀI</div>
+                <div className="bet-count"><i className="fa-solid fa-user"></i> 4,272</div>
+                <div className="bet-pool">2.142.916.349</div>
+                <button className="casino-bet-btn">CƯỢC</button>
+             </div>
+
+             {/* CENTER BOWL AREA */}
+             <div className="bowl-area">
+                <div className="bowl-circle-bg">
+                   <ThreeDiceWorld dices={dices} isShaking={isShaking} phase={phase} />
+                   <div className={`casino-bowl ${isBowlClosed ? 'closed' : 'opened'} ${isBowlShaking ? 'shaking' : ''}`}></div>
+                   {isBowlClosed ? (
+                     <div className="countdown-timer">{timer}</div>
+                   ) : (
+                     <div className="result-score-overlay">
+                        <div className="result-number">{totalDice}</div>
+                        {phase === "result" && <div className="result-countdown">{timer}</div>}
+                     </div>
+                   )}
+                </div>
+             </div>
+
+             {/* XIU SIDE */}
+             <div className={`bet-side xiu-side ${phase === "result" && !isTai ? 'winner-glow' : phase === "result" ? 'side-dim' : ''}`}>
+                <div className="bet-title">XỈU</div>
+                <div className="bet-count"><i className="fa-solid fa-user"></i> 4,638</div>
+                <div className="bet-pool">2.142.916.349</div>
+                <button className="casino-bet-btn">CƯỢC</button>
+             </div>
           </div>
 
-          <div className="go88-timer-circle">
-             {isBowlClosed && !isShaking ? (
-               <span className={`go88-timer-val ${timer <= 5 ? 'timer-low' : ''}`}>{timer}</span>
-             ) : (
-               <div className="dice-container">
-                  {!isBowlClosed && !isShaking && (
-                    <div className="go88-result-val-top" style={{
-                      position: 'absolute', top: '-45px', left: '50%', transform: 'translateX(-50%)',
-                      fontSize: '32px', color: '#ffd700', fontWeight: '900', textShadow: '0 0 10px #000',
-                      zIndex: 10, background: 'rgba(0,0,0,0.7)', padding: '2px 15px', borderRadius: '15px'
-                    }}>
-                      {totalDice}
-                    </div>
-                  )}
-                  <Dice3D value={dices[0]} shaking={isShaking} className="dice-1" />
-                  <Dice3D value={dices[1]} shaking={isShaking} className="dice-2" />
-                  <Dice3D value={dices[2]} shaking={isShaking} className="dice-3" />
-               </div>
-             )}
-             <div className={`go88-bowl-overlay ${isBowlClosed ? '' : 'open'} ${isBowlShaking ? 'shaking' : ''}`}></div>
+          {/* FOOTER HISTORY */}
+          <div className="casino-footer">
+             <div className="history-dots">
+                {[...Array(15)].map((_, i) => {
+                   const res = getDeterministicResult(sessionId - i - 1).reduce((a,b)=>a+b,0);
+                   return <div key={i} className={`h-dot ${res > 10 ? 'h-tai' : 'h-xiu'}`}></div>
+                })}
+             </div>
           </div>
+        </div>
 
-          {/* XIU SIDE */}
-          <div className="go88-side">
-            <div className={`go88-text-metallic ${phase === "result" && !isTai ? 'winner-active' : ''}`}>XỈU</div>
-            <div className="go88-pool-val">{(sessionId * 987).toLocaleString()}</div>
-            <button className="btn-cuoc-glossy">CƯỢC</button>
-          </div>
-
-          <div className="go88-history-row">
-            {[...Array(15)].map((_, i) => {
-               const res = getDeterministicResult(sessionId - i - 1).reduce((a,b)=>a+b,0);
-               return <div key={i} className={`hist-dot ${res > 10 ? 'tai' : 'xiu'}`}></div>
-            })}
-          </div>
+        {/* SIDE BUTTONS */}
+        <div className="casino-sidebar-left">
+           <div className="s-btn"><i className="fa-solid fa-info"></i></div>
+           <div className="s-btn"><i className="fa-solid fa-chart-line"></i></div>
+           <div className="s-btn"><i className="fa-solid fa-question"></i></div>
+           <div className="s-btn"><i className="fa-solid fa-scroll"></i></div>
+        </div>
+        <div className="casino-sidebar-right">
+           <div className="s-btn"><i className="fa-solid fa-trophy"></i></div>
+           <div className="s-btn"><i className="fa-solid fa-comment-dots"></i></div>
+           <div className="s-btn"><i className="fa-solid fa-hand-dots"></i></div>
         </div>
       </div>
     </div>
