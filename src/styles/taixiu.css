@@ -183,3 +183,56 @@
 .hist-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #fff; }
 .hist-dot.tai { background: #fff; }
 .hist-dot.xiu { background: #000; }
+
+/* 3D DICE & BOWL SYSTEM */
+.go88-bowl-overlay {
+  position: absolute; top: -5px; left: -5px; width: 230px; height: 230px;
+  background: radial-gradient(circle at 30% 30%, #555, #111);
+  border: 4px solid #d4af37; border-radius: 50%;
+  z-index: 15; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+}
+.go88-bowl-overlay.open {
+  transform: translate(150px, -250px) rotate(20deg);
+  opacity: 0; pointer-events: none;
+}
+
+.dice-container {
+  display: flex; gap: 15px; z-index: 5;
+}
+
+.dice-3d {
+  width: 45px; height: 45px; position: relative;
+  transform-style: preserve-3d;
+  animation: roll-3d 0.8s ease-out;
+}
+
+@keyframes roll-3d {
+  0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(0.5); }
+  50% { transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg) scale(1.2); }
+  100% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1); }
+}
+
+.dice-face {
+  position: absolute; width: 45px; height: 45px;
+  background: #fff; border: 1px solid #ccc; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+/* Basic dots for 2D-like faces in 3D container */
+.dice-face.val-1 .dot { width: 12px; height: 12px; background: #ff0000; border-radius: 50%; }
+.dice-face.val-2 { flex-direction: column; justify-content: space-around; }
+.dice-face.val-2 .dot { width: 8px; height: 8px; background: #000; border-radius: 50%; }
+
+/* Result Glow */
+.result-glow {
+  position: absolute; width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,204,0,0.3) 0%, transparent 70%);
+  animation: pulse-glow 1s infinite alternate;
+  z-index: 1;
+}
+@keyframes pulse-glow {
+  from { transform: scale(1); opacity: 0.5; }
+  to { transform: scale(1.3); opacity: 0.9; }
+}
