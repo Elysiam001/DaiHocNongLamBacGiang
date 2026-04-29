@@ -5,28 +5,29 @@ import "../styles/taixiu.css";
 
 const socket = io("https://dainochonglambacgiang.onrender.com");
 
-const Dice3D = ({ value }) => {
-  const renderDots = (v) => {
-    const dots = [];
-    if (v === 1) dots.push(<div key={1} className="dot red"></div>);
-    else if (v === 2) {
-      dots.push(<div key={1} className="dot"></div>);
-      dots.push(<div key={2} className="dot"></div>);
-    } else if (v === 3) {
-      for (let i = 0; i < 3; i++) dots.push(<div key={i} className="dot"></div>);
-    } else if (v === 4) {
-      for (let i = 0; i < 4; i++) dots.push(<div key={i} className="dot red"></div>);
-    } else if (v === 5) {
-      for (let i = 0; i < 5; i++) dots.push(<div key={i} className="dot"></div>);
-    } else if (v === 6) {
-      for (let i = 0; i < 6; i++) dots.push(<div key={i} className="dot"></div>);
+const Dice3D = ({ value, isShaking }) => {
+  // Rotation mapping to bring the target face to the front/top view
+  const getRotation = (v) => {
+    switch (v) {
+      case 1: return "rotateX(0deg) rotateY(0deg)";
+      case 2: return "rotateX(0deg) rotateY(180deg)";
+      case 3: return "rotateX(0deg) rotateY(-90deg)";
+      case 4: return "rotateX(0deg) rotateY(90deg)";
+      case 5: return "rotateX(-90deg) rotateY(0deg)";
+      case 6: return "rotateX(90deg) rotateY(0deg)";
+      default: return "";
     }
-    return dots;
   };
 
   return (
-    <div className="dice-3d">
-      <div className={`dice-face val-${value}`}>{renderDots(value)}</div>
+    <div className={`dice-3d ${isShaking ? 'shaking' : ''}`} style={{ transform: isShaking ? "" : getRotation(value) }}>
+      {/* 6 Faces of the cube */}
+      <div className="dice-face face-1"><div className="dot red"></div></div>
+      <div className="dice-face face-2"><div className="dot"></div><div className="dot"></div></div>
+      <div className="dice-face face-3"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+      <div className="dice-face face-4"><div className="dot red"></div><div className="dot red"></div><div className="dot red"></div><div className="dot red"></div></div>
+      <div className="dice-face face-5"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
+      <div className="dice-face face-6"><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
     </div>
   );
 };
@@ -34,12 +35,12 @@ const Dice3D = ({ value }) => {
 export default function TaiXiuModal({ onClose, jackpotValue }) {
   const session = getSession();
   const [balance, setBalance] = useState(0);
-  const [timer, setTimer] = useState(30); // Khởi tạo 30s
+  const [timer, setTimer] = useState(30);
   const [phase, setPhase] = useState("betting");
   const [dices, setDices] = useState([1, 1, 1]);
   const [isBowlClosed, setIsBowlClosed] = useState(true);
   const [totalPool, setTotalPool] = useState({ tai: 0, xiu: 0 });
-  const [sessionId, setSessionId] = useState(1024); // Giả lập mã phiên bắt đầu từ 1024
+  const [sessionId, setSessionId] = useState(1024);
 
   // MODAL STATES
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -50,15 +51,13 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  // GAME LOOP LOGIC (30s Betting -> 10s Result)
+  // GAME LOOP LOGIC
   useEffect(() => {
     const gameInterval = setInterval(() => {
       setTimer((prev) => {
         if (prev > 1) return prev - 1;
 
-        // KHI HẾT GIỜ
         if (phase === "betting") {
-          // CHUYỂN SANG MỞ BÁT (10 giây)
           setPhase("result");
           const randomDices = [
             Math.floor(Math.random() * 6) + 1,
@@ -66,18 +65,12 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             Math.floor(Math.random() * 6) + 1
           ];
           setDices(randomDices);
-          setIsBowlClosed(false); // Mở bát
+          setIsBowlClosed(false);
           return 10; 
         } else {
-          // QUAY LẠI ĐẶT CƯỢC (30 giây)
           setPhase("betting");
-          setIsBowlClosed(true); // Úp bát
-          setSessionId(s => s + 1); // Tăng mã phiên
-          // Fake pool update
-          setTotalPool({ 
-             tai: Math.floor(Math.random() * 100000000), 
-             xiu: Math.floor(Math.random() * 100000000) 
-          });
+          setIsBowlClosed(true);
+          setSessionId(s => s + 1);
           return 30;
         }
       });
@@ -93,7 +86,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
     socket.on("balanceUpdate", (data) => data && data.username === session.username && setBalance(data.newBalance));
   }, [session]);
 
-  // DRAG HANDLERS
   const onMouseDown = (e) => {
     if (e.target.closest('.go88-top-deco') || e.target.closest('.go88-table-oval')) {
        if (isHistoryOpen || isRulesOpen) return;
@@ -121,7 +113,6 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
   const handleBet = (side, amount) => {
     if (phase !== "betting") return;
     setBalance(prev => prev - amount);
-    // Emit socket bet if needed
   };
 
   const mockHistory = [
@@ -167,7 +158,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
              </div>
              <div className="dice-container">
                 {!isBowlClosed && <div className="result-glow"></div>}
-                {dices.map((v, i) => <Dice3D key={i} value={v} />)}
+                {dices.map((v, i) => <Dice3D key={i} value={v} isShaking={phase === 'betting'} />)}
              </div>
           </div>
 
@@ -184,6 +175,7 @@ export default function TaiXiuModal({ onClose, jackpotValue }) {
             ))}
           </div>
 
+          {/* Modals for History and Rules */}
           {isHistoryOpen && (
             <div className="history-modal-overlay">
               <div className="history-header">
